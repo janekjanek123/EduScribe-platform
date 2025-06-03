@@ -4,68 +4,54 @@ import path from 'path';
 import OpenAI from 'openai';
 import { promisify } from 'util';
 
-// Set FFmpeg path using the ffmpeg-installer with fallbacks
+// Configure FFmpeg to use system binaries
+const ffmpegPath = '/usr/bin/ffmpeg';
+const ffprobePath = '/usr/bin/ffprobe';
+
+// Set FFmpeg paths for Render deployment
 let ffmpegPathSet = false;
 let ffprobePathSet = false;
 
-// Set up FFmpeg path
+// Set up FFmpeg path - prioritize system paths for production deployment
 try {
-  const ffmpegInstaller = require('@ffmpeg-installer/ffmpeg');
-  if (ffmpegInstaller && ffmpegInstaller.path) {
-    if (fs.existsSync(ffmpegInstaller.path)) {
-      ffmpeg.setFfmpegPath(ffmpegInstaller.path);
-      console.log('[VideoTranscription] FFmpeg path set from installer:', ffmpegInstaller.path);
-      ffmpegPathSet = true;
-    } else {
-      console.warn('[VideoTranscription] FFmpeg installer path does not exist:', ffmpegInstaller.path);
-    }
+  // For production (Render), use system paths
+  if (process.env.NODE_ENV === 'production') {
+    ffmpeg.setFfmpegPath(ffmpegPath);
+    ffmpeg.setFfprobePath(ffprobePath);
+    console.log('[VideoTranscription] Production mode: Using system FFmpeg at:', ffmpegPath);
+    console.log('[VideoTranscription] Production mode: Using system FFprobe at:', ffprobePath);
+    ffmpegPathSet = true;
+    ffprobePathSet = true;
   } else {
-    console.warn('[VideoTranscription] FFmpeg installer found but no path provided');
-  }
-} catch (error) {
-  console.warn('[VideoTranscription] FFmpeg installer require failed:', error);
-}
+    // For development, try to find FFmpeg in common locations
+    const commonPaths = [
+      // System paths (assuming ffmpeg and ffprobe are in the same dir)
+      { ffmpeg: '/usr/local/bin/ffmpeg', ffprobe: '/usr/local/bin/ffprobe' },
+      { ffmpeg: '/usr/bin/ffmpeg', ffprobe: '/usr/bin/ffprobe' },
+      { ffmpeg: '/opt/homebrew/bin/ffmpeg', ffprobe: '/opt/homebrew/bin/ffprobe' },
+      { ffmpeg: 'ffmpeg', ffprobe: 'ffprobe' } // Use PATH
+    ];
 
-// Set up FFprobe path - using system ffprobe since ffprobe-static was removed
-try {
-  // Try to use system ffprobe
-  ffmpeg.setFfprobePath('ffprobe');
-  console.log('[VideoTranscription] FFprobe path set to system ffprobe');
-  ffprobePathSet = true;
-} catch (error) {
-  console.warn('[VideoTranscription] System ffprobe not available:', error);
-}
-
-// If installer didn't work, try to find ffmpeg and ffprobe in common locations
-if (!ffmpegPathSet || !ffprobePathSet) {
-  const commonPaths = [
-    // Try to construct the installer path manually
-    { ffmpeg: path.join(process.cwd(), 'node_modules', '@ffmpeg-installer', 'darwin-x64', 'ffmpeg'), ffprobe: '/usr/local/bin/ffprobe' },
-    { ffmpeg: path.join(process.cwd(), 'node_modules', '@ffmpeg-installer', 'darwin-arm64', 'ffmpeg'), ffprobe: '/opt/homebrew/bin/ffprobe' },
-    // System paths (assuming ffmpeg and ffprobe are in the same dir)
-    { ffmpeg: '/usr/local/bin/ffmpeg', ffprobe: '/usr/local/bin/ffprobe' },
-    { ffmpeg: '/usr/bin/ffmpeg', ffprobe: '/usr/bin/ffprobe' },
-    { ffmpeg: '/opt/homebrew/bin/ffmpeg', ffprobe: '/opt/homebrew/bin/ffprobe' },
-    { ffmpeg: 'ffmpeg', ffprobe: 'ffprobe' } // Use PATH
-  ];
-
-  for (const paths of commonPaths) {
-    try {
-      if (!ffmpegPathSet && (paths.ffmpeg === 'ffmpeg' || fs.existsSync(paths.ffmpeg))) {
-        ffmpeg.setFfmpegPath(paths.ffmpeg);
-        console.log('[VideoTranscription] Using FFmpeg at:', paths.ffmpeg);
-        ffmpegPathSet = true;
+    for (const paths of commonPaths) {
+      try {
+        if (!ffmpegPathSet && (paths.ffmpeg === 'ffmpeg' || fs.existsSync(paths.ffmpeg))) {
+          ffmpeg.setFfmpegPath(paths.ffmpeg);
+          console.log('[VideoTranscription] Using FFmpeg at:', paths.ffmpeg);
+          ffmpegPathSet = true;
+        }
+        if (!ffprobePathSet && (paths.ffprobe === 'ffprobe' || fs.existsSync(paths.ffprobe))) {
+          ffmpeg.setFfprobePath(paths.ffprobe);
+          console.log('[VideoTranscription] Using FFprobe at:', paths.ffprobe);
+          ffprobePathSet = true;
+        }
+        if (ffmpegPathSet && ffprobePathSet) break;
+      } catch (error) {
+        console.warn('[VideoTranscription] Could not use FFmpeg/FFprobe at:', paths);
       }
-      if (!ffprobePathSet && (paths.ffprobe === 'ffprobe' || fs.existsSync(paths.ffprobe))) {
-        ffmpeg.setFfprobePath(paths.ffprobe);
-        console.log('[VideoTranscription] Using FFprobe at:', paths.ffprobe);
-        ffprobePathSet = true;
-      }
-      if (ffmpegPathSet && ffprobePathSet) break;
-    } catch (error) {
-      console.warn('[VideoTranscription] Could not use FFmpeg/FFprobe at:', paths);
     }
   }
+} catch (error) {
+  console.error('[VideoTranscription] Error setting FFmpeg paths:', error);
 }
 
 if (!ffmpegPathSet) {

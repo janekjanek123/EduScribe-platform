@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useSupabase } from '@/lib/supabase-provider'
 
@@ -11,7 +11,7 @@ interface FormData {
   agreeToTerms: boolean
 }
 
-export default function CheckoutPage() {
+function CheckoutPageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { user } = useSupabase()
@@ -641,5 +641,13 @@ export default function CheckoutPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function CheckoutPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <CheckoutPageContent />
+    </Suspense>
   )
 } 
