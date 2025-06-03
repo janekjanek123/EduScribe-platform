@@ -1,0 +1,11 @@
+{
+  "/dashboard/page": "app/dashboard/page.js",
+  "/page": "app/page.js",
+  "/api/text-notes/route": "app/api/text-notes/route.js",
+  "/api/video-notes/route": "app/api/video-notes/route.js",
+  "/api/file-notes/route": "app/api/file-notes/route.js",
+  "/help/page": "app/help/page.js",
+  "/api/queue-status/route": "app/api/queue-status/route.js",
+  "/api/upload-video/route": "app/api/upload-video/route.js",
+  "/api/refresh-usage/route": "app/api/refresh-usage/route.js"
+}
