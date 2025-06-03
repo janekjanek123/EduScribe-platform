@@ -4,7 +4,7 @@ import { createClient } from '@supabase/supabase-js';
 import { cookies } from 'next/headers';
 
 // NOTE: We're using database storage now, no need for in-memory fallbacks
-export const notesStorage: Record<string, any> = {};
+const notesStorage: Record<string, any> = {};
 
 export async function GET(request: NextRequest) {
   console.log('[API] GET /api/get-notes - Starting request processing');
