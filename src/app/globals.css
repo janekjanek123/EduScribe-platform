@@ -1,0 +1,246 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Line clamp utilities */
+.line-clamp-2 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.line-clamp-3 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
+}
+
+/* Enhanced markdown styling for educational notes with reduced overwhelm */
+.prose {
+  max-width: none;
+  color: #4b5563;
+  line-height: 1.7;
+  font-size: 0.95rem;
+  font-weight: 400;
+}
+
+/* Headings - softer and less overwhelming */
+.prose h1, .prose h2 {
+  color: #374151;
+  font-weight: 600;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+  line-height: 1.4;
+}
+
+.prose h3 {
+  color: #4b5563;
+  font-weight: 500;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+  font-size: 1.2rem;
+  line-height: 1.4;
+}
+
+.prose h4 {
+  color: #6b7280;
+  font-weight: 500;
+  margin-top: 1.25rem;
+  margin-bottom: 0.75rem;
+  font-size: 1.05rem;
+  line-height: 1.4;
+}
+
+.prose h5, .prose h6 {
+  color: #6b7280;
+  font-weight: 400;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+/* Paragraphs - comfortable and readable */
+.prose p {
+  margin-bottom: 1rem;
+  color: #4b5563;
+  font-weight: 400;
+  line-height: 1.7;
+}
+
+/* Lists - clean and scannable */
+.prose ul, .prose ol {
+  margin-bottom: 1rem;
+  padding-left: 1.5rem;
+}
+
+.prose li {
+  margin-bottom: 0.4rem;
+  color: #4b5563;
+  font-weight: 400;
+  line-height: 1.6;
+}
+
+.prose li::marker {
+  color: #9ca3af;
+}
+
+/* Strong text - more subtle emphasis */
+.prose strong {
+  font-weight: 500;
+  color: #374151;
+}
+
+/* Emphasis */
+.prose em {
+  font-style: italic;
+  color: #4b5563;
+  font-weight: 400;
+}
+
+/* Code and technical elements */
+.prose code {
+  background-color: #f3f4f6;
+  color: #6b7280;
+  padding: 0.2rem 0.4rem;
+  border-radius: 0.25rem;
+  font-size: 0.9rem;
+  font-weight: 400;
+}
+
+/* Blockquotes - softer styling */
+.prose blockquote {
+  border-left: 3px solid #d1d5db;
+  padding-left: 1rem;
+  margin: 1rem 0;
+  color: #6b7280;
+  font-style: italic;
+  font-weight: 400;
+  background-color: #f9fafb;
+  border-radius: 0.25rem;
+  padding: 0.75rem 1rem;
+}
+
+/* Links - subtle but accessible */
+.prose a {
+  color: #3b82f6;
+  text-decoration: none;
+  font-weight: 400;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s ease;
+}
+
+.prose a:hover {
+  border-bottom-color: #3b82f6;
+}
+
+/* Improved spacing between sections */
+.prose > * + * {
+  margin-top: 1rem;
+}
+
+/* Better spacing for headings that follow content */
+.prose * + h2 {
+  margin-top: 2rem;
+}
+
+.prose * + h3 {
+  margin-top: 1.5rem;
+}
+
+.prose * + h4 {
+  margin-top: 1.25rem;
+}
+
+/* Summary section specific styling */
+.prose .summary-section {
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin: 1rem 0;
+}
+
+.prose .summary-section h3,
+.prose .summary-section h4 {
+  color: #475569;
+  font-weight: 500;
+  margin-top: 0;
+}
+
+/* Note view toggle buttons styling */
+.note-view-toggle {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  padding: 0.25rem;
+  background-color: #f1f5f9;
+  border-radius: 0.5rem;
+  border: 1px solid #e2e8f0;
+}
+
+.note-view-toggle button {
+  flex: 1;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 0.25rem;
+  font-size: 0.9rem;
+  font-weight: 400;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #64748b;
+  background-color: transparent;
+}
+
+.note-view-toggle button.active {
+  background-color: #ffffff;
+  color: #1e293b;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  font-weight: 500;
+}
+
+.note-view-toggle button:hover:not(.active) {
+  color: #475569;
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-primary-600 hover:bg-primary-700 text-white font-bold py-2 px-4 rounded transition duration-300;
+  }
+  
+  .btn-secondary {
+    @apply bg-secondary-600 hover:bg-secondary-700 text-white font-bold py-2 px-4 rounded transition duration-300;
+  }
+
+  .input-field {
+    @apply border border-gray-300 rounded-md p-2 w-full focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent;
+  }
+} 
