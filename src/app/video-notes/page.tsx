@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import ReactMarkdown from 'react-markdown'
 import { useSupabase } from '@/lib/supabase-provider'
@@ -23,7 +23,7 @@ interface NotesData {
   user_id: string;
 }
 
-export default function VideoNotesPage() {
+function VideoNotesPageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const noteId = searchParams?.get('id')
@@ -421,5 +421,13 @@ export default function VideoNotesPage() {
         </div>
       )}
     </div>
+  )
+}
+
+export default function VideoNotesPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <VideoNotesPageContent />
+    </Suspense>
   )
 } 
