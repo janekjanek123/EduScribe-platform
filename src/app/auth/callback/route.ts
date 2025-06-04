@@ -26,7 +26,8 @@ export async function GET(request: Request) {
         const userMetadata = data.user.user_metadata;
         console.log('[Auth Callback] User metadata:', userMetadata);
         
-        if (userMetadata && userMetadata.user_type && userMetadata.interests) {
+        // Only create profile if user didn't skip the survey
+        if (userMetadata && !userMetadata.survey_skipped && userMetadata.onboarding_completed) {
           try {
             // Check if profile already exists
             const { data: existingProfile } = await supabase
@@ -62,6 +63,10 @@ export async function GET(request: Request) {
             console.error('[Auth Callback] Exception creating user profile:', profileCreateError);
             // Don't fail the auth flow for profile creation errors
           }
+        } else if (userMetadata && userMetadata.survey_skipped) {
+          console.log('[Auth Callback] User skipped survey, not creating detailed profile for user:', data.user.id);
+        } else {
+          console.log('[Auth Callback] No valid metadata found for user:', data.user.id);
         }
       }
     } catch (authError) {
