@@ -90,6 +90,19 @@ export async function POST(request: NextRequest) {
       }, { status: 500 });
     }
     
+    // STEP 6: Create the user_profiles table
+    console.log('[Init DB API] Creating user_profiles table...');
+    const { error: profileTableError } = await supabase.rpc('create_user_profiles_table');
+    
+    if (profileTableError && !profileTableError.message.includes('already exists')) {
+      console.error('[Init DB API] Error creating user_profiles table:', profileTableError);
+      return NextResponse.json({ 
+        success: false,
+        error: 'Database error',
+        message: `Failed to create user_profiles table: ${profileTableError.message}`
+      }, { status: 500 });
+    }
+    
     // If we get here, create the stored procedures if they don't exist
     console.log('[Init DB API] Setting up database stored procedures...');
     
@@ -139,6 +152,51 @@ export async function POST(request: NextRequest) {
           content TEXT,
           created_at TIMESTAMP DEFAULT NOW()
         );
+      END;
+      $$ LANGUAGE plpgsql;
+
+      -- Function to create user_profiles table if it doesn't exist
+      CREATE OR REPLACE FUNCTION create_user_profiles_table()
+      RETURNS void AS $$
+      BEGIN
+        CREATE TABLE IF NOT EXISTS public.user_profiles (
+          id SERIAL PRIMARY KEY,
+          user_id UUID NOT NULL UNIQUE REFERENCES auth.users(id) ON DELETE CASCADE,
+          email TEXT,
+          user_type TEXT,
+          interests TEXT[],
+          onboarding_completed BOOLEAN DEFAULT FALSE,
+          created_at TIMESTAMP DEFAULT NOW(),
+          updated_at TIMESTAMP DEFAULT NOW()
+        );
+        
+        -- Enable Row Level Security
+        ALTER TABLE public.user_profiles ENABLE ROW LEVEL SECURITY;
+        
+        -- Create RLS policies
+        CREATE POLICY IF NOT EXISTS "Users can view their own profile" 
+          ON public.user_profiles 
+          FOR SELECT 
+          USING (auth.uid() = user_id);
+          
+        CREATE POLICY IF NOT EXISTS "Users can create their own profile" 
+          ON public.user_profiles 
+          FOR INSERT 
+          WITH CHECK (auth.uid() = user_id);
+          
+        CREATE POLICY IF NOT EXISTS "Users can update their own profile" 
+          ON public.user_profiles 
+          FOR UPDATE 
+          USING (auth.uid() = user_id);
+          
+        CREATE POLICY IF NOT EXISTS "Users can delete their own profile" 
+          ON public.user_profiles 
+          FOR DELETE 
+          USING (auth.uid() = user_id);
+        
+        -- Create indexes
+        CREATE INDEX IF NOT EXISTS idx_user_profiles_user_id ON public.user_profiles(user_id);
+        CREATE INDEX IF NOT EXISTS idx_user_profiles_user_type ON public.user_profiles(user_type);
       END;
       $$ LANGUAGE plpgsql;
     `;
@@ -211,12 +269,59 @@ export async function POST(request: NextRequest) {
           console.error('[Init DB API] Error creating text_notes table directly:', createTextError);
         }
       }
+      
+      // Create user_profiles table
+      const createUserProfilesSQL = `
+        CREATE TABLE IF NOT EXISTS public.user_profiles (
+          id SERIAL PRIMARY KEY,
+          user_id UUID NOT NULL UNIQUE REFERENCES auth.users(id) ON DELETE CASCADE,
+          email TEXT,
+          user_type TEXT,
+          interests TEXT[],
+          onboarding_completed BOOLEAN DEFAULT FALSE,
+          created_at TIMESTAMP DEFAULT NOW(),
+          updated_at TIMESTAMP DEFAULT NOW()
+        );
+        
+        ALTER TABLE public.user_profiles ENABLE ROW LEVEL SECURITY;
+        
+        CREATE POLICY IF NOT EXISTS "Users can view their own profile" 
+          ON public.user_profiles 
+          FOR SELECT 
+          USING (auth.uid() = user_id);
+          
+        CREATE POLICY IF NOT EXISTS "Users can create their own profile" 
+          ON public.user_profiles 
+          FOR INSERT 
+          WITH CHECK (auth.uid() = user_id);
+          
+        CREATE POLICY IF NOT EXISTS "Users can update their own profile" 
+          ON public.user_profiles 
+          FOR UPDATE 
+          USING (auth.uid() = user_id);
+          
+        CREATE POLICY IF NOT EXISTS "Users can delete their own profile" 
+          ON public.user_profiles 
+          FOR DELETE 
+          USING (auth.uid() = user_id);
+        
+        CREATE INDEX IF NOT EXISTS idx_user_profiles_user_id ON public.user_profiles(user_id);
+        CREATE INDEX IF NOT EXISTS idx_user_profiles_user_type ON public.user_profiles(user_type);
+      `;
+      
+      const { error: directProfileError } = await supabase.from('user_profiles').select('count').limit(1);
+      if (directProfileError && directProfileError.code === '42P01') {
+        const { error: createProfileError } = await supabase.rpc('exec_sql', { sql: createUserProfilesSQL });
+        if (createProfileError) {
+          console.error('[Init DB API] Error creating user_profiles table directly:', createProfileError);
+        }
+      }
     }
     
     return NextResponse.json({
       success: true,
       message: 'Database schema initialized successfully',
-      tables: ['video_notes', 'file_notes', 'text_notes']
+      tables: ['video_notes', 'file_notes', 'text_notes', 'user_profiles']
     });
   } catch (error: any) {
     console.error('[Init DB API] Unexpected error:', error);
