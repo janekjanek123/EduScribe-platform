@@ -526,8 +526,8 @@ export async function refreshSavedNotesCount(
 
     console.log('[Subscription] Refreshing saved notes count for user:', userId);
 
-    // Count notes from all tables
-    const [videoResult, fileResult, textResult] = await Promise.all([
+    // Count notes from all tables including video_upload_notes
+    const [videoResult, fileResult, textResult, uploadVideoResult] = await Promise.all([
       supabase
         .from('video_notes')
         .select('id', { count: 'exact', head: true })
@@ -539,18 +539,32 @@ export async function refreshSavedNotesCount(
       supabase
         .from('text_notes')
         .select('id', { count: 'exact', head: true })
+        .eq('user_id', userId),
+      // Handle video_upload_notes table that might not exist in all environments
+      supabase
+        .from('video_upload_notes')
+        .select('id', { count: 'exact', head: true })
         .eq('user_id', userId)
+        .then(
+          result => result,
+          error => {
+            console.warn('[Subscription] video_upload_notes table might not exist:', error.message)
+            return { count: 0 }
+          }
+        )
     ]);
 
     const videoCount = videoResult.count || 0;
     const fileCount = fileResult.count || 0;
     const textCount = textResult.count || 0;
-    const totalCount = videoCount + fileCount + textCount;
+    const uploadVideoCount = uploadVideoResult.count || 0;
+    const totalCount = videoCount + fileCount + textCount + uploadVideoCount;
 
     console.log('[Subscription] Note counts:', {
       video: videoCount,
       file: fileCount,
       text: textCount,
+      video_upload: uploadVideoCount,
       total: totalCount
     });
 

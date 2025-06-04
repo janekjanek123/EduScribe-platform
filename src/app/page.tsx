@@ -24,18 +24,20 @@ export default function HomePage() {
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
             {/* YouTube Card */}
             <Link href="/generate/youtube" className="group">
-              <div className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-200 hover:border-blue-300">
-                <div className="h-2 bg-gradient-to-r from-blue-500 to-blue-600"></div>
-                <div className="p-6">
-                  <div className="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-blue-200 transition-colors">
-                    <span className="text-2xl">📺</span>
+              <div className="homepage-feature-card blue">
+                <div className="card-color-bar bg-gradient-to-r from-blue-500 to-blue-600"></div>
+                <div className="card-content">
+                  <div>
+                    <div className="card-icon">
+                      <span className="text-2xl">📺</span>
+                    </div>
+                    <h3 className="card-title">{t('home.youtubeVideos')}</h3>
+                    <p className="card-description">
+                      {t('home.youtubeDescription')}
+                    </p>
                   </div>
-                  <h3 className="text-lg font-bold text-gray-900 mb-2 text-center">{t('home.youtubeVideos')}</h3>
-                  <p className="text-gray-600 text-center text-sm mb-4">
-                    {t('home.youtubeDescription')}
-                  </p>
-                  <div className="text-center">
-                    <span className="inline-flex items-center px-3 py-2 bg-blue-50 text-blue-700 rounded-lg text-sm font-medium group-hover:bg-blue-100 transition-colors">
+                  <div className="card-button-container">
+                    <span className="homepage-action-button blue">
                       {t('home.enterLink')}
                     </span>
                   </div>
@@ -45,18 +47,20 @@ export default function HomePage() {
 
             {/* File Upload Card */}
             <Link href="/generate/upload" className="group">
-              <div className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-200 hover:border-green-300">
-                <div className="h-2 bg-gradient-to-r from-green-500 to-green-600"></div>
-                <div className="p-6">
-                  <div className="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-green-200 transition-colors">
-                    <span className="text-2xl">📄</span>
+              <div className="homepage-feature-card green">
+                <div className="card-color-bar bg-gradient-to-r from-green-500 to-green-600"></div>
+                <div className="card-content">
+                  <div>
+                    <div className="card-icon">
+                      <span className="text-2xl">📄</span>
+                    </div>
+                    <h3 className="card-title">{t('home.uploadFile')}</h3>
+                    <p className="card-description">
+                      {t('home.uploadFileDescription')}
+                    </p>
                   </div>
-                  <h3 className="text-lg font-bold text-gray-900 mb-2 text-center">{t('home.uploadFile')}</h3>
-                  <p className="text-gray-600 text-center text-sm mb-4">
-                    {t('home.uploadFileDescription')}
-                  </p>
-                  <div className="text-center">
-                    <span className="inline-flex items-center px-3 py-2 bg-green-50 text-green-700 rounded-lg text-sm font-medium group-hover:bg-green-100 transition-colors">
+                  <div className="card-button-container">
+                    <span className="homepage-action-button green">
                       {t('home.uploadFileAction')}
                     </span>
                   </div>
@@ -66,18 +70,20 @@ export default function HomePage() {
 
             {/* Video Upload Card - NEW INDEPENDENT SYSTEM */}
             <Link href="/upload-video" className="group">
-              <div className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-200 hover:border-orange-300">
-                <div className="h-2 bg-gradient-to-r from-orange-500 to-orange-600"></div>
-                <div className="p-6">
-                  <div className="w-14 h-14 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-orange-200 transition-colors">
-                    <span className="text-2xl">🎥</span>
+              <div className="homepage-feature-card orange">
+                <div className="card-color-bar bg-gradient-to-r from-orange-500 to-orange-600"></div>
+                <div className="card-content">
+                  <div>
+                    <div className="card-icon">
+                      <span className="text-2xl">🎥</span>
+                    </div>
+                    <h3 className="card-title">{t('home.uploadVideo')}</h3>
+                    <p className="card-description">
+                      {t('home.uploadVideoDescription')}
+                    </p>
                   </div>
-                  <h3 className="text-lg font-bold text-gray-900 mb-2 text-center">{t('home.uploadVideo')}</h3>
-                  <p className="text-gray-600 text-center text-sm mb-4">
-                    {t('home.uploadVideoDescription')}
-                  </p>
-                  <div className="text-center">
-                    <span className="inline-flex items-center px-3 py-2 bg-orange-50 text-orange-700 rounded-lg text-sm font-medium group-hover:bg-orange-100 transition-colors">
+                  <div className="card-button-container">
+                    <span className="homepage-action-button orange">
                       {t('home.uploadVideoAction')}
                     </span>
                   </div>
@@ -87,18 +93,20 @@ export default function HomePage() {
 
             {/* Text Input Card */}
             <Link href="/generate/text" className="group">
-              <div className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-200 hover:border-purple-300">
-                <div className="h-2 bg-gradient-to-r from-purple-500 to-purple-600"></div>
-                <div className="p-6">
-                  <div className="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-purple-200 transition-colors">
-                    <span className="text-2xl">✏️</span>
+              <div className="homepage-feature-card purple">
+                <div className="card-color-bar bg-gradient-to-r from-purple-500 to-purple-600"></div>
+                <div className="card-content">
+                  <div>
+                    <div className="card-icon">
+                      <span className="text-2xl">✏️</span>
+                    </div>
+                    <h3 className="card-title">{t('home.textInput')}</h3>
+                    <p className="card-description">
+                      {t('home.textInputDescription')}
+                    </p>
                   </div>
-                  <h3 className="text-lg font-bold text-gray-900 mb-2 text-center">{t('home.textInput')}</h3>
-                  <p className="text-gray-600 text-center text-sm mb-4">
-                    {t('home.textInputDescription')}
-                  </p>
-                  <div className="text-center">
-                    <span className="inline-flex items-center px-3 py-2 bg-purple-50 text-purple-700 rounded-lg text-sm font-medium group-hover:bg-purple-100 transition-colors">
+                  <div className="card-button-container">
+                    <span className="homepage-action-button purple">
                       {t('home.enterText')}
                     </span>
                   </div>

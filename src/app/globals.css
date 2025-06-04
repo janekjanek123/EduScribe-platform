@@ -243,4 +243,255 @@ body {
   .input-field {
     @apply border border-gray-300 rounded-md p-2 w-full focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent;
   }
+
+  /* Standardized Homepage Feature Cards - Fixed Dimensions */
+  .homepage-feature-card {
+    @apply bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-200;
+    /* Fixed dimensions for perfect consistency */
+    width: 100%;
+    height: 320px; /* Fixed height */
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .homepage-feature-card:hover {
+    transform: translateY(-2px);
+  }
+  
+  /* Color bar at top of each card */
+  .homepage-feature-card .card-color-bar {
+    height: 8px;
+    flex-shrink: 0;
+  }
+  
+  /* Card content container with flex layout */
+  .homepage-feature-card .card-content {
+    @apply p-6;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 0; /* Allow flex items to shrink */
+  }
+  
+  /* Icon container */
+  .homepage-feature-card .card-icon {
+    @apply w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4 transition-colors;
+    flex-shrink: 0;
+  }
+  
+  /* Card title with truncation */
+  .homepage-feature-card .card-title {
+    @apply text-lg font-bold text-gray-900 mb-3 text-center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex-shrink: 0;
+  }
+  
+  /* Card description with fixed height and line clamping */
+  .homepage-feature-card .card-description {
+    @apply text-gray-600 text-center text-sm mb-6;
+    flex: 1;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    overflow: hidden;
+    line-height: 1.4;
+    max-height: 4.2rem; /* 3 lines × 1.4 line-height */
+  }
+  
+  /* Button container */
+  .homepage-feature-card .card-button-container {
+    @apply flex justify-center;
+    flex-shrink: 0;
+  }
+
+  /* Color variants for hover effects */
+  .homepage-feature-card.blue:hover {
+    @apply border-blue-300;
+  }
+  
+  .homepage-feature-card.blue .card-icon {
+    @apply bg-blue-100;
+  }
+  
+  .homepage-feature-card.blue:hover .card-icon {
+    @apply bg-blue-200;
+  }
+  
+  .homepage-feature-card.green:hover {
+    @apply border-green-300;
+  }
+  
+  .homepage-feature-card.green .card-icon {
+    @apply bg-green-100;
+  }
+  
+  .homepage-feature-card.green:hover .card-icon {
+    @apply bg-green-200;
+  }
+  
+  .homepage-feature-card.orange:hover {
+    @apply border-orange-300;
+  }
+  
+  .homepage-feature-card.orange .card-icon {
+    @apply bg-orange-100;
+  }
+  
+  .homepage-feature-card.orange:hover .card-icon {
+    @apply bg-orange-200;
+  }
+  
+  .homepage-feature-card.purple:hover {
+    @apply border-purple-300;
+  }
+  
+  .homepage-feature-card.purple .card-icon {
+    @apply bg-purple-100;
+  }
+  
+  .homepage-feature-card.purple:hover .card-icon {
+    @apply bg-purple-200;
+  }
+
+  /* Unified Homepage Action Button Styles - Fixed Dimensions */
+  .homepage-action-button {
+    @apply inline-flex items-center justify-center mx-auto px-4 py-3 rounded-lg font-medium transition-all duration-200 ease-in-out;
+    /* Fixed dimensions for perfect consistency */
+    width: 180px;
+    height: 50px;
+    font-size: 0.875rem; /* 14px */
+    
+    /* Text overflow handling */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    
+    /* Better text centering */
+    text-align: center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .homepage-action-button.blue {
+    @apply bg-blue-50 text-blue-700;
+  }
+  
+  .homepage-action-button.blue:hover {
+    @apply bg-blue-100;
+  }
+  
+  .homepage-action-button.green {
+    @apply bg-green-50 text-green-700;
+  }
+  
+  .homepage-action-button.green:hover {
+    @apply bg-green-100;
+  }
+  
+  .homepage-action-button.orange {
+    @apply bg-orange-50 text-orange-700;
+  }
+  
+  .homepage-action-button.orange:hover {
+    @apply bg-orange-100;
+  }
+  
+  .homepage-action-button.purple {
+    @apply bg-purple-50 text-purple-700;
+  }
+  
+  .homepage-action-button.purple:hover {
+    @apply bg-purple-100;
+  }
+}
+
+/* Responsive adjustments for homepage feature cards */
+@layer utilities {
+  /* Mobile: Smaller cards */
+  @media (max-width: 640px) {
+    .homepage-feature-card {
+      height: 280px;
+    }
+    
+    .homepage-feature-card .card-content {
+      @apply p-4;
+    }
+    
+    .homepage-feature-card .card-icon {
+      @apply w-12 h-12 mb-3;
+    }
+    
+    .homepage-feature-card .card-title {
+      @apply text-base mb-2;
+    }
+    
+    .homepage-feature-card .card-description {
+      @apply text-xs mb-4;
+      max-height: 3.6rem;
+    }
+    
+    .homepage-action-button {
+      width: 140px;
+      height: 44px;
+      font-size: 0.8125rem; /* 13px */
+      padding: 0.625rem 0.75rem; /* 10px 12px */
+    }
+  }
+  
+  /* Tablet: Medium size */
+  @media (min-width: 641px) and (max-width: 1023px) {
+    .homepage-feature-card {
+      height: 300px;
+    }
+    
+    .homepage-action-button {
+      width: 160px;
+      height: 48px;
+      font-size: 0.8125rem; /* 13px */
+    }
+  }
+  
+  /* Large screens: Larger cards */
+  @media (min-width: 1024px) {
+    .homepage-feature-card {
+      height: 340px;
+    }
+    
+    .homepage-feature-card .card-content {
+      @apply p-7;
+    }
+    
+    .homepage-feature-card .card-description {
+      max-height: 4.8rem;
+    }
+    
+    .homepage-action-button {
+      width: 200px;
+      height: 52px;
+      font-size: 0.9375rem; /* 15px */
+      padding: 0.875rem 1rem; /* 14px 16px */
+    }
+  }
+  
+  /* Extra large screens: Even larger cards */
+  @media (min-width: 1280px) {
+    .homepage-feature-card {
+      height: 360px;
+    }
+    
+    .homepage-feature-card .card-content {
+      @apply p-8;
+    }
+    
+    .homepage-action-button {
+      width: 220px;
+      height: 56px;
+      font-size: 1rem; /* 16px */
+      padding: 1rem 1.25rem; /* 16px 20px */
+    }
+  }
 } 
