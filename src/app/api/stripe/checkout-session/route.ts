@@ -111,6 +111,17 @@ export async function POST(request: NextRequest) {
 
     // Create Stripe checkout session
     const stripe = getServerStripe()
+    
+    // Ensure we have the app URL for redirects
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL
+    if (!appUrl) {
+      console.error('[Stripe] NEXT_PUBLIC_APP_URL environment variable is required for redirects')
+      return NextResponse.json(
+        { error: 'Server configuration error - missing app URL for redirects' },
+        { status: 500 }
+      )
+    }
+    
     const checkoutSession = await stripe.checkout.sessions.create({
       mode: 'subscription',
       payment_method_types: ['card'],
@@ -120,8 +131,8 @@ export async function POST(request: NextRequest) {
           quantity: 1,
         },
       ],
-      success_url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/payment-cancelled`,
+      success_url: `${appUrl}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${appUrl}/payment-cancelled`,
       customer_email: user.email!,
       metadata: {
         userId: user.id,

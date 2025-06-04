@@ -23,9 +23,21 @@ STRIPE_STUDENT_YEARLY_PRICE_ID=price_...
 STRIPE_PRO_MONTHLY_PRICE_ID=price_...
 STRIPE_PRO_YEARLY_PRICE_ID=price_...
 
-# App Configuration
-NEXT_PUBLIC_APP_URL=http://localhost:3000
+# App Configuration (CRITICAL for Deployment)
+NEXT_PUBLIC_APP_URL=http://localhost:3000  # For local development
+# NEXT_PUBLIC_APP_URL=https://yourdomain.com  # For production on Render/Vercel
 ```
+
+## Important: App URL Configuration
+
+The `NEXT_PUBLIC_APP_URL` environment variable is **CRITICAL** for proper Stripe redirects:
+
+- **Local Development**: `http://localhost:3000`
+- **Production (Render)**: `https://your-app-name.onrender.com` 
+- **Production (Vercel)**: `https://your-app.vercel.app`
+- **Custom Domain**: `https://yourdomain.com`
+
+**⚠️ WARNING**: If `NEXT_PUBLIC_APP_URL` is not set correctly, Stripe checkout will fail with redirect errors!
 
 ## Stripe Dashboard Setup
 
