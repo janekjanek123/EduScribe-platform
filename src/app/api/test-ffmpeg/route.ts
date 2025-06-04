@@ -55,27 +55,27 @@ export async function GET(request: NextRequest) {
       console.log('[Test FFmpeg API] Production mode: Using system FFmpeg/FFprobe');
     } else {
       // For development, check various paths
-      const systemPathPairs = [
-        { ffmpeg: '/usr/local/bin/ffmpeg', ffprobe: '/usr/local/bin/ffprobe' },
-        { ffmpeg: '/usr/bin/ffmpeg', ffprobe: '/usr/bin/ffprobe' },
-        { ffmpeg: '/opt/homebrew/bin/ffmpeg', ffprobe: '/opt/homebrew/bin/ffprobe' },
-        { ffmpeg: 'ffmpeg', ffprobe: 'ffprobe' }
-      ];
+    const systemPathPairs = [
+      { ffmpeg: '/usr/local/bin/ffmpeg', ffprobe: '/usr/local/bin/ffprobe' },
+      { ffmpeg: '/usr/bin/ffmpeg', ffprobe: '/usr/bin/ffprobe' },
+      { ffmpeg: '/opt/homebrew/bin/ffmpeg', ffprobe: '/opt/homebrew/bin/ffprobe' },
+      { ffmpeg: 'ffmpeg', ffprobe: 'ffprobe' }
+    ];
 
-      for (const pair of systemPathPairs) {
-        if (pair.ffmpeg === 'ffmpeg' || fs.existsSync(pair.ffmpeg)) {
-          testResults.systemPathsFfmpeg.push(pair.ffmpeg);
-          if (!testResults.ffmpeg.workingPath) {
-            ffmpeg.setFfmpegPath(pair.ffmpeg);
-            testResults.ffmpeg.workingPath = pair.ffmpeg;
+    for (const pair of systemPathPairs) {
+      if (pair.ffmpeg === 'ffmpeg' || fs.existsSync(pair.ffmpeg)) {
+        testResults.systemPathsFfmpeg.push(pair.ffmpeg);
+        if (!testResults.ffmpeg.workingPath) {
+          ffmpeg.setFfmpegPath(pair.ffmpeg);
+          testResults.ffmpeg.workingPath = pair.ffmpeg;
             testResults.ffmpeg.pathExists = true;
           }
-        }
-        if (pair.ffprobe === 'ffprobe' || fs.existsSync(pair.ffprobe)) {
-          testResults.systemPathsFfprobe.push(pair.ffprobe);
-          if (!testResults.ffprobe.workingPath) {
-            ffmpeg.setFfprobePath(pair.ffprobe);
-            testResults.ffprobe.workingPath = pair.ffprobe;
+      }
+      if (pair.ffprobe === 'ffprobe' || fs.existsSync(pair.ffprobe)) {
+        testResults.systemPathsFfprobe.push(pair.ffprobe);
+        if (!testResults.ffprobe.workingPath) {
+          ffmpeg.setFfprobePath(pair.ffprobe);
+          testResults.ffprobe.workingPath = pair.ffprobe;
             testResults.ffprobe.pathExists = true;
           }
         }

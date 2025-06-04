@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslation } from 'react-i18next';
 import { useSupabase } from '@/lib/supabase-provider';
 import { useSubscription } from '@/contexts/SubscriptionContext';
 import UsageCounter from '@/components/UsageCounter';
-import QueueStatus from '@/components/QueueStatus';
 
 interface Note {
   id: string;
@@ -38,6 +38,7 @@ interface Note {
 }
 
 export default function DashboardPage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const { user, supabase } = useSupabase();
   const { refreshUsage } = useSubscription();
@@ -234,28 +235,28 @@ export default function DashboardPage() {
   const getTypeIcon = (type: string) => {
     switch (type) {
       case 'video':
-        return '🎥';
+        return '📺'; // YouTube videos
       case 'video-upload':
-        return '📹'; // Different icon for uploaded videos
+        return '🎬'; // Uploaded videos
       case 'file':
-        return '📄';
+        return '📄'; // Files (PDFs, PowerPoint, etc.)
       case 'text':
-        return '📝';
+        return '📝'; // Text input
       default:
-        return '📋';
+        return '📄';
     }
   };
 
   const getTypeColor = (type: string) => {
     switch (type) {
       case 'video':
-        return 'bg-red-100 text-red-800';
+        return 'bg-red-100 text-red-800'; // YouTube red
       case 'video-upload':
-        return 'bg-orange-100 text-orange-800'; // Different color for uploaded videos
+        return 'bg-purple-100 text-purple-800'; // Purple for uploaded videos
       case 'file':
-        return 'bg-green-100 text-green-800';
+        return 'bg-blue-100 text-blue-800'; // Blue for files
       case 'text':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-green-100 text-green-800'; // Green for text
       default:
         return 'bg-gray-100 text-gray-800';
     }
@@ -378,13 +379,26 @@ export default function DashboardPage() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Please log in to view your dashboard</h2>
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">
+            {t('dashboard.loginRequired')}
+          </h1>
           <button
             onClick={() => router.push('/')}
-            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
           >
-            Go to Login
+            {t('dashboard.goToHomepage')}
           </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">{t('dashboard.loadingNotes')}</p>
         </div>
       </div>
     );
@@ -393,273 +407,272 @@ export default function DashboardPage() {
   const filteredNotes = getFilteredNotes();
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">My Notes Dashboard</h1>
-            <p className="text-gray-600 mt-1">Manage all your generated notes in one place</p>
-            
-            {/* Usage Counter */}
-            <div className="mt-3">
-              <UsageCounter />
+        <div className="mb-8">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">
+                {t('dashboard.title')}
+              </h1>
+              <p className="text-gray-600 mt-1">
+                {t('dashboard.subtitle')}
+              </p>
             </div>
-          </div>
-          <div className="flex gap-4">
-            <button
-              onClick={() => router.push('/generate/youtube')}
-              className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700"
-            >
-              + Video Notes
-            </button>
-            <button
-              onClick={() => router.push('/generate/upload')}
-              className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700"
-            >
-              + File Notes
-            </button>
-            <button
-              onClick={() => router.push('/generate/text')}
-              className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
-            >
-              + Text Notes
-            </button>
+            
+            <div className="flex flex-col sm:flex-row gap-3">
+              <button
+                onClick={() => router.push('/')}
+                className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                {t('dashboard.generateNotes')}
+              </button>
+            </div>
           </div>
         </div>
 
-        {/* Filter Tabs */}
-        <div className="bg-white rounded-lg shadow-sm mb-6">
-          <div className="border-b border-gray-200">
-            <nav className="flex space-x-8 px-6" aria-label="Tabs">
-              {[
-                { key: 'all', label: 'All Notes', count: notes.length },
-                { key: 'video', label: 'Video Notes', count: notes.filter(n => n.type === 'video' || n.type === 'video-upload').length },
-                { key: 'file', label: 'File Notes', count: notes.filter(n => n.type === 'file').length },
-                { key: 'text', label: 'Text Notes', count: notes.filter(n => n.type === 'text').length }
-              ].map((tab) => (
-                <button
-                  key={tab.key}
-                  onClick={() => setFilter(tab.key as any)}
-                  className={`py-4 px-1 border-b-2 font-medium text-sm ${
-                    filter === tab.key
-                      ? 'border-blue-500 text-blue-600'
-                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                  }`}
-                >
-                  {tab.label} ({tab.count})
-                </button>
-              ))}
-            </nav>
+        {/* Usage Counter */}
+        <div className="mb-8">
+          <UsageCounter />
+        </div>
+
+        {/* Error Display */}
+        {error && (
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+            <p className="text-red-700">{error}</p>
+            <button
+              onClick={fetchAllNotes}
+              className="mt-2 text-red-600 hover:text-red-800 underline"
+            >
+              {t('dashboard.tryAgain')}
+            </button>
+          </div>
+        )}
+
+        {/* Filters */}
+        <div className="mb-6">
+          <div className="flex flex-wrap gap-2">
+            <button
+              onClick={() => setFilter('all')}
+              className={`px-4 py-2 rounded-lg transition-colors ${
+                filter === 'all'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-white text-gray-700 hover:bg-gray-50 border'
+              }`}
+            >
+              {t('dashboard.filters.allNotes')} ({notes.length})
+            </button>
+            <button
+              onClick={() => setFilter('video')}
+              className={`px-4 py-2 rounded-lg transition-colors ${
+                filter === 'video'
+                  ? 'bg-red-600 text-white'
+                  : 'bg-white text-gray-700 hover:bg-gray-50 border'
+              }`}
+            >
+              {t('dashboard.filters.videoNotes')} ({notes.filter(n => n.type === 'video').length})
+            </button>
+            <button
+              onClick={() => setFilter('video-upload')}
+              className={`px-4 py-2 rounded-lg transition-colors ${
+                filter === 'video-upload'
+                  ? 'bg-purple-600 text-white'
+                  : 'bg-white text-gray-700 hover:bg-gray-50 border'
+              }`}
+            >
+              {t('dashboard.filters.uploadedVideoNotes')} ({notes.filter(n => n.type === 'video-upload').length})
+            </button>
+            <button
+              onClick={() => setFilter('file')}
+              className={`px-4 py-2 rounded-lg transition-colors ${
+                filter === 'file'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-white text-gray-700 hover:bg-gray-50 border'
+              }`}
+            >
+              {t('dashboard.filters.fileNotes')} ({notes.filter(n => n.type === 'file').length})
+            </button>
+            <button
+              onClick={() => setFilter('text')}
+              className={`px-4 py-2 rounded-lg transition-colors ${
+                filter === 'text'
+                  ? 'bg-green-600 text-white'
+                  : 'bg-white text-gray-700 hover:bg-gray-50 border'
+              }`}
+            >
+              {t('dashboard.filters.textNotes')} ({notes.filter(n => n.type === 'text').length})
+            </button>
           </div>
         </div>
 
         {/* Notes Grid */}
-        {isLoading ? (
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {[1, 2, 3, 4, 5, 6].map((i) => (
-              <div key={i} className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <div className="animate-pulse">
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 bg-gray-200 rounded-lg"></div>
-                    <div className="flex-1">
-                      <div className="h-4 bg-gray-200 rounded mb-2"></div>
-                      <div className="h-3 bg-gray-200 rounded mb-1"></div>
-                      <div className="h-3 bg-gray-200 rounded mb-1"></div>
-                      <div className="h-3 bg-gray-200 rounded w-2/3"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : filteredNotes.length === 0 ? (
-          <div className="text-center py-12 bg-white rounded-lg shadow-sm border">
+        {filteredNotes.length === 0 ? (
+          <div className="text-center py-12">
             <div className="text-6xl mb-4">📝</div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">No notes yet</h3>
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">
+              {filter === 'all' ? t('dashboard.noNotes') : t('dashboard.noNotesInCategory')}
+            </h3>
             <p className="text-gray-600 mb-6">
-              {filter !== 'all' 
-                ? 'No notes match your search criteria.' 
-                : 'Start by creating your first note using one of the tools above.'}
+              {filter === 'all' ? t('dashboard.createFirstNote') : t('dashboard.tryDifferentFilter')}
             </p>
-            {!filter && (
-              <div className="flex justify-center gap-4">
-                <button
-                  onClick={() => router.push('/generate/youtube')}
-                  className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700"
-                >
-                  + Video Notes
-                </button>
-                <button
-                  onClick={() => router.push('/generate/upload')}
-                  className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700"
-                >
-                  + File Notes
-                </button>
-                <button
-                  onClick={() => router.push('/generate/text')}
-                  className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
-                >
-                  + Text Notes
-                </button>
-              </div>
+            {filter === 'all' && (
+              <button
+                onClick={() => router.push('/')}
+                className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                {t('dashboard.generateFirstNote')}
+              </button>
             )}
           </div>
         ) : (
-          <>
-            {/* Queue Status */}
-            <div className="mb-6">
-              <QueueStatus compact />
-            </div>
-            
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {filteredNotes.map((note) => (
-                <div key={note.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
-                  <div className="flex items-start gap-4">
-                    <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${
-                      note.type === 'video' || note.type === 'video-upload' ? 'bg-red-100' : 
-                      note.type === 'file' ? 'bg-green-100' : 'bg-blue-100'
-                    }`}>
-                      <span className="text-xl">
-                        {note.type === 'video' ? '🎥' : 
-                         note.type === 'video-upload' ? '📹' : 
-                         note.type === 'file' ? '📁' : '📝'}
-                      </span>
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
-                            {note.title || 'Untitled Note'}
-                          </h3>
-                          <p className="text-gray-600 text-sm line-clamp-3 mb-3">
-                            {note.content?.substring(0, 150)}...
-                          </p>
-                          <div className="flex items-center gap-4 text-xs text-gray-500">
-                            <span className="capitalize">
-                              {note.type === 'video-upload' ? 'Video Upload' : 
-                               note.type === 'video' ? 'Video' :
-                               note.type === 'file' ? 'File' : 'Text'} Notes
-                            </span>
-                            <span>•</span>
-                            <span>{new Date(note.created_at).toLocaleDateString()}</span>
-                            {note.slide_count && (
-                              <>
-                                <span>•</span>
-                                <span className="flex items-center gap-1 text-green-600">
-                                  📊 {note.slide_count} slides
-                                </span>
-                              </>
-                            )}
-                            {note.quiz && note.quiz.length > 0 && (
-                              <>
-                                <span>•</span>
-                                <span className="flex items-center gap-1 text-blue-600">
-                                  📝 {note.quiz.length} quiz questions
-                                </span>
-                              </>
-                            )}
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-2 ml-4">
-                          <button
-                            onClick={() => openDeleteConfirm(note)}
-                            className="p-2 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-md transition-colors"
-                            title="Delete note"
-                          >
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                            </svg>
-                          </button>
-                        </div>
-                      </div>
-                      <div className="mt-4">
-                        <button
-                          onClick={() => handleNoteClick(note)}
-                          className="text-blue-600 hover:text-blue-800 text-sm font-medium"
-                        >
-                          View Full Notes →
-                        </button>
-                      </div>
-                    </div>
-                  </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredNotes.map((note) => (
+              <div
+                key={`${note.type}-${note.id}`}
+                className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow p-6 cursor-pointer"
+                onClick={() => handleNoteClick(note)}
+              >
+                {/* Note Type Badge */}
+                <div className="flex items-center justify-between mb-4">
+                  <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getTypeColor(note.type)}`}>
+                    <span className="mr-2">{getTypeIcon(note.type)}</span>
+                    {t(`dashboard.noteTypes.${note.type}`)}
+                  </span>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      openDeleteConfirm(note);
+                    }}
+                    className="text-gray-400 hover:text-red-500 transition-colors"
+                    title={t('dashboard.deleteNote')}
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  </button>
                 </div>
-              ))}
+
+                {/* Thumbnail for video notes */}
+                {note.type === 'video' && note.thumbnail_url && (
+                  <div className="mb-4">
+                    <img
+                      src={note.thumbnail_url}
+                      alt={note.title}
+                      className="w-full h-32 object-cover rounded-lg"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).style.display = 'none';
+                      }}
+                    />
+                  </div>
+                )}
+
+                {/* Note Title */}
+                <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
+                  {note.title}
+                </h3>
+
+                {/* Note Content Preview */}
+                {note.content && (
+                  <p className="text-gray-600 text-sm mb-4 line-clamp-3">
+                    {note.content.substring(0, 150)}...
+                  </p>
+                )}
+
+                {/* File-specific information */}
+                {note.type === 'file' && note.file_name && (
+                  <div className="mb-3">
+                    <p className="text-sm text-gray-500">
+                      📎 {note.file_name}
+                    </p>
+                    {note.slide_count && (
+                      <p className="text-sm text-gray-500">
+                        📊 {t('dashboard.slideCount', { count: note.slide_count })}
+                      </p>
+                    )}
+                  </div>
+                )}
+
+                {/* Quiz indicator */}
+                {note.quiz && note.quiz.length > 0 && (
+                  <div className="mb-3">
+                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                      🧠 {t('dashboard.quizAvailable', { count: note.quiz.length })}
+                    </span>
+                  </div>
+                )}
+
+                {/* Creation Date */}
+                <p className="text-sm text-gray-500">
+                  {t('dashboard.createdOn')} {new Date(note.created_at).toLocaleDateString()}
+                </p>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Logout Confirmation Modal */}
+        {showLogoutConfirm && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg p-6 max-w-md mx-4">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                {t('dashboard.confirmLogout.title')}
+              </h3>
+              <p className="text-gray-600 mb-6">
+                {t('dashboard.confirmLogout.message')}
+              </p>
+              <div className="flex space-x-3">
+                <button
+                  onClick={handleCancelLogout}
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                >
+                  {t('dashboard.confirmLogout.cancel')}
+                </button>
+                <button
+                  onClick={handleConfirmLogout}
+                  className="flex-1 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+                >
+                  {t('dashboard.confirmLogout.confirm')}
+                </button>
+              </div>
             </div>
-          </>
+          </div>
+        )}
+
+        {/* Delete Confirmation Modal */}
+        {deleteConfirm.isOpen && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg p-6 max-w-md mx-4">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                {t('dashboard.deleteConfirm.title')}
+              </h3>
+              <p className="text-gray-600 mb-2">
+                {t('dashboard.deleteConfirm.message')}
+              </p>
+              <p className="text-sm font-medium text-gray-900 mb-6">
+                "{deleteConfirm.noteTitle}"
+              </p>
+              <p className="text-sm text-gray-500 mb-6">
+                {t('dashboard.deleteConfirm.warning')}
+              </p>
+              <div className="flex space-x-3">
+                <button
+                  onClick={closeDeleteConfirm}
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                >
+                  {t('dashboard.deleteConfirm.cancel')}
+                </button>
+                <button
+                  onClick={handleDeleteNote}
+                  className="flex-1 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+                >
+                  {t('dashboard.deleteConfirm.confirm')}
+                </button>
+              </div>
+            </div>
+          </div>
         )}
       </div>
-
-      {/* Delete Confirmation Modal */}
-      {deleteConfirm.isOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
-                <svg className="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                </svg>
-              </div>
-              <h3 className="text-lg font-semibold text-gray-900">Delete Note</h3>
-            </div>
-            
-            <p className="text-gray-600 mb-6">
-              Are you sure you want to delete "<strong>{deleteConfirm.noteTitle}</strong>"? 
-              This action cannot be undone.
-            </p>
-            
-            <div className="flex justify-end gap-3">
-              <button
-                onClick={closeDeleteConfirm}
-                className="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleDeleteNote}
-                className="px-4 py-2 text-white bg-red-600 hover:bg-red-700 rounded-md transition-colors"
-              >
-                Delete Note
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Logout Confirmation Modal */}
-      {showLogoutConfirm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
-                <svg className="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                </svg>
-              </div>
-              <h3 className="text-lg font-semibold text-gray-900">Confirm Logout</h3>
-            </div>
-            
-            <p className="text-gray-600 mb-6">
-              Are you sure you want to log out? You'll need to sign in again to access your notes and quizzes.
-            </p>
-            
-            <div className="flex justify-end gap-3">
-              <button
-                onClick={handleCancelLogout}
-                className="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleConfirmLogout}
-                className="px-4 py-2 text-white bg-red-600 hover:bg-red-700 rounded-md transition-colors"
-              >
-                Logout
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 } 
