@@ -21,7 +21,14 @@
     "migrate-powerpoint": "node scripts/migrate-powerpoint.js",
     "health-check": "curl -X GET http://localhost:3000/api/health",
     "setup-subscription": "node scripts/setup-subscription.js",
-    "create-subscription-tables": "node scripts/create-subscription-tables.js"
+    "create-subscription-tables": "node scripts/create-subscription-tables.js",
+    "setup-job-queue": "node scripts/setup-job-queue.js",
+    "test-job-queue": "node scripts/test-job-queue.js",
+    "migrate-job-queue": "node scripts/migrate-job-queue.js",
+    "worker-start": "node scripts/start-worker.js",
+    "worker-stop": "node scripts/stop-worker.js",
+    "worker-status": "curl -X GET http://localhost:3000/api/worker",
+    "cleanup-jobs": "node scripts/cleanup-jobs.js"
   },
   "dependencies": {
     "@emailjs/browser": "^4.4.1",
