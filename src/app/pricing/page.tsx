@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { useTranslation } from 'react-i18next'
 import { useSupabase } from '@/lib/supabase-provider'
 import { PLAN_PRICING } from '@/lib/stripe'
 
@@ -93,7 +94,36 @@ interface UserSubscription {
   cancel_at_period_end: boolean
 }
 
+// Toast notification component
+const Toast = ({ message, type, onClose }: { message: string; type: 'success' | 'error' | 'info'; onClose: () => void }) => {
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      onClose()
+    }, 5000)
+    return () => clearTimeout(timer)
+  }, [onClose])
+
+  const bgColor = type === 'success' ? 'bg-green-600' : type === 'error' ? 'bg-red-600' : 'bg-blue-600'
+  const icon = type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️'
+
+  return (
+    <div className="fixed top-4 right-4 z-50 animate-in slide-in-from-top duration-300">
+      <div className={`${bgColor} text-white px-6 py-4 rounded-lg shadow-lg max-w-md flex items-center space-x-3`}>
+        <span className="text-lg">{icon}</span>
+        <p className="font-medium">{message}</p>
+        <button 
+          onClick={onClose}
+          className="ml-4 text-white hover:text-gray-200 font-bold text-lg"
+        >
+          ×
+        </button>
+      </div>
+    </div>
+  )
+}
+
 export default function PricingPage() {
+  const { t } = useTranslation()
   const router = useRouter()
   const { user, supabase } = useSupabase()
   const [plans] = useState(staticPlans)
@@ -106,6 +136,7 @@ export default function PricingPage() {
   const [showCancelModal, setShowCancelModal] = useState(false)
   const [userNotesCount, setUserNotesCount] = useState(0)
   const [loadingNotesCount, setLoadingNotesCount] = useState(false)
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null)
 
   // Fetch user's current subscription
   useEffect(() => {
@@ -133,17 +164,42 @@ export default function PricingPage() {
             )
           `)
           .eq('user_id', user.id)
-          .eq('status', 'active')
+          .order('created_at', { ascending: false })
+          .limit(1)
           .single()
 
         if (subscriptionError) {
-          console.log('[Pricing] No active subscription found:', subscriptionError.message)
+          console.log('[Pricing] No subscription found:', subscriptionError.message)
           setCurrentPlan('free')
           setUserSubscription(null)
         } else {
           console.log('[Pricing] Found subscription:', subscriptionData)
-          setCurrentPlan(subscriptionData.plan_id)
-          setUserSubscription(subscriptionData)
+          console.log('[Pricing] Subscription details:', {
+            plan_id: subscriptionData.plan_id,
+            billing_cycle: subscriptionData.billing_cycle,
+            status: subscriptionData.status,
+            stripe_subscription_id: subscriptionData.stripe_subscription_id,
+            current_period_end: subscriptionData.current_period_end,
+            cancel_at_period_end: subscriptionData.cancel_at_period_end
+          })
+          
+          // Determine the current plan based on subscription status
+          if (subscriptionData.status === 'active' || 
+              (subscriptionData.status === 'trialing') ||
+              (subscriptionData.cancel_at_period_end && new Date(subscriptionData.current_period_end) > new Date())) {
+            setCurrentPlan(subscriptionData.plan_id)
+            setUserSubscription(subscriptionData)
+            console.log('[Pricing] Set as current plan:', subscriptionData.plan_id)
+          } else {
+            console.log('[Pricing] Subscription not active:', {
+              status: subscriptionData.status,
+              cancel_at_period_end: subscriptionData.cancel_at_period_end,
+              current_period_end: subscriptionData.current_period_end
+            })
+            setCurrentPlan('free')
+            setUserSubscription(subscriptionData) // Still keep subscription data for cancellation purposes
+            console.log('[Pricing] Set as free plan but keeping subscription data for cancellation')
+          }
         }
       } catch (error) {
         console.error('[Pricing] Error fetching subscription:', error)
@@ -156,6 +212,14 @@ export default function PricingPage() {
 
     fetchUserSubscription()
   }, [user, supabase])
+
+  // Refresh notes count whenever the cancel modal is opened
+  useEffect(() => {
+    if (showCancelModal && user) {
+      console.log('[Pricing] Cancel modal opened, refreshing notes count...')
+      fetchUserNotesCount()
+    }
+  }, [showCancelModal, user])
 
   // Function to fetch user's notes count
   const fetchUserNotesCount = async () => {
@@ -170,34 +234,100 @@ export default function PricingPage() {
         throw new Error('No authentication token available')
       }
 
-      // Count notes across all tables including video_upload_notes
-      const [textResult, fileResult, videoResult, uploadVideoResult] = await Promise.all([
-        supabase.from('text_notes').select('id', { count: 'exact' }).eq('user_id', user.id),
-        supabase.from('file_notes').select('id', { count: 'exact' }).eq('user_id', user.id),
-        supabase.from('video_notes').select('id', { count: 'exact' }).eq('user_id', user.id),
-        // Handle video_upload_notes table that might not exist in all environments
-        supabase.from('video_upload_notes').select('id', { count: 'exact' }).eq('user_id', user.id).then(
-          result => result,
-          error => {
-            console.warn('[Pricing] video_upload_notes table might not exist:', error.message)
-            return { count: 0 }
+      console.log('[Pricing] Fetching accurate notes count for user:', user.id)
+
+      // Use the same API approach as dashboard for consistency and accuracy
+      const [videoResponse, fileResponse, textResponse, uploadVideoResponse] = await Promise.all([
+        fetch('/api/video-notes', {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
           }
-        )
+        }),
+        fetch('/api/file-notes', {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }),
+        fetch('/api/text-notes', {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }),
+        fetch('/api/upload-video', {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        })
       ])
 
-      const textCount = textResult.count || 0
-      const fileCount = fileResult.count || 0
-      const videoCount = videoResult.count || 0
-      const uploadVideoCount = uploadVideoResult.count || 0
-      const totalCount = textCount + fileCount + videoCount + uploadVideoCount
+      let totalCount = 0
 
-      console.log('[Pricing] Notes count:', { textCount, fileCount, videoCount, uploadVideoCount, totalCount })
+      // Count video notes (YouTube)
+      if (videoResponse.ok) {
+        const videoData = await videoResponse.json()
+        if (videoData.success && videoData.data) {
+          totalCount += videoData.data.length
+          console.log('[Pricing] Video notes count:', videoData.data.length)
+        }
+      }
+
+      // Count video upload notes
+      if (uploadVideoResponse.ok) {
+        const uploadVideoData = await uploadVideoResponse.json()
+        if (uploadVideoData.success && uploadVideoData.data) {
+          totalCount += uploadVideoData.data.length
+          console.log('[Pricing] Upload video notes count:', uploadVideoData.data.length)
+        }
+      }
+
+      // Count file notes
+      if (fileResponse.ok) {
+        const fileData = await fileResponse.json()
+        if (fileData.success && fileData.data) {
+          totalCount += fileData.data.length
+          console.log('[Pricing] File notes count:', fileData.data.length)
+        }
+      }
+
+      // Count text notes
+      if (textResponse.ok) {
+        const textData = await textResponse.json()
+        if (textData.success && textData.data) {
+          totalCount += textData.data.length
+          console.log('[Pricing] Text notes count:', textData.data.length)
+        }
+      }
+
+      console.log('[Pricing] Total accurate notes count:', totalCount)
       setUserNotesCount(totalCount)
       return totalCount
     } catch (error) {
       console.error('[Pricing] Error fetching notes count:', error)
-      setUserNotesCount(0)
-      return 0
+      // Fallback to direct database query if API fails
+      try {
+        const [textResult, fileResult, videoResult] = await Promise.all([
+          supabase.from('text_notes').select('id', { count: 'exact' }).eq('user_id', user.id),
+          supabase.from('file_notes').select('id', { count: 'exact' }).eq('user_id', user.id),
+          supabase.from('video_notes').select('id', { count: 'exact' }).eq('user_id', user.id)
+        ])
+
+        const fallbackCount = (textResult.count || 0) + (fileResult.count || 0) + (videoResult.count || 0)
+        console.log('[Pricing] Fallback notes count:', fallbackCount)
+        setUserNotesCount(fallbackCount)
+        return fallbackCount
+      } catch (fallbackError) {
+        console.error('[Pricing] Fallback counting also failed:', fallbackError)
+        setUserNotesCount(0)
+        return 0
+      }
     } finally {
       setLoadingNotesCount(false)
     }
@@ -271,8 +401,21 @@ export default function PricingPage() {
 
   const handleCancelSubscription = async () => {
     if (!userSubscription || !user) {
+      console.error('[Pricing] Cannot cancel - missing data:', {
+        hasUserSubscription: !!userSubscription,
+        hasUser: !!user,
+        userSubscription: userSubscription
+      })
       return
     }
+
+    console.log('[Pricing] Starting cancellation process:', {
+      userId: user.id,
+      subscriptionId: userSubscription.stripe_subscription_id,
+      planId: userSubscription.plan_id,
+      status: userSubscription.status,
+      fullUserSubscription: userSubscription
+    })
 
     setIsCancelling(true)
 
@@ -283,7 +426,33 @@ export default function PricingPage() {
         throw new Error('No valid session found. Please sign in again.')
       }
 
-      console.log('[Pricing] Cancelling subscription:', userSubscription.stripe_subscription_id)
+      // Extract the actual subscription ID - handle both string and object cases
+      let actualSubscriptionId = userSubscription.stripe_subscription_id
+      
+      // If it's an object (which seems to be the case), extract the ID
+      if (typeof actualSubscriptionId === 'object' && actualSubscriptionId && (actualSubscriptionId as any).id) {
+        actualSubscriptionId = (actualSubscriptionId as any).id
+      }
+      
+      // If it's a stringified JSON, parse it and extract the ID
+      if (typeof actualSubscriptionId === 'string' && actualSubscriptionId.startsWith('{')) {
+        try {
+          const parsed = JSON.parse(actualSubscriptionId)
+          if (parsed.id) {
+            actualSubscriptionId = parsed.id
+          }
+        } catch (e) {
+          console.error('[Pricing] Failed to parse subscription ID JSON:', e)
+        }
+      }
+
+      console.log('[Pricing] Original subscription ID:', userSubscription.stripe_subscription_id)
+      console.log('[Pricing] Extracted subscription ID:', actualSubscriptionId)
+      console.log('[Pricing] Request payload:', {
+        subscriptionId: actualSubscriptionId
+      })
+
+      console.log('[Pricing] Cancelling subscription:', actualSubscriptionId)
 
       const response = await fetch('/api/stripe/cancel-subscription', {
         method: 'POST',
@@ -292,16 +461,20 @@ export default function PricingPage() {
           'Authorization': `Bearer ${session.access_token}`,
         },
         body: JSON.stringify({
-          subscriptionId: userSubscription.stripe_subscription_id
+          subscriptionId: actualSubscriptionId
         })
       })
 
+      console.log('[Pricing] Response status:', response.status)
+      console.log('[Pricing] Response ok:', response.ok)
+      
       const data = await response.json()
       console.log('[Pricing] Cancellation response:', data)
 
       if (!response.ok) {
         console.error('[Pricing] Cancellation failed:', {
           status: response.status,
+          statusText: response.statusText,
           data: data
         })
         
@@ -309,8 +482,20 @@ export default function PricingPage() {
         let errorMessage = 'Failed to cancel subscription'
         if (data.error) {
           errorMessage = data.error
-        } else if (data.details) {
-          errorMessage = `${errorMessage}: ${data.details}`
+        }
+        
+        // Add additional details if available
+        if (data.details && data.details !== data.error) {
+          errorMessage += `\n\nDetails: ${data.details}`
+        }
+        
+        // Add Stripe error information if available
+        if (data.stripeErrorType) {
+          errorMessage += `\n\nStripe Error: ${data.stripeErrorType}`
+        }
+        
+        if (data.stripeErrorCode) {
+          errorMessage += ` (${data.stripeErrorCode})`
         }
         
         throw new Error(errorMessage)
@@ -321,53 +506,18 @@ export default function PricingPage() {
       setCurrentPlan('free')
       setShowCancelModal(false)
       
-      // Create detailed success message
-      let successMessage = 'Your subscription has been cancelled successfully!'
-      successMessage += '\n\nYou have been switched to the Free plan.'
-      
-      if (data.notesDeleted && data.notesDeleted.total > 0) {
-        successMessage += `\n\nNote Management:\n• ${data.notesDeleted.total} notes were deleted to comply with Free plan limits`
-        successMessage += `\n• ${data.remainingNotes} notes remain in your account`
-        
-        if (data.notesDeleted.text > 0) successMessage += `\n• Text notes deleted: ${data.notesDeleted.text}`
-        if (data.notesDeleted.file > 0) successMessage += `\n• File notes deleted: ${data.notesDeleted.file}`
-        if (data.notesDeleted.video > 0) successMessage += `\n• Video notes deleted: ${data.notesDeleted.video}`
-        if (data.notesDeleted.video_upload > 0) successMessage += `\n• Video upload notes deleted: ${data.notesDeleted.video_upload}`
-        
-        successMessage += '\n\nYour 3 oldest notes have been preserved.'
-      }
-      
-      // Add warning if there were Stripe issues but cancellation succeeded
-      if (data.warning) {
-        successMessage += `\n\nNote: ${data.warning}`
-      }
-      
-      successMessage += '\n\nYou can upgrade again anytime to unlock more features!'
-      
-      // Show success message
-      alert(successMessage)
+      // Show custom toast notification instead of browser alert
+      setToast({
+        message: t('pricing.cancelModal.successMessage'),
+        type: 'info'
+      })
       
     } catch (error: any) {
       console.error('[Pricing] Error cancelling subscription:', error)
-      
-      let errorMessage = 'Failed to cancel subscription. '
-      
-      // Provide helpful error messages
-      if (error.message.includes('authentication') || error.message.includes('session')) {
-        errorMessage += 'Please try signing out and back in, then try again.'
-      } else if (error.message.includes('network') || error.message.includes('fetch')) {
-        errorMessage += 'Please check your internet connection and try again.'
-      } else if (error.message.includes('Stripe')) {
-        errorMessage += 'There was an issue with payment processing. Please contact support.'
-      } else {
-        errorMessage += 'Please try again or contact support if the problem persists.'
-      }
-      
-      if (error.message && !error.message.includes('Failed to cancel subscription')) {
-        errorMessage += `\n\nError details: ${error.message}`
-      }
-      
-      alert(errorMessage)
+      setToast({
+        message: t('pricing.cancelModal.errorMessage', { error: error.message }),
+        type: 'error'
+      })
     } finally {
       setIsCancelling(false)
     }
@@ -399,40 +549,40 @@ export default function PricingPage() {
     
     // Notes generation limit
     if (plan.limits.notes_per_month === -1) {
-      features.push({ text: 'Unlimited notes per month', available: true })
+      features.push({ text: t('pricing.features.unlimited') + ' ' + t('pricing.features.notesGeneration'), available: true })
     } else {
-      features.push({ text: `${plan.limits.notes_per_month} notes per month`, available: true })
+      features.push({ text: `${plan.limits.notes_per_month} ${t('pricing.features.notesGeneration')}`, available: true })
     }
     
     // Storage limit
-    features.push({ text: `${plan.limits.max_saved_notes} saved notes`, available: true })
+    features.push({ text: `${plan.limits.max_saved_notes} ${t('pricing.features.savedNotes')}`, available: true })
     
     // Character limit
     const charLimit = plan.limits.max_text_length.toLocaleString()
-    features.push({ text: `${charLimit} character limit per note`, available: true })
+    features.push({ text: t('pricing.features.characterLimit', { limit: charLimit }), available: true })
     
     // Quizzes
-    features.push({ text: 'Generate quizzes', available: plan.features.quizzes })
+    features.push({ text: t('pricing.features.quizzes'), available: plan.features.quizzes })
     
     // PPT uploads
-    features.push({ text: 'PPT uploads', available: plan.features.ppt_support })
+    features.push({ text: t('pricing.features.pptUploads'), available: plan.features.ppt_support })
     
     // YouTube support
-    features.push({ text: 'YouTube to Notes', available: plan.features.youtube_support })
+    features.push({ text: t('pricing.features.youtubeSupport'), available: plan.features.youtube_support })
     
     // Upload Video
-    features.push({ text: 'Upload Video to Notes', available: plan.features.upload_video })
+    features.push({ text: t('pricing.features.uploadVideo'), available: plan.features.upload_video })
     
     // Export to Notepad
-    features.push({ text: 'Export to Notepad', available: plan.features.export })
+    features.push({ text: t('pricing.features.exportNotepad'), available: plan.features.export })
     
     // Processing Priority
     if (plan.features.priority_generation) {
-      features.push({ text: 'Highest processing priority', available: true })
+      features.push({ text: t('pricing.features.highestPriority'), available: true })
     } else if (plan.id === 'student') {
-      features.push({ text: 'Medium processing priority', available: true })
+      features.push({ text: t('pricing.features.mediumPriority'), available: true })
     } else {
-      features.push({ text: 'Lowest processing priority', available: true })
+      features.push({ text: t('pricing.features.lowestPriority'), available: true })
     }
     
     return features
@@ -446,7 +596,7 @@ export default function PricingPage() {
       return (
         <div className="flex items-center justify-center">
           <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-          Creating checkout...
+          {t('pricing.buttons.creatingCheckout')}
         </div>
       )
     }
@@ -455,28 +605,28 @@ export default function PricingPage() {
       return (
         <div className="flex items-center justify-center">
           <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-          Cancelling...
+          {t('pricing.buttons.cancelling')}
         </div>
       )
     }
     
     if (isCurrentPlan) {
       if (userSubscription?.cancel_at_period_end) {
-        return 'Cancelling at Period End'
+        return t('pricing.buttons.cancellingAtPeriodEnd')
       } else {
-        return 'Current Plan'
+        return t('pricing.buttons.currentPlan')
       }
     }
     
     if (plan.id === 'free' && hasActiveSubscription) {
-      return 'Cancel Subscription'
+      return t('pricing.buttons.cancelSubscription')
     }
     
     if (plan.id === 'free') {
-      return 'Get Started Free'
+      return t('pricing.buttons.getStartedFree')
     }
     
-    return 'Choose Plan'
+    return t('pricing.buttons.choosePlan')
   }
 
   const isButtonDisabled = (plan: typeof staticPlans[0]) => {
@@ -484,160 +634,96 @@ export default function PricingPage() {
     return isCurrentPlan || isLoading || isCancelling || subscriptionLoading
   }
 
-  // Cancel Subscription Modal
+  // Redesigned Cancel Subscription Modal
   const CancelModal = () => {
     if (!showCancelModal) return null
 
+    const willDeleteNotes = userNotesCount > 3
     const notesToDelete = Math.max(0, userNotesCount - 3)
-    const willDeleteNotes = notesToDelete > 0
+    const isHighRisk = willDeleteNotes
 
     return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div className="bg-white rounded-lg p-6 max-w-lg mx-4 max-h-[90vh] overflow-y-auto">
-          <div className="flex items-center mb-4">
-            <div className="flex-shrink-0">
-              <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                willDeleteNotes ? 'bg-red-100' : 'bg-yellow-100'
-              }`}>
-                <span className="text-xl">{willDeleteNotes ? '⚠️' : '🔄'}</span>
+      <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
+        <div className="bg-white rounded-xl p-8 max-w-lg mx-4 max-h-[90vh] overflow-y-auto shadow-2xl border-2 border-red-200">
+          {/* Header with Warning Icon */}
+          <div className="text-center mb-6">
+            <div className="flex justify-center mb-4">
+              <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center border-2 border-red-300">
+                <span className="text-3xl">⚠️</span>
               </div>
             </div>
-            <div className="ml-4">
-              <h3 className="text-lg font-semibold text-gray-900">
-                Cancel Subscription & Switch to Free Plan
-              </h3>
-              <p className="text-sm text-gray-600">
-                This action will take effect immediately
+            <h3 className="text-2xl font-bold text-gray-900 mb-3">
+              {t('pricing.cancelModal.title')}
+            </h3>
+          </div>
+          
+          {/* Warning Message */}
+          <div className="mb-6 text-center">
+            <div className="bg-red-50 border-2 border-red-200 rounded-lg p-4 mb-4">
+              <p className="text-red-800 font-medium text-lg leading-relaxed">
+                {t('pricing.cancelModal.warningMessage')}
+              </p>
+              <p className="text-red-700 font-semibold mt-2">
+                {t('pricing.cancelModal.irreversible')}
               </p>
             </div>
           </div>
           
-          <div className="mb-6">
-            <p className="text-gray-700 mb-4">
-              You are about to cancel your subscription and switch to the Free plan. Please review the details below:
-            </p>
-            
-            {loadingNotesCount ? (
-              <div className="bg-gray-50 rounded-lg p-4 mb-4">
-                <div className="flex items-center">
-                  <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mr-2"></div>
-                  <span className="text-sm text-gray-600">Checking your notes...</span>
+          {/* Notes Status Box */}
+          {loadingNotesCount ? (
+            <div className="bg-gray-50 rounded-lg p-4 mb-6 border border-gray-200">
+              <div className="flex items-center justify-center">
+                <div className="w-5 h-5 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mr-3"></div>
+                <span className="text-gray-600 font-medium">{t('pricing.cancelModal.checkingNotes')}</span>
+              </div>
+            </div>
+          ) : (
+            <div className={`rounded-lg p-4 mb-6 border-2 ${
+              isHighRisk 
+                ? 'bg-red-50 border-red-300' 
+                : 'bg-blue-50 border-blue-300'
+            }`}>
+              <div className="flex items-center justify-center">
+                <div className="text-center">
+                  <div className={`text-sm ${isHighRisk ? 'text-red-700' : 'text-blue-700'} font-medium`}>
+                    {t('pricing.cancelModal.freePlanLimit')}
+                  </div>
+                  {isHighRisk && (
+                    <div className="text-red-800 font-bold mt-2 text-lg">
+                      {t('pricing.cancelModal.notesWillBeDeleted', { count: notesToDelete })}
+                    </div>
+                  )}
                 </div>
               </div>
-            ) : (
-              <>
-                <div className="bg-blue-50 rounded-lg p-4 mb-4 border border-blue-200">
-                  <div className="flex">
-                    <div className="flex-shrink-0">
-                      <span className="text-blue-600 text-lg">📊</span>
-                    </div>
-                    <div className="ml-3">
-                      <h4 className="text-sm font-medium text-blue-800">Current Notes Status</h4>
-                      <p className="text-sm text-blue-700">
-                        You currently have <strong>{userNotesCount} notes</strong> saved
-                      </p>
-                      <p className="text-xs text-blue-600 mt-1">
-                        Free plan allows maximum 3 notes
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                {willDeleteNotes && (
-                  <div className="bg-red-50 rounded-lg p-4 mb-4 border-2 border-red-300">
-                    <div className="flex">
-                      <div className="flex-shrink-0">
-                        <span className="text-red-600 text-xl">🚨</span>
-                      </div>
-                      <div className="ml-3">
-                        <h4 className="text-sm font-semibold text-red-900">⚠️ DATA LOSS WARNING</h4>
-                        <div className="bg-red-100 rounded p-2 mt-2 border border-red-200">
-                          <p className="text-sm text-red-800 font-medium mb-1">
-                            <strong>{notesToDelete} of your notes will be permanently deleted!</strong>
-                          </p>
-                          <p className="text-xs text-red-700">
-                            • Your <strong>3 oldest notes</strong> will be kept<br/>
-                            • Your <strong>{notesToDelete} newest notes</strong> will be deleted forever<br/>
-                            • This action <strong>cannot be undone</strong>
-                          </p>
-                        </div>
-                        <p className="text-xs text-red-600 mt-2 font-medium">
-                          ⚠️ Consider exporting your notes before proceeding
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {!willDeleteNotes && userNotesCount <= 3 && userNotesCount > 0 && (
-                  <div className="bg-green-50 rounded-lg p-4 mb-4 border border-green-200">
-                    <div className="flex">
-                      <div className="flex-shrink-0">
-                        <span className="text-green-600 text-lg">✅</span>
-                      </div>
-                      <div className="ml-3">
-                        <h4 className="text-sm font-medium text-green-800">Notes Safe</h4>
-                        <p className="text-sm text-green-700">
-                          All your {userNotesCount} notes will be preserved (within Free plan limit of 3 notes)
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </>
-            )}
-
-            <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-              <p className="text-sm text-gray-700 font-medium mb-2">
-                What happens when you confirm:
-              </p>
-              <ul className="text-sm text-gray-600 space-y-1">
-                <li>• Subscription cancelled immediately</li>
-                <li>• Switched to Free plan (2 notes/month, 3 saved notes max)</li>
-                {willDeleteNotes && <li>• <strong>{notesToDelete} newest notes deleted permanently</strong></li>}
-                <li>• No future charges</li>
-                <li>• Can upgrade again anytime</li>
-              </ul>
             </div>
-          </div>
+          )}
 
-          <div className="flex space-x-3">
+          {/* Action Buttons */}
+          <div className="flex space-x-4">
             <button
               onClick={() => setShowCancelModal(false)}
-              className="flex-1 px-4 py-3 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 font-medium transition-colors"
+              className="flex-1 px-6 py-4 border-2 border-gray-300 rounded-lg text-gray-800 hover:bg-gray-50 font-semibold text-lg transition-colors"
               disabled={isCancelling}
             >
-              Keep Subscription
+              {t('pricing.cancelModal.keepSubscription')}
             </button>
             <button
               onClick={handleCancelSubscription}
               disabled={isCancelling || loadingNotesCount}
-              className={`flex-1 px-4 py-3 rounded-md font-medium transition-colors ${
-                willDeleteNotes
-                  ? 'bg-red-600 hover:bg-red-700 text-white disabled:opacity-50'
-                  : 'bg-orange-600 hover:bg-orange-700 text-white disabled:opacity-50'
-              }`}
+              className="flex-1 px-6 py-4 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold text-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isCancelling ? (
                 <div className="flex items-center justify-center">
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                  Processing...
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                  {t('common.loading')}
                 </div>
               ) : loadingNotesCount ? (
-                'Loading...'
-              ) : willDeleteNotes ? (
-                `⚠️ Yes, Delete ${notesToDelete} Notes`
+                t('common.loading')
               ) : (
-                'Yes, Cancel Subscription'
+                t('pricing.cancelModal.confirmCancel')
               )}
             </button>
           </div>
-          
-          {willDeleteNotes && (
-            <p className="text-xs text-red-600 text-center mt-2">
-              ⚠️ This will permanently delete {notesToDelete} of your notes
-            </p>
-          )}
         </div>
       </div>
     )
@@ -656,25 +742,34 @@ export default function PricingPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      {/* Toast Notification */}
+      {toast && (
+        <Toast 
+          message={toast.message} 
+          type={toast.type} 
+          onClose={() => setToast(null)} 
+        />
+      )}
+      
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            Choose Your Plan
+            {t('pricing.title')}
           </h1>
           <p className="text-xl text-gray-600 mb-8">
-            Unlock the full potential of AI-powered note generation
+            {t('pricing.subtitle')}
           </p>
           
           {/* Current Subscription Status */}
           {user && userSubscription && (
             <div className="mb-8 p-4 bg-blue-50 border border-blue-200 rounded-lg max-w-md mx-auto">
               <p className="text-blue-800">
-                <strong>Current Plan:</strong> {staticPlans.find(p => p.id === currentPlan)?.display_name || 'Unknown'}
+                <strong>{t('pricing.currentPlan')}:</strong> {staticPlans.find(p => p.id === currentPlan)?.display_name || t('pricing.unknown')}
               </p>
               {userSubscription.cancel_at_period_end && (
                 <p className="text-orange-600 text-sm mt-1">
-                  Subscription will end on {new Date(userSubscription.current_period_end).toLocaleDateString()}
+                  {t('pricing.subscriptionEndsOn', { date: new Date(userSubscription.current_period_end).toLocaleDateString() })}
                 </p>
               )}
             </div>
@@ -683,7 +778,7 @@ export default function PricingPage() {
           {/* Billing Toggle */}
           <div className="flex items-center justify-center mb-8">
             <span className={`mr-3 ${billingCycle === 'monthly' ? 'text-gray-900 font-medium' : 'text-gray-500'}`}>
-              Monthly
+              {t('pricing.monthly')}
             </span>
             <button
               onClick={() => setBillingCycle(billingCycle === 'monthly' ? 'yearly' : 'monthly')}
@@ -696,11 +791,11 @@ export default function PricingPage() {
               />
             </button>
             <span className={`ml-3 ${billingCycle === 'yearly' ? 'text-gray-900 font-medium' : 'text-gray-500'}`}>
-              Yearly
+              {t('pricing.yearly')}
             </span>
             {billingCycle === 'yearly' && (
               <span className="ml-2 px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full">
-                Save up to 25%
+                {t('pricing.saveUpTo')}
               </span>
             )}
           </div>
@@ -745,7 +840,7 @@ export default function PricingPage() {
                 {plan.id === 'student' && (
                   <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
                     <span className="bg-blue-600 text-white px-4 py-1 rounded-full text-sm font-medium">
-                      Most Popular
+                      {t('pricing.mostPopular')}
                     </span>
                   </div>
                 )}
@@ -754,40 +849,40 @@ export default function PricingPage() {
                 {isCurrentPlan && (
                   <div className="absolute -top-3 -right-3">
                     <span className="bg-green-600 text-white px-3 py-1 rounded-full text-sm font-medium">
-                      Current Plan
+                      {t('pricing.currentPlan')}
                     </span>
                   </div>
                 )}
 
                 <div className="text-center mb-8">
                   <h3 className={`text-2xl font-bold ${theme.textClass} mb-2`}>
-                    {plan.display_name}
+                    {t(`pricing.plans.${plan.id}.name`)}
                   </h3>
-                  <p className="text-gray-600 mb-4">{plan.description}</p>
+                  <p className="text-gray-600 mb-4">{t(`pricing.plans.${plan.id}.description`)}</p>
                   
                   {/* Price */}
                   <div className="mb-4">
                     {plan.price_monthly === 0 ? (
-                      <div className="text-4xl font-bold text-gray-900">Free</div>
+                      <div className="text-4xl font-bold text-gray-900">{t('pricing.free')}</div>
                     ) : (
                       <>
                         <div className="text-4xl font-bold text-gray-900">
                           {formatPrice(displayPrice)}
                           {billingCycle === 'yearly' && (
-                            <span className="text-lg font-normal text-gray-600">/year</span>
+                            <span className="text-lg font-normal text-gray-600">/{t('pricing.year')}</span>
                           )}
                           {billingCycle === 'monthly' && (
-                            <span className="text-lg font-normal text-gray-600">/month</span>
+                            <span className="text-lg font-normal text-gray-600">/{t('pricing.month')}</span>
                           )}
                         </div>
                         {billingCycle === 'yearly' && (
                           <div className="text-sm text-gray-600">
-                            {formatPrice(pricePerMonth)}/month when billed annually
+                            {formatPrice(pricePerMonth)}/{t('pricing.month')} {t('pricing.whenBilledAnnually')}
                           </div>
                         )}
                         {billingCycle === 'yearly' && pricing.discountPercentage > 0 && (
                           <div className="text-sm text-green-600 font-medium">
-                            Save {formatPrice(pricing.yearlySavings)} per year
+                            {t('pricing.saveAmount', { amount: formatPrice(pricing.yearlySavings) })}
                           </div>
                         )}
                       </>
@@ -815,7 +910,10 @@ export default function PricingPage() {
                 <button
                   onClick={() => {
                     if (plan.id === 'free' && userSubscription && userSubscription.status === 'active') {
-                      setShowCancelModal(true)
+                      // Fetch notes count before showing modal
+                      fetchUserNotesCount().then(() => {
+                        setShowCancelModal(true)
+                      })
                     } else {
                       handlePlanSelect(plan.id)
                     }
@@ -839,39 +937,39 @@ export default function PricingPage() {
         {/* FAQ Section */}
         <div className="mt-16 max-w-4xl mx-auto">
           <h2 className="text-3xl font-bold text-center text-gray-900 mb-8">
-            Frequently Asked Questions
+            {t('pricing.faq.title')}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                Can I change my plan anytime?
+                {t('pricing.faq.changePlan.question')}
               </h3>
               <p className="text-gray-600">
-                Yes, you can upgrade or downgrade your plan at any time. Changes take effect immediately for upgrades and at the end of your billing cycle for downgrades.
+                {t('pricing.faq.changePlan.answer')}
               </p>
             </div>
             <div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                What happens if I exceed my limits?
+                {t('pricing.faq.exceedLimits.question')}
               </h3>
               <p className="text-gray-600">
-                If you reach your monthly note generation limit, you'll need to upgrade your plan or wait until the next billing cycle. Your saved notes remain accessible.
+                {t('pricing.faq.exceedLimits.answer')}
               </p>
             </div>
             <div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                Is there a free trial?
+                {t('pricing.faq.freeTrial.question')}
               </h3>
               <p className="text-gray-600">
-                Our Free plan allows you to try EduScribe with 2 notes per month. You can upgrade anytime to unlock more features and higher limits.
+                {t('pricing.faq.freeTrial.answer')}
               </p>
             </div>
             <div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                How does billing work?
+                {t('pricing.faq.billing.question')}
               </h3>
               <p className="text-gray-600">
-                You'll be charged at the beginning of each billing cycle. Annual plans offer significant savings compared to monthly billing.
+                {t('pricing.faq.billing.answer')}
               </p>
             </div>
           </div>
@@ -883,7 +981,7 @@ export default function PricingPage() {
             onClick={() => router.push('/dashboard')}
             className="text-blue-600 hover:text-blue-800 font-medium"
           >
-            ← Back to Dashboard
+            ← {t('pricing.backToDashboard')}
           </button>
         </div>
       </div>

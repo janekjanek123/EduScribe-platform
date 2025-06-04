@@ -108,7 +108,7 @@ const pl = {
     noGuaranteeText: 'Dążymy do utrzymania EduScribe w działaniu przez cały czas, ale nie możemy zagwarantować 100% czasu działania. Usługa może być tymczasowo niedostępna z powodu konserwacji, aktualizacji lub problemów technicznych. Nie ponosimy odpowiedzialności za jakiekolwiek niedogodności lub straty wynikające z przerw w działaniu usługi.',
     
     noRefunds: 'Brak Zwrotów',
-    noRefundsText: 'EduScribe jest dostarczany "jak jest" i "jak dostępny". Nie oferujemy zwrotów za opłaty za subskrypcję, niewykorzystane kredyty lub jakiekolwiek inne opłaty, chyba że wymaga tego obowiązujące prawo. Wszystkie sprzedaże są ostateczne. Możesz anulować subskrypcję w dowolnym momencie, aby zapobiec przyszłym opłatom.',
+    noRefundsText: 'EduScribe jest dostarczany "jak jest" i "jak dostępny". Nie oferujemy zwrotów za opłaty za subskrypcję, niewykorzystane kredyty lub jakiekolwiek inne opłaty, chyba że wymaga tego obowiązujące prawo. Wszelkie sprzedaże są ostateczne. Możesz anulować subskrypcję w dowolnym momencie, aby zapobiec przyszłym opłatom.',
     
     userContent: 'Treści Generowane przez Użytkownika',
     userContentText: 'Jesteś wyłącznie odpowiedzialny za wszelkie treści, które przesyłasz, wprowadzasz lub generujesz przy użyciu naszej Usługi. Gwarantujesz, że masz niezbędne prawa do używania takich treści i że nie naruszają one praw stron trzecich ani obowiązujących przepisów. Zastrzegamy sobie prawo do usuwania treści naruszających niniejsze warunki.',
@@ -214,12 +214,57 @@ const pl = {
   // Dashboard
   dashboard: {
     title: 'Panel użytkownika',
+    subtitle: 'Zarządzaj wszystkimi wygenerowanymi notatkami w jednym miejscu',
     myNotes: 'Moje notatki',
     recentNotes: 'Ostatnie notatki',
     usage: 'Wykorzystanie',
     upgrade: 'Ulepsz plan',
     noNotes: 'Nie masz jeszcze żadnych notatek',
-    createFirst: 'Stwórz swoją pierwszą notatkę'
+    noNotesInCategory: 'Brak notatek w tej kategorii',
+    createFirst: 'Stwórz swoją pierwszą notatkę',
+    createFirstNote: 'Stwórz pierwszą notatkę',
+    tryDifferentFilter: 'Spróbuj innego filtra lub stwórz nowe notatki',
+    generateNotes: 'Generuj notatki',
+    generateFirstNote: 'Wygeneruj pierwszą notatkę',
+    logout: 'Wyloguj się',
+    loginRequired: 'Musisz się zalogować, aby zobaczyć panel',
+    goToHomepage: 'Przejdź do strony głównej',
+    loadingNotes: 'Ładowanie notatek...',
+    tryAgain: 'Spróbuj ponownie',
+    deleteNote: 'Usuń notatkę',
+    createdOn: 'Utworzono',
+    slideCount: '{{count}} slajdów',
+    quizAvailable: '{{count}} pytań quizu',
+    
+    filters: {
+      allNotes: 'Wszystkie notatki',
+      videoNotes: 'Notatki wideo',
+      fileNotes: 'Notatki z plików',
+      textNotes: 'Notatki tekstowe',
+      uploadedVideoNotes: 'Przesłane wideo'
+    },
+    
+    noteTypes: {
+      video: 'YouTube',
+      'video-upload': 'Przesłane wideo',
+      file: 'Plik',
+      text: 'Tekst'
+    },
+    
+    confirmLogout: {
+      title: 'Potwierdź wylogowanie',
+      message: 'Czy na pewno chcesz się wylogować? Będziesz musiał się ponownie zalogować, aby uzyskać dostęp do swoich notatek.',
+      cancel: 'Anuluj',
+      confirm: 'Wyloguj się'
+    },
+    
+    deleteConfirm: {
+      title: 'Usuń notatkę',
+      message: 'Czy na pewno chcesz usunąć tę notatkę?',
+      warning: 'Ta akcja nie może zostać cofnięta.',
+      cancel: 'Anuluj',
+      confirm: 'Usuń notatkę'
+    }
   },
   
   // Notes Generation
@@ -261,9 +306,66 @@ const pl = {
     pro: 'Pro',
     monthly: 'miesięcznie',
     yearly: 'rocznie',
+    month: 'miesiąc',
+    year: 'rok',
     mostPopular: 'Najpopularniejszy',
     choosePlan: 'Wybierz plan',
     currentPlan: 'Aktualny plan',
+    unknown: 'Nieznany',
+    subscriptionEndsOn: 'Subskrypcja kończy się {{date}}',
+    saveUpTo: 'Oszczędź do 25%',
+    whenBilledAnnually: 'przy rozliczeniu rocznym',
+    saveAmount: 'Oszczędź {{amount}} rocznie',
+    backToDashboard: 'Powrót do panelu',
+    
+    plans: {
+      free: {
+        name: 'Darmowy',
+        description: 'Podstawowe generowanie notatek dla studentów'
+      },
+      student: {
+        name: 'Student',
+        description: 'Idealny dla studentów z rozszerzonymi funkcjami'
+      },
+      pro: {
+        name: 'Pro',
+        description: 'Najlepszy plan dla zaawansowanych użytkowników i profesjonalistów'
+      }
+    },
+    
+    cancelModal: {
+      title: 'Czy na pewno chcesz anulować subskrypcję?',
+      warningMessage: 'Jeśli anulujesz plan, **wszystkie notatki przekraczające limit Planu Darmowego (3 notatki)** zostaną trwale usunięte.',
+      irreversible: 'Ta akcja jest nieodwracalna.',
+      checkingNotes: 'Sprawdzanie zapisanych notatek...',
+      freePlanLimit: 'Limit planu darmowego: 3 notatki',
+      notesWillBeDeleted: '⚠️ {{count}} {{count, plural, one {notatka zostanie usunięta} few {notatki zostaną usunięte} many {notatek zostanie usuniętych} other {notatek zostanie usuniętych}}}',
+      keepSubscription: 'Zachowaj subskrypcję',
+      confirmCancel: 'Tak, anuluj subskrypcję',
+      successMessage: 'Twoja subskrypcja została anulowana. Szkoda, że odchodzisz – mamy nadzieję, że jeszcze się zobaczymy!',
+      errorMessage: 'Nie udało się anulować subskrypcji: {{error}}. Skontaktuj się z pomocą techniczną, jeśli problem będzie się powtarzał.'
+    },
+    
+    faq: {
+      title: 'Często Zadawane Pytania',
+      changePlan: {
+        question: 'Czy mogę zmienić plan w dowolnym momencie?',
+        answer: 'Tak, możesz podwyższyć lub obniżyć plan w dowolnym momencie. Zmiany wchodzą w życie natychmiast w przypadku podwyższenia i na koniec cyklu rozliczeniowego w przypadku obniżenia.'
+      },
+      exceedLimits: {
+        question: 'Co się stanie, jeśli przekroczę limity?',
+        answer: 'Jeśli osiągniesz miesięczny limit generowania notatek, będziesz musiał podwyższyć plan lub poczekać do następnego cyklu rozliczeniowego. Zapisane notatki pozostają dostępne.'
+      },
+      freeTrial: {
+        question: 'Czy jest okres próbny?',
+        answer: 'Nasz Plan Darmowy pozwala wypróbować EduScribe z 2 notatkami miesięcznie. Możesz podwyższyć plan w dowolnym momencie, aby odblokować więcej funkcji i wyższe limity.'
+      },
+      billing: {
+        question: 'Jak działa rozliczanie?',
+        answer: 'Opłata jest pobierana na początku każdego cyklu rozliczeniowego. Plany roczne oferują znaczne oszczędności w porównaniu z rozliczaniem miesięcznym.'
+      }
+    },
+    
     features: {
       notesGeneration: 'generowanie notatek/miesiąc',
       savedNotes: 'zapisane notatki',
@@ -271,7 +373,24 @@ const pl = {
       fileUpload: 'Przesyłanie plików',
       quizzes: 'Quizy',
       prioritySupport: 'Wsparcie priorytetowe',
-      unlimited: 'Nielimitowane'
+      unlimited: 'Nielimitowane',
+      characterLimit: 'Limit {{limit}} znaków na notatkę',
+      pptUploads: 'Przesyłanie PPT',
+      uploadVideo: 'Przesyłanie wideo do notatek',
+      exportNotepad: 'Eksport do Notatnika',
+      highestPriority: 'Najwyższy priorytet przetwarzania',
+      mediumPriority: 'Średni priorytet przetwarzania',
+      lowestPriority: 'Najniższy priorytet przetwarzania'
+    },
+    
+    buttons: {
+      creatingCheckout: 'Tworzenie płatności...',
+      cancelling: 'Anulowanie...',
+      cancellingAtPeriodEnd: 'Anulowanie na koniec okresu',
+      currentPlan: 'Aktualny plan',
+      cancelSubscription: 'Anuluj subskrypcję',
+      getStartedFree: 'Zacznij za darmo',
+      choosePlan: 'Wybierz plan'
     }
   },
   
@@ -316,6 +435,17 @@ const pl = {
     next: 'Dalej',
     previous: 'Poprzedni',
     continue: 'Kontynuuj'
+  },
+  
+  // About Page
+  about: {
+    title: 'O nas',
+    paragraph1: 'Jesteśmy grupą studentów, którzy stworzyli tę aplikację jako projekt poboczny. Wszystko zaczęło się od prostego pomysłu — chcieliśmy znaleźć lepszy sposób na robienie notatek z wykładów online, szczególnie gdy czas nas gonił przed egzaminami.',
+    paragraph2: 'Na początku to był tylko skrypt, który pomagał nam przetwarzać nagrania z zajęć. Ale z czasem pomyśleliśmy: "Skoro nam to pomaga, może przyda się też innym?". I tak narodził się EduScribe.',
+    paragraph3: 'Po wielu nieprzespanych nocach spędzonych na debugowaniu (i niekończących się dyskusjach o rozmiarach czcionek o 2 nad ranem), udało nam się stworzyć coś, z czego jesteśmy naprawdę dumni.',
+    paragraph4: 'Mamy nadzieję, że ta aplikacja ułatwi komuś życie — czy to podczas przygotowań do matury, nauki nowego języka, czy po prostu próby ogarnięcia materiału z zajęć. Dziękujemy, że jesteście z nami w tej podróży.',
+    quote: '"Najlepsze pomysły rodzą się z próby rozwiązania własnych problemów."',
+    backToHome: 'Powrót do strony głównej'
   }
 }
 
@@ -531,12 +661,57 @@ const en = {
   // Dashboard
   dashboard: {
     title: 'Dashboard',
+    subtitle: 'Manage all your generated notes in one place',
     myNotes: 'My Notes',
     recentNotes: 'Recent Notes',
     usage: 'Usage',
     upgrade: 'Upgrade Plan',
     noNotes: 'You don\'t have any notes yet',
-    createFirst: 'Create your first note'
+    noNotesInCategory: 'No notes in this category',
+    createFirst: 'Create your first note',
+    createFirstNote: 'Create first note',
+    tryDifferentFilter: 'Try a different filter or create new notes',
+    generateNotes: 'Generate Notes',
+    generateFirstNote: 'Generate first note',
+    logout: 'Logout',
+    loginRequired: 'You need to log in to view the dashboard',
+    goToHomepage: 'Go to Homepage',
+    loadingNotes: 'Loading notes...',
+    tryAgain: 'Try again',
+    deleteNote: 'Delete note',
+    createdOn: 'Created on',
+    slideCount: '{{count}} slides',
+    quizAvailable: '{{count}} quiz questions',
+    
+    filters: {
+      allNotes: 'All Notes',
+      videoNotes: 'Video Notes',
+      fileNotes: 'File Notes',
+      textNotes: 'Text Notes',
+      uploadedVideoNotes: 'Uploaded Videos'
+    },
+    
+    noteTypes: {
+      video: 'YouTube',
+      'video-upload': 'Uploaded Video',
+      file: 'File',
+      text: 'Text'
+    },
+    
+    confirmLogout: {
+      title: 'Confirm Logout',
+      message: 'Are you sure you want to log out? You will need to sign in again to access your notes.',
+      cancel: 'Cancel',
+      confirm: 'Logout'
+    },
+    
+    deleteConfirm: {
+      title: 'Delete Note',
+      message: 'Are you sure you want to delete this note?',
+      warning: 'This action cannot be undone.',
+      cancel: 'Cancel',
+      confirm: 'Delete Note'
+    }
   },
   
   // Notes Generation
@@ -578,9 +753,66 @@ const en = {
     pro: 'Pro',
     monthly: 'monthly',
     yearly: 'yearly',
+    month: 'month',
+    year: 'year',
     mostPopular: 'Most Popular',
     choosePlan: 'Choose Plan',
     currentPlan: 'Current Plan',
+    unknown: 'Unknown',
+    subscriptionEndsOn: 'Subscription ends on {{date}}',
+    saveUpTo: 'Save up to 25%',
+    whenBilledAnnually: 'when billed annually',
+    saveAmount: 'Save {{amount}} annually',
+    backToDashboard: 'Back to Dashboard',
+    
+    plans: {
+      free: {
+        name: 'Free',
+        description: 'Basic note generation for students'
+      },
+      student: {
+        name: 'Student',
+        description: 'Ideal for students with extended features'
+      },
+      pro: {
+        name: 'Pro',
+        description: 'Best plan for advanced users and professionals'
+      }
+    },
+    
+    cancelModal: {
+      title: 'Are you sure you want to cancel your subscription?',
+      warningMessage: 'If you cancel your plan, **all notes exceeding the Free Plan limit (3 notes)** will be permanently deleted.',
+      irreversible: 'This action is irreversible.',
+      checkingNotes: 'Checking saved notes...',
+      freePlanLimit: 'Free plan limit: 3 notes',
+      notesWillBeDeleted: '⚠️ {{count}} {{count, plural, one {note will be deleted} few {notes will be deleted} many {notes will be deleted} other {notes will be deleted}}}',
+      keepSubscription: 'Keep subscription',
+      confirmCancel: 'Yes, cancel subscription',
+      successMessage: 'Your subscription has been cancelled. We\'re sorry to see you go – we hope to see you again soon!',
+      errorMessage: 'Failed to cancel subscription: {{error}}. Please contact support if the issue persists.'
+    },
+    
+    faq: {
+      title: 'Frequently Asked Questions',
+      changePlan: {
+        question: 'Can I change my plan at any time?',
+        answer: 'Yes, you can upgrade or downgrade your plan at any time. Changes take effect immediately for upgrades and at the end of the billing cycle for downgrades.'
+      },
+      exceedLimits: {
+        question: 'What happens if I exceed my limits?',
+        answer: 'If you reach your monthly note generation limit, you will need to upgrade your plan or wait for the next billing cycle. Saved notes remain available.'
+      },
+      freeTrial: {
+        question: 'Is there a free trial?',
+        answer: 'Our Free Plan allows you to try EduScribe with 2 notes per month. You can upgrade your plan at any time to unlock more features and higher limits.'
+      },
+      billing: {
+        question: 'How does billing work?',
+        answer: 'Payment is charged at the start of each billing cycle. Annual plans offer significant savings compared to monthly billing.'
+      }
+    },
+    
     features: {
       notesGeneration: 'note generations/month',
       savedNotes: 'saved notes',
@@ -588,7 +820,24 @@ const en = {
       fileUpload: 'File Upload',
       quizzes: 'Quizzes',
       prioritySupport: 'Priority Support',
-      unlimited: 'Unlimited'
+      unlimited: 'Unlimited',
+      characterLimit: 'Limit {{limit}} characters per note',
+      pptUploads: 'PPT Uploads',
+      uploadVideo: 'Upload Video to Notes',
+      exportNotepad: 'Export to Notepad',
+      highestPriority: 'Highest Processing Priority',
+      mediumPriority: 'Medium Processing Priority',
+      lowestPriority: 'Lowest Processing Priority'
+    },
+    
+    buttons: {
+      creatingCheckout: 'Creating checkout...',
+      cancelling: 'Cancelling...',
+      cancellingAtPeriodEnd: 'Cancelling at period end',
+      currentPlan: 'Current Plan',
+      cancelSubscription: 'Cancel Subscription',
+      getStartedFree: 'Get Started for Free',
+      choosePlan: 'Choose Plan'
     }
   },
   
@@ -633,6 +882,17 @@ const en = {
     next: 'Next',
     previous: 'Previous',
     continue: 'Continue'
+  },
+  
+  // About Page
+  about: {
+    title: 'About Us',
+    paragraph1: 'We are a group of students who created this application as a side project. It all started with a simple idea — we wanted to find a better way to take notes from online lectures, especially when time was running out before exams.',
+    paragraph2: 'At first, it was just a script that helped us process lecture recordings. But then we thought: "If it helps us, it might help others too?". And so EduScribe was born.',
+    paragraph3: 'After countless sleepless nights spent debugging (and endless discussions about font sizes at 2 AM), we managed to create something that we are truly proud of.',
+    paragraph4: 'We hope this application makes someone\'s life easier — whether it\'s during exam preparation, learning a new language, or just trying to get a handle on the material from lectures. Thank you for being with us on this journey.',
+    quote: '"The best ideas come from trying to solve your own problems."',
+    backToHome: 'Back to Homepage'
   }
 }
 
