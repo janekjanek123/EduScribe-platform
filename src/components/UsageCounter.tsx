@@ -11,13 +11,16 @@ interface UsageCounterProps {
 export default function UsageCounter({ className = '', showLabel = true }: UsageCounterProps) {
   const { usage, limits, isLoading, refreshUsage } = useSubscription()
   const [isRefreshing, setIsRefreshing] = useState(false)
+  const [lastRefresh, setLastRefresh] = useState<Date | null>(null)
 
   const handleRefresh = async () => {
     setIsRefreshing(true)
     try {
       await refreshUsage()
+      setLastRefresh(new Date())
     } catch (error) {
       console.error('Failed to refresh usage:', error)
+      alert('Failed to refresh note count. Please try again or refresh the page.')
     } finally {
       setIsRefreshing(false)
     }
@@ -31,7 +34,7 @@ export default function UsageCounter({ className = '', showLabel = true }: Usage
     )
   }
 
-  const percentage = (usage.total_saved_notes / limits.max_saved_notes) * 100
+  const percentage = limits.max_saved_notes > 0 ? (usage.total_saved_notes / limits.max_saved_notes) * 100 : 0
   
   // Determine color based on usage percentage
   const getColorClasses = () => {
@@ -61,7 +64,7 @@ export default function UsageCounter({ className = '', showLabel = true }: Usage
   return (
     <div className={`inline-flex items-center space-x-2 ${className}`}>
       {showLabel && (
-        <span className="text-sm text-gray-600">Storage:</span>
+        <span className="text-sm text-gray-600">Saved Notes:</span>
       )}
       <div className={`px-3 py-1 rounded-full border ${colors.bg} ${colors.border}`}>
         <span className={`text-sm font-medium ${colors.text}`}>
@@ -90,7 +93,7 @@ export default function UsageCounter({ className = '', showLabel = true }: Usage
             ? 'text-gray-400 cursor-not-allowed' 
             : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
         }`}
-        title="Refresh storage count"
+        title={`Refresh note count${lastRefresh ? ` (last updated: ${lastRefresh.toLocaleTimeString()})` : ''}`}
       >
         <svg 
           className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} 
@@ -106,6 +109,13 @@ export default function UsageCounter({ className = '', showLabel = true }: Usage
           />
         </svg>
       </button>
+      
+      {/* Help tooltip for inaccurate counts */}
+      {lastRefresh && (
+        <span className="text-xs text-gray-400">
+          Updated {lastRefresh.toLocaleTimeString()}
+        </span>
+      )}
     </div>
   )
 } 

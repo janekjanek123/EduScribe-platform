@@ -104,6 +104,8 @@ export default function PricingPage() {
   const [isCancelling, setIsCancelling] = useState(false)
   const [subscriptionLoading, setSubscriptionLoading] = useState(true)
   const [showCancelModal, setShowCancelModal] = useState(false)
+  const [userNotesCount, setUserNotesCount] = useState(0)
+  const [loadingNotesCount, setLoadingNotesCount] = useState(false)
 
   // Fetch user's current subscription
   useEffect(() => {
@@ -115,34 +117,36 @@ export default function PricingPage() {
       }
 
       try {
-        console.log('[Pricing] Fetching subscription for user:', user.id)
+        console.log('[Pricing] Fetching user subscription for:', user.id)
         
-        const { data: subscription, error } = await supabase
+        const { data: subscriptionData, error: subscriptionError } = await supabase
           .from('user_subscriptions')
-          .select('*')
+          .select(`
+            plan_id,
+            billing_cycle,
+            status,
+            stripe_subscription_id,
+            current_period_end,
+            cancel_at_period_end,
+            subscription_plans (
+              display_name
+            )
+          `)
           .eq('user_id', user.id)
           .eq('status', 'active')
           .single()
 
-        if (error) {
-          if (error.code === 'PGRST116') {
-            // No subscription found - user is on free plan
-            console.log('[Pricing] No active subscription found, user is on free plan')
-            setCurrentPlan('free')
-            setUserSubscription(null)
-          } else {
-            console.error('[Pricing] Error fetching subscription:', error)
-            setCurrentPlan('free')
-            setUserSubscription(null)
-          }
-        } else if (subscription) {
-          console.log('[Pricing] Active subscription found:', subscription)
-          setCurrentPlan(subscription.plan_id)
-          setUserSubscription(subscription)
-          setBillingCycle(subscription.billing_cycle as 'monthly' | 'yearly')
+        if (subscriptionError) {
+          console.log('[Pricing] No active subscription found:', subscriptionError.message)
+          setCurrentPlan('free')
+          setUserSubscription(null)
+        } else {
+          console.log('[Pricing] Found subscription:', subscriptionData)
+          setCurrentPlan(subscriptionData.plan_id)
+          setUserSubscription(subscriptionData)
         }
-      } catch (err) {
-        console.error('[Pricing] Unexpected error fetching subscription:', err)
+      } catch (error) {
+        console.error('[Pricing] Error fetching subscription:', error)
         setCurrentPlan('free')
         setUserSubscription(null)
       } finally {
@@ -153,6 +157,52 @@ export default function PricingPage() {
     fetchUserSubscription()
   }, [user, supabase])
 
+  // Function to fetch user's notes count
+  const fetchUserNotesCount = async () => {
+    if (!user || !supabase) return 0
+
+    setLoadingNotesCount(true)
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      const token = session?.access_token
+
+      if (!token) {
+        throw new Error('No authentication token available')
+      }
+
+      // Count notes across all tables including video_upload_notes
+      const [textResult, fileResult, videoResult, uploadVideoResult] = await Promise.all([
+        supabase.from('text_notes').select('id', { count: 'exact' }).eq('user_id', user.id),
+        supabase.from('file_notes').select('id', { count: 'exact' }).eq('user_id', user.id),
+        supabase.from('video_notes').select('id', { count: 'exact' }).eq('user_id', user.id),
+        // Handle video_upload_notes table that might not exist in all environments
+        supabase.from('video_upload_notes').select('id', { count: 'exact' }).eq('user_id', user.id).then(
+          result => result,
+          error => {
+            console.warn('[Pricing] video_upload_notes table might not exist:', error.message)
+            return { count: 0 }
+          }
+        )
+      ])
+
+      const textCount = textResult.count || 0
+      const fileCount = fileResult.count || 0
+      const videoCount = videoResult.count || 0
+      const uploadVideoCount = uploadVideoResult.count || 0
+      const totalCount = textCount + fileCount + videoCount + uploadVideoCount
+
+      console.log('[Pricing] Notes count:', { textCount, fileCount, videoCount, uploadVideoCount, totalCount })
+      setUserNotesCount(totalCount)
+      return totalCount
+    } catch (error) {
+      console.error('[Pricing] Error fetching notes count:', error)
+      setUserNotesCount(0)
+      return 0
+    } finally {
+      setLoadingNotesCount(false)
+    }
+  }
+
   const handlePlanSelect = async (planId: string) => {
     if (!user) {
       router.push('/?signup=true')
@@ -162,6 +212,8 @@ export default function PricingPage() {
     if (planId === 'free') {
       // Handle downgrade to free plan - show cancel modal
       if (userSubscription) {
+        // Fetch notes count before showing modal
+        await fetchUserNotesCount()
         setShowCancelModal(true)
       } else {
         router.push('/dashboard')
@@ -231,6 +283,8 @@ export default function PricingPage() {
         throw new Error('No valid session found. Please sign in again.')
       }
 
+      console.log('[Pricing] Cancelling subscription:', userSubscription.stripe_subscription_id)
+
       const response = await fetch('/api/stripe/cancel-subscription', {
         method: 'POST',
         headers: {
@@ -243,26 +297,77 @@ export default function PricingPage() {
       })
 
       const data = await response.json()
+      console.log('[Pricing] Cancellation response:', data)
 
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to cancel subscription')
+        console.error('[Pricing] Cancellation failed:', {
+          status: response.status,
+          data: data
+        })
+        
+        // Provide specific error messages based on the response
+        let errorMessage = 'Failed to cancel subscription'
+        if (data.error) {
+          errorMessage = data.error
+        } else if (data.details) {
+          errorMessage = `${errorMessage}: ${data.details}`
+        }
+        
+        throw new Error(errorMessage)
       }
 
-      // Update local state to reflect the cancellation
-      setUserSubscription({
-        ...userSubscription,
-        cancel_at_period_end: true
-      })
-
-      // Close modal and show success message
+      // Success - update local state
+      setUserSubscription(null)
+      setCurrentPlan('free')
       setShowCancelModal(false)
       
+      // Create detailed success message
+      let successMessage = 'Your subscription has been cancelled successfully!'
+      successMessage += '\n\nYou have been switched to the Free plan.'
+      
+      if (data.notesDeleted && data.notesDeleted.total > 0) {
+        successMessage += `\n\nNote Management:\n• ${data.notesDeleted.total} notes were deleted to comply with Free plan limits`
+        successMessage += `\n• ${data.remainingNotes} notes remain in your account`
+        
+        if (data.notesDeleted.text > 0) successMessage += `\n• Text notes deleted: ${data.notesDeleted.text}`
+        if (data.notesDeleted.file > 0) successMessage += `\n• File notes deleted: ${data.notesDeleted.file}`
+        if (data.notesDeleted.video > 0) successMessage += `\n• Video notes deleted: ${data.notesDeleted.video}`
+        if (data.notesDeleted.video_upload > 0) successMessage += `\n• Video upload notes deleted: ${data.notesDeleted.video_upload}`
+        
+        successMessage += '\n\nYour 3 oldest notes have been preserved.'
+      }
+      
+      // Add warning if there were Stripe issues but cancellation succeeded
+      if (data.warning) {
+        successMessage += `\n\nNote: ${data.warning}`
+      }
+      
+      successMessage += '\n\nYou can upgrade again anytime to unlock more features!'
+      
       // Show success message
-      alert('Your subscription has been cancelled. You will retain access until the end of your current billing period, then be switched to the Free plan.')
+      alert(successMessage)
       
     } catch (error: any) {
-      console.error('Error cancelling subscription:', error)
-      alert('Failed to cancel subscription. Please try again or contact support.')
+      console.error('[Pricing] Error cancelling subscription:', error)
+      
+      let errorMessage = 'Failed to cancel subscription. '
+      
+      // Provide helpful error messages
+      if (error.message.includes('authentication') || error.message.includes('session')) {
+        errorMessage += 'Please try signing out and back in, then try again.'
+      } else if (error.message.includes('network') || error.message.includes('fetch')) {
+        errorMessage += 'Please check your internet connection and try again.'
+      } else if (error.message.includes('Stripe')) {
+        errorMessage += 'There was an issue with payment processing. Please contact support.'
+      } else {
+        errorMessage += 'Please try again or contact support if the problem persists.'
+      }
+      
+      if (error.message && !error.message.includes('Failed to cancel subscription')) {
+        errorMessage += `\n\nError details: ${error.message}`
+      }
+      
+      alert(errorMessage)
     } finally {
       setIsCancelling(false)
     }
@@ -383,34 +488,156 @@ export default function PricingPage() {
   const CancelModal = () => {
     if (!showCancelModal) return null
 
+    const notesToDelete = Math.max(0, userNotesCount - 3)
+    const willDeleteNotes = notesToDelete > 0
+
     return (
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div className="bg-white rounded-lg p-6 max-w-md mx-4">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
-            Cancel Subscription
-          </h3>
-          <p className="text-gray-600 mb-6">
-            Are you sure you want to cancel your current subscription and switch to the Free plan?
-          </p>
-          <p className="text-sm text-gray-500 mb-6">
-            You will retain access to your current plan until the end of your billing period.
-          </p>
-          <div className="flex space-x-4">
+        <div className="bg-white rounded-lg p-6 max-w-lg mx-4 max-h-[90vh] overflow-y-auto">
+          <div className="flex items-center mb-4">
+            <div className="flex-shrink-0">
+              <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                willDeleteNotes ? 'bg-red-100' : 'bg-yellow-100'
+              }`}>
+                <span className="text-xl">{willDeleteNotes ? '⚠️' : '🔄'}</span>
+              </div>
+            </div>
+            <div className="ml-4">
+              <h3 className="text-lg font-semibold text-gray-900">
+                Cancel Subscription & Switch to Free Plan
+              </h3>
+              <p className="text-sm text-gray-600">
+                This action will take effect immediately
+              </p>
+            </div>
+          </div>
+          
+          <div className="mb-6">
+            <p className="text-gray-700 mb-4">
+              You are about to cancel your subscription and switch to the Free plan. Please review the details below:
+            </p>
+            
+            {loadingNotesCount ? (
+              <div className="bg-gray-50 rounded-lg p-4 mb-4">
+                <div className="flex items-center">
+                  <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mr-2"></div>
+                  <span className="text-sm text-gray-600">Checking your notes...</span>
+                </div>
+              </div>
+            ) : (
+              <>
+                <div className="bg-blue-50 rounded-lg p-4 mb-4 border border-blue-200">
+                  <div className="flex">
+                    <div className="flex-shrink-0">
+                      <span className="text-blue-600 text-lg">📊</span>
+                    </div>
+                    <div className="ml-3">
+                      <h4 className="text-sm font-medium text-blue-800">Current Notes Status</h4>
+                      <p className="text-sm text-blue-700">
+                        You currently have <strong>{userNotesCount} notes</strong> saved
+                      </p>
+                      <p className="text-xs text-blue-600 mt-1">
+                        Free plan allows maximum 3 notes
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {willDeleteNotes && (
+                  <div className="bg-red-50 rounded-lg p-4 mb-4 border-2 border-red-300">
+                    <div className="flex">
+                      <div className="flex-shrink-0">
+                        <span className="text-red-600 text-xl">🚨</span>
+                      </div>
+                      <div className="ml-3">
+                        <h4 className="text-sm font-semibold text-red-900">⚠️ DATA LOSS WARNING</h4>
+                        <div className="bg-red-100 rounded p-2 mt-2 border border-red-200">
+                          <p className="text-sm text-red-800 font-medium mb-1">
+                            <strong>{notesToDelete} of your notes will be permanently deleted!</strong>
+                          </p>
+                          <p className="text-xs text-red-700">
+                            • Your <strong>3 oldest notes</strong> will be kept<br/>
+                            • Your <strong>{notesToDelete} newest notes</strong> will be deleted forever<br/>
+                            • This action <strong>cannot be undone</strong>
+                          </p>
+                        </div>
+                        <p className="text-xs text-red-600 mt-2 font-medium">
+                          ⚠️ Consider exporting your notes before proceeding
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {!willDeleteNotes && userNotesCount <= 3 && userNotesCount > 0 && (
+                  <div className="bg-green-50 rounded-lg p-4 mb-4 border border-green-200">
+                    <div className="flex">
+                      <div className="flex-shrink-0">
+                        <span className="text-green-600 text-lg">✅</span>
+                      </div>
+                      <div className="ml-3">
+                        <h4 className="text-sm font-medium text-green-800">Notes Safe</h4>
+                        <p className="text-sm text-green-700">
+                          All your {userNotesCount} notes will be preserved (within Free plan limit of 3 notes)
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
+
+            <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+              <p className="text-sm text-gray-700 font-medium mb-2">
+                What happens when you confirm:
+              </p>
+              <ul className="text-sm text-gray-600 space-y-1">
+                <li>• Subscription cancelled immediately</li>
+                <li>• Switched to Free plan (2 notes/month, 3 saved notes max)</li>
+                {willDeleteNotes && <li>• <strong>{notesToDelete} newest notes deleted permanently</strong></li>}
+                <li>• No future charges</li>
+                <li>• Can upgrade again anytime</li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="flex space-x-3">
             <button
               onClick={() => setShowCancelModal(false)}
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+              className="flex-1 px-4 py-3 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 font-medium transition-colors"
               disabled={isCancelling}
             >
               Keep Subscription
             </button>
             <button
               onClick={handleCancelSubscription}
-              disabled={isCancelling}
-              className="flex-1 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50"
+              disabled={isCancelling || loadingNotesCount}
+              className={`flex-1 px-4 py-3 rounded-md font-medium transition-colors ${
+                willDeleteNotes
+                  ? 'bg-red-600 hover:bg-red-700 text-white disabled:opacity-50'
+                  : 'bg-orange-600 hover:bg-orange-700 text-white disabled:opacity-50'
+              }`}
             >
-              {isCancelling ? 'Cancelling...' : 'Cancel Subscription'}
+              {isCancelling ? (
+                <div className="flex items-center justify-center">
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                  Processing...
+                </div>
+              ) : loadingNotesCount ? (
+                'Loading...'
+              ) : willDeleteNotes ? (
+                `⚠️ Yes, Delete ${notesToDelete} Notes`
+              ) : (
+                'Yes, Cancel Subscription'
+              )}
             </button>
           </div>
+          
+          {willDeleteNotes && (
+            <p className="text-xs text-red-600 text-center mt-2">
+              ⚠️ This will permanently delete {notesToDelete} of your notes
+            </p>
+          )}
         </div>
       </div>
     )

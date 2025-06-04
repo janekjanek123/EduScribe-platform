@@ -434,10 +434,9 @@ export default function DashboardPage() {
             <nav className="flex space-x-8 px-6" aria-label="Tabs">
               {[
                 { key: 'all', label: 'All Notes', count: notes.length },
-                { key: 'video', label: 'Video Notes', count: notes.filter(n => n.type === 'video').length },
+                { key: 'video', label: 'Video Notes', count: notes.filter(n => n.type === 'video' || n.type === 'video-upload').length },
                 { key: 'file', label: 'File Notes', count: notes.filter(n => n.type === 'file').length },
-                { key: 'text', label: 'Text Notes', count: notes.filter(n => n.type === 'text').length },
-                { key: 'video-upload', label: 'Video Uploads', count: notes.filter(n => n.type === 'video-upload').length }
+                { key: 'text', label: 'Text Notes', count: notes.filter(n => n.type === 'text').length }
               ].map((tab) => (
                 <button
                   key={tab.key}
