@@ -5,7 +5,7 @@ import { promises as fs } from 'fs';
 import { promisify } from 'util';
 import os from 'os';
 import path from 'path';
-import { extractSubtitles } from './subtitles';
+import { extractYouTubeTranscript, TranscriptResult as NewTranscriptResult } from './youtube-transcript';
 
 // Re-export the validators for backward compatibility
 export { isLikelyUrl };
@@ -211,7 +211,7 @@ export async function getVideoInfo(videoId: string): Promise<YouTubeVideoInfo> {
 
 /**
  * Gets the transcript for a YouTube video
- * Wraps the subtitle extraction service to provide consistent error handling
+ * Uses the new production-safe transcript extraction service
  */
 export async function getVideoTranscript(videoId: string): Promise<TranscriptResult> {
   if (!videoId) {
@@ -220,46 +220,35 @@ export async function getVideoTranscript(videoId: string): Promise<TranscriptRes
       error: 'No video ID provided'
     };
   }
-  
+
   try {
-    // Use the subtitles service to extract transcript
-    const transcript = await extractSubtitles(videoId);
+    console.log(`[YouTube Service] Extracting transcript for video: ${videoId}`);
     
-    if (!transcript || transcript.trim().length === 0) {
+    // Use the new production-safe transcript extraction
+    const result = await extractYouTubeTranscript(videoId);
+    
+    if (result.error) {
+      console.warn(`[YouTube Service] Transcript extraction failed: ${result.error}`);
       return {
         transcript: '',
-        error: 'No subtitles available for this video'
+        error: result.error
       };
     }
     
+    if (!result.transcript || result.transcript.trim().length === 0) {
+      return {
+        transcript: '',
+        error: 'No transcript content available for this video'
+      };
+    }
+    
+    console.log(`[YouTube Service] Successfully extracted transcript (${result.transcript.length} characters)`);
     return {
-      transcript
+      transcript: result.transcript
     };
+    
   } catch (error: any) {
     console.error('[YouTube Service] Error extracting transcript:', error);
-    
-    // Provide specific error messages for common issues
-    if (error.message?.includes('yt-dlp is required')) {
-      return {
-        transcript: '',
-        error: 'yt-dlp is required but not installed'
-      };
-    }
-    
-    if (error.message?.includes('subtitles are disabled')) {
-      return {
-        transcript: '',
-        error: 'This video has disabled subtitles'
-      };
-    }
-    
-    if (error.message?.includes('not available')) {
-      return {
-        transcript: '',
-        error: 'No subtitles available for this video'
-      };
-    }
-    
     return {
       transcript: '',
       error: `Error extracting transcript: ${error.message}`

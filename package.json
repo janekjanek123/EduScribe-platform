@@ -9,6 +9,7 @@
     "lint": "next lint",
     "install-yt-dlp": "bash scripts/install-yt-dlp.sh",
     "test-subtitles": "node scripts/test-subtitles.js",
+    "test-youtube-transcript": "node scripts/test-youtube-transcript.js",
     "check-schema": "node check-schema.js",
     "refresh-schema": "node refresh-schema-cache.js",
     "fix-schema": "node apply-schema-fix.js",
