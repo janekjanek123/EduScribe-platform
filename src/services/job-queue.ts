@@ -92,10 +92,27 @@ class JobQueueService {
   private supabase: ReturnType<typeof createClient>;
 
   constructor() {
-    this.supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
+    // Handle missing service role key gracefully during build time
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    
+    if (!supabaseUrl) {
+      throw new Error('NEXT_PUBLIC_SUPABASE_URL is required');
+    }
+    
+    // During build time, use anon key as fallback if service role key is not available
+    const key = serviceRoleKey || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    
+    if (!key) {
+      throw new Error('Either SUPABASE_SERVICE_ROLE_KEY or NEXT_PUBLIC_SUPABASE_ANON_KEY is required');
+    }
+    
+    this.supabase = createClient(supabaseUrl, key);
+    
+    // Log warning if using anon key instead of service role key
+    if (!serviceRoleKey && process.env.NODE_ENV !== 'production') {
+      console.warn('[JobQueue] Using anon key instead of service role key. Some operations may be restricted.');
+    }
   }
 
   /**
