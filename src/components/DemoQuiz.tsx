@@ -1,9 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { useSupabase } from '@/lib/supabase-provider';
 
-export interface QuizQuestion {
+export interface DemoQuizQuestion {
   id: string;
   question: string;
   options: {
@@ -15,14 +14,12 @@ export interface QuizQuestion {
   explanation?: string;
 }
 
-interface QuizProps {
-  questions: QuizQuestion[];
-  noteId: string;
-  noteType: 'text' | 'video' | 'file';
+interface DemoQuizProps {
+  questions: DemoQuizQuestion[];
   onComplete?: (score: number, totalQuestions: number) => void;
 }
 
-interface QuizResult {
+interface DemoQuizResult {
   score: number;
   correctAnswers: number;
   totalQuestions: number;
@@ -31,14 +28,12 @@ interface QuizResult {
   userAnswers?: string[];
 }
 
-export default function Quiz({ questions, noteId, noteType, onComplete }: QuizProps) {
-  const { user, supabase } = useSupabase();
+export default function DemoQuiz({ questions, onComplete }: DemoQuizProps) {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<string[]>([]);
   const [selectedAnswer, setSelectedAnswer] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [result, setResult] = useState<QuizResult | null>(null);
-  const [error, setError] = useState('');
+  const [result, setResult] = useState<DemoQuizResult | null>(null);
   const [showDetailedResults, setShowDetailedResults] = useState(false);
 
   if (!questions || questions.length === 0) {
@@ -68,67 +63,34 @@ export default function Quiz({ questions, noteId, noteType, onComplete }: QuizPr
     if (currentQuestion < questions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
     } else {
-      // Quiz completed, submit answers
+      // Quiz completed, calculate results
       submitQuiz(newAnswers);
     }
   };
 
   const submitQuiz = async (finalAnswers: string[]) => {
-    if (!user) {
-      setError('You must be logged in to submit quiz answers');
-      return;
-    }
-
     setIsSubmitting(true);
-    setError('');
+
+    // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 1000));
 
     try {
-      // Get the access token for API calls
-      const { data: { session } } = await supabase.auth.getSession();
-      const token = session?.access_token;
-
-      if (!token) {
-        throw new Error('No authentication token available');
-      }
-
-      console.log('[Quiz] Submitting quiz answers:', {
-        noteId,
-        noteType,
-        answersCount: finalAnswers.length
+      // Calculate results locally
+      let correct = 0;
+      finalAnswers.forEach((answer, index) => {
+        if (answer === questions[index].correctAnswer) {
+          correct++;
+        }
       });
 
-      const response = await fetch('/api/quiz-attempts', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          noteId,
-          noteType,
-          answers: finalAnswers
-        })
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to submit quiz');
-      }
-
-      const data = await response.json();
+      const percentage = Math.round((correct / questions.length) * 100);
       
-      if (!data.success) {
-        throw new Error(data.message || 'Quiz submission failed');
-      }
-
-      console.log('[Quiz] Quiz submitted successfully:', data.data);
-      
-      const quizResult: QuizResult = {
-        score: data.data.score,
-        correctAnswers: data.data.correctAnswers,
-        totalQuestions: data.data.totalQuestions,
-        percentage: data.data.percentage,
-        completedAt: data.data.completedAt,
+      const quizResult: DemoQuizResult = {
+        score: correct,
+        correctAnswers: correct,
+        totalQuestions: questions.length,
+        percentage: percentage,
+        completedAt: new Date().toISOString(),
         userAnswers: finalAnswers
       };
 
@@ -140,17 +102,10 @@ export default function Quiz({ questions, noteId, noteType, onComplete }: QuizPr
       }
 
     } catch (err: any) {
-      console.error('[Quiz] Error submitting quiz:', err);
-      setError(err.message || 'Failed to submit quiz');
+      console.error('[DemoQuiz] Error calculating results:', err);
     } finally {
       setIsSubmitting(false);
     }
-  };
-
-  const getScoreColor = (percentage: number) => {
-    if (percentage >= 80) return 'text-green-600';
-    if (percentage >= 60) return 'text-yellow-600';
-    return 'text-red-600';
   };
 
   const getScoreMessage = (percentage: number) => {
@@ -258,18 +213,19 @@ export default function Quiz({ questions, noteId, noteType, onComplete }: QuizPr
 
         {/* Detailed Results Section */}
         {showDetailedResults && result.userAnswers && (
-          <div className="pt-6" style={{ borderTop: '1px solid var(--bg-tertiary)' }}>
-            <h4 className="text-lg font-bold mb-4" style={{ color: 'var(--text-primary)' }}>📋 Detailed Results</h4>
-            <div className="space-y-6">
+          <div className="mt-6">
+            <h4 className="text-lg font-semibold mb-4" style={{ color: 'var(--text-primary)' }}>
+              Detailed Results
+            </h4>
+            <div className="space-y-4">
               {questions.map((question, index) => {
                 const userAnswer = result.userAnswers![index];
                 const isCorrect = userAnswer === question.correctAnswer;
                 
                 return (
-                  <div key={question.id} className="rounded-xl p-4" style={{ 
-                    background: 'linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%)',
-                    border: '1px solid var(--bg-tertiary)',
-                    boxShadow: 'var(--shadow-sm)'
+                  <div key={question.id} className="p-4 rounded-xl" style={{ 
+                    background: 'var(--bg-primary)',
+                    border: '1px solid var(--bg-tertiary)'
                   }}>
                     <div className="flex items-start gap-3 mb-3">
                       <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white font-bold ${
@@ -435,17 +391,6 @@ export default function Quiz({ questions, noteId, noteType, onComplete }: QuizPr
         </div>
       </div>
 
-      {/* Error Message */}
-      {error && (
-        <div className="mb-4 p-4 rounded-xl" style={{ 
-          background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.1))',
-          border: '1px solid rgba(239, 68, 68, 0.3)',
-          boxShadow: '0 0 20px rgba(239, 68, 68, 0.1)'
-        }}>
-          <p style={{ color: '#ef4444' }}>{error}</p>
-        </div>
-      )}
-
       {/* Next Button */}
       <div className="flex justify-between items-center">
         <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>
@@ -479,4 +424,4 @@ export default function Quiz({ questions, noteId, noteType, onComplete }: QuizPr
       </div>
     </div>
   );
-} 
+}
