@@ -646,7 +646,15 @@ function CheckoutPageContent() {
 
 export default function CheckoutPage() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--bg-primary)' }}>
+        <div className="text-center">
+          <div className="w-20 h-20 rounded-full animate-spin mx-auto mb-6"
+            style={{ border: '4px solid var(--bg-tertiary)', borderTop: '4px solid var(--color-cta)' }}></div>
+          <p style={{ color: 'var(--text-secondary)' }}>Loading checkout...</p>
+        </div>
+      </div>
+    }>
       <CheckoutPageContent />
     </Suspense>
   )

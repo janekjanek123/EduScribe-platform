@@ -132,17 +132,17 @@ export default function HelpPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen py-12" style={{ background: 'var(--bg-primary)' }}>
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">
+        <div className="text-center mb-16">
+          <h1 className="text-4xl font-bold mb-6" style={{ color: 'var(--text-primary)' }}>
             {t('help.title')}
           </h1>
-          <h2 className="text-xl text-blue-600 mb-6">
+          <h2 className="text-2xl mb-8" style={{ color: 'var(--color-cta)', textShadow: 'var(--glow-cta)' }}>
             {t('help.subtitle')}
           </h2>
-          <p className="text-gray-600 max-w-2xl mx-auto leading-relaxed">
+          <p className="max-w-2xl mx-auto leading-relaxed text-lg" style={{ color: 'var(--text-secondary)' }}>
             {t('help.welcomeMessage')}
           </p>
         </div>
@@ -150,16 +150,20 @@ export default function HelpPage() {
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Main Contact Form */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-6">
+            <div className="rounded-2xl p-8" style={{ 
+              background: 'linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%)',
+              border: '1px solid var(--bg-tertiary)',
+              boxShadow: 'var(--shadow-lg)'
+            }}>
+              <h3 className="text-2xl font-semibold mb-8" style={{ color: 'var(--text-primary)' }}>
                 {t('help.contactForm')}
               </h3>
 
               <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
                 {/* Email Field */}
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                    {t('help.emailLabel')} <span className="text-red-500">*</span>
+                  <label htmlFor="email" className="block text-sm font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>
+                    {t('help.emailLabel')} <span style={{ color: '#ef4444' }}>*</span>
                   </label>
                   <input
                     type="email"
@@ -168,19 +172,25 @@ export default function HelpPage() {
                     value={formData.email}
                     onChange={handleChange}
                     placeholder={t('help.emailPlaceholder')}
-                    className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                      errors.email ? 'border-red-300 focus:border-red-500' : 'border-gray-300'
+                    className={`w-full px-4 py-3 rounded-xl transition-all duration-300 ${
+                      errors.email ? 'focus:ring-2 focus:ring-red-500' : 'focus:ring-2 focus:ring-[var(--color-cta)]'
                     }`}
+                    style={{
+                      background: 'var(--bg-primary)',
+                      border: `1px solid ${errors.email ? '#ef4444' : 'var(--bg-tertiary)'}`,
+                      color: 'var(--text-primary)',
+                      boxShadow: 'var(--shadow-sm)'
+                    }}
                     disabled={isSubmitting}
                   />
                   {errors.email && (
-                    <p className="mt-1 text-sm text-red-600">{errors.email}</p>
+                    <p className="mt-2 text-sm" style={{ color: '#ef4444' }}>{errors.email}</p>
                   )}
                 </div>
 
                 {/* Subject Field */}
                 <div>
-                  <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="subject" className="block text-sm font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>
                     {t('help.subjectLabel')}
                   </label>
                   <input
@@ -190,15 +200,21 @@ export default function HelpPage() {
                     value={formData.subject}
                     onChange={handleChange}
                     placeholder={t('help.subjectPlaceholder')}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-4 py-3 rounded-xl transition-all duration-300 focus:ring-2 focus:ring-[var(--color-cta)]"
+                    style={{
+                      background: 'var(--bg-primary)',
+                      border: '1px solid var(--bg-tertiary)',
+                      color: 'var(--text-primary)',
+                      boxShadow: 'var(--shadow-sm)'
+                    }}
                     disabled={isSubmitting}
                   />
                 </div>
 
                 {/* Message Field */}
                 <div>
-                  <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
-                    {t('help.messageLabel')} <span className="text-red-500">*</span>
+                  <label htmlFor="message" className="block text-sm font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>
+                    {t('help.messageLabel')} <span style={{ color: '#ef4444' }}>*</span>
                   </label>
                   <textarea
                     id="message"
@@ -207,13 +223,19 @@ export default function HelpPage() {
                     value={formData.message}
                     onChange={handleChange}
                     placeholder={t('help.messagePlaceholder')}
-                    className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-vertical ${
-                      errors.message ? 'border-red-300 focus:border-red-500' : 'border-gray-300'
+                    className={`w-full px-4 py-3 rounded-xl transition-all duration-300 resize-vertical ${
+                      errors.message ? 'focus:ring-2 focus:ring-red-500' : 'focus:ring-2 focus:ring-[var(--color-cta)]'
                     }`}
+                    style={{
+                      background: 'var(--bg-primary)',
+                      border: `1px solid ${errors.message ? '#ef4444' : 'var(--bg-tertiary)'}`,
+                      color: 'var(--text-primary)',
+                      boxShadow: 'var(--shadow-sm)'
+                    }}
                     disabled={isSubmitting}
                   />
                   {errors.message && (
-                    <p className="mt-1 text-sm text-red-600">{errors.message}</p>
+                    <p className="mt-2 text-sm" style={{ color: '#ef4444' }}>{errors.message}</p>
                   )}
                 </div>
 
@@ -222,7 +244,13 @@ export default function HelpPage() {
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:bg-blue-400 disabled:cursor-not-allowed transition-colors"
+                    className="w-full py-4 px-8 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105"
+                    style={{
+                      background: isSubmitting ? 'var(--bg-tertiary)' : 'var(--color-cta)',
+                      color: isSubmitting ? 'var(--text-muted)' : 'var(--bg-primary)',
+                      boxShadow: isSubmitting ? 'none' : 'var(--glow-cta)',
+                      cursor: isSubmitting ? 'not-allowed' : 'pointer'
+                    }}
                   >
                     {isSubmitting ? t('help.sending') : t('help.sendButton')}
                   </button>
@@ -232,44 +260,52 @@ export default function HelpPage() {
           </div>
 
           {/* Sidebar */}
-          <div className="space-y-6">
+          <div className="space-y-8">
             {/* Quick Help */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            <div className="rounded-2xl p-6" style={{ 
+              background: 'linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%)',
+              border: '1px solid var(--bg-tertiary)',
+              boxShadow: 'var(--shadow-lg)'
+            }}>
+              <h3 className="text-xl font-semibold mb-4" style={{ color: 'var(--text-primary)' }}>
                 {t('help.quickHelp')}
               </h3>
-              <p className="text-sm text-gray-600 mb-4">
+              <p className="text-base mb-6" style={{ color: 'var(--text-secondary)' }}>
                 {t('help.commonIssues')}
               </p>
 
-              <div className="space-y-4">
-                <div className="border-l-4 border-blue-500 pl-4">
-                  <h4 className="font-medium text-gray-900">{t('help.accountIssue')}</h4>
-                  <p className="text-sm text-gray-600">{t('help.accountIssueDesc')}</p>
+              <div className="space-y-6">
+                <div className="border-l-4 pl-4" style={{ borderColor: 'var(--color-cta)' }}>
+                  <h4 className="font-semibold text-base mb-2" style={{ color: 'var(--text-primary)' }}>{t('help.accountIssue')}</h4>
+                  <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>{t('help.accountIssueDesc')}</p>
                 </div>
 
-                <div className="border-l-4 border-green-500 pl-4">
-                  <h4 className="font-medium text-gray-900">{t('help.uploadIssue')}</h4>
-                  <p className="text-sm text-gray-600">{t('help.uploadIssueDesc')}</p>
+                <div className="border-l-4 pl-4" style={{ borderColor: 'var(--color-file)' }}>
+                  <h4 className="font-semibold text-base mb-2" style={{ color: 'var(--text-primary)' }}>{t('help.uploadIssue')}</h4>
+                  <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>{t('help.uploadIssueDesc')}</p>
                 </div>
 
-                <div className="border-l-4 border-purple-500 pl-4">
-                  <h4 className="font-medium text-gray-900">{t('help.noteGeneration')}</h4>
-                  <p className="text-sm text-gray-600">{t('help.noteGenerationDesc')}</p>
+                <div className="border-l-4 pl-4" style={{ borderColor: 'var(--color-text)' }}>
+                  <h4 className="font-semibold text-base mb-2" style={{ color: 'var(--text-primary)' }}>{t('help.noteGeneration')}</h4>
+                  <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>{t('help.noteGenerationDesc')}</p>
                 </div>
               </div>
             </div>
 
             {/* Direct Contact */}
-            <div className="bg-blue-50 rounded-lg border border-blue-200 p-6">
-              <h3 className="text-lg font-semibold text-blue-900 mb-4">
+            <div className="rounded-2xl p-6" style={{ 
+              background: 'linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%)',
+              border: '2px solid var(--color-cta)',
+              boxShadow: 'var(--glow-cta)'
+            }}>
+              <h3 className="text-xl font-semibold mb-4" style={{ color: 'var(--color-cta)', textShadow: 'var(--glow-cta)' }}>
                 {t('help.directContact')}
               </h3>
-              <div className="space-y-2">
-                <p className="text-sm text-blue-800">
+              <div className="space-y-3">
+                <p className="text-base font-medium break-words" style={{ color: 'var(--text-primary)' }}>
                   {t('help.emailDirect')}
                 </p>
-                <p className="text-sm text-blue-700">
+                <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
                   {t('help.responseTime')}
                 </p>
               </div>

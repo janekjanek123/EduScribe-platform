@@ -43,9 +43,13 @@ export default function Quiz({ questions, noteId, noteType, onComplete }: QuizPr
 
   if (!questions || questions.length === 0) {
     return (
-      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
-        <h3 className="text-lg font-semibold text-yellow-800 mb-2">Quiz Not Available</h3>
-        <p className="text-yellow-700">No quiz questions are available for this note.</p>
+      <div className="rounded-xl p-6" style={{ 
+        background: 'linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%)',
+        border: '2px solid var(--color-video)',
+        boxShadow: '0 0 20px rgba(255, 165, 0, 0.3)'
+      }}>
+        <h3 className="text-lg font-semibold mb-2" style={{ color: 'var(--color-video)' }}>Quiz Not Available</h3>
+        <p style={{ color: 'var(--text-secondary)' }}>No quiz questions are available for this note.</p>
       </div>
     );
   }
@@ -160,46 +164,65 @@ export default function Quiz({ questions, noteId, noteType, onComplete }: QuizPr
   // Show quiz result
   if (result) {
     return (
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <div className="rounded-2xl p-6" style={{ 
+        background: 'linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%)',
+        border: '1px solid var(--bg-tertiary)',
+        boxShadow: 'var(--shadow-lg)'
+      }}>
         <div className="text-center mb-6">
-          <div className="w-16 h-16 mx-auto mb-4 bg-blue-100 rounded-full flex items-center justify-center">
+          <div className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center" style={{ 
+            background: 'linear-gradient(135deg, var(--color-cta), var(--color-file))',
+            boxShadow: 'var(--glow-cta)'
+          }}>
             <span className="text-2xl">🎯</span>
           </div>
           
-          <h3 className="text-2xl font-bold text-gray-900 mb-2">Quiz Completed!</h3>
+          <h3 className="text-2xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>Quiz Completed!</h3>
           
-          <div className={`text-4xl font-bold mb-2 ${getScoreColor(result.percentage)}`}>
+          <div className="text-4xl font-bold mb-2" style={{ 
+            color: result.percentage >= 80 ? 'var(--color-cta)' :
+                   result.percentage >= 60 ? 'var(--color-video)' :
+                   '#ef4444'
+          }}>
             {result.percentage}%
           </div>
           
-          <p className="text-lg text-gray-600 mb-4">
+          <p className="text-lg mb-4" style={{ color: 'var(--text-secondary)' }}>
             {result.correctAnswers} out of {result.totalQuestions} correct
           </p>
           
-          <p className="text-xl font-semibold text-gray-800 mb-6">
+          <p className="text-xl font-semibold mb-6" style={{ color: 'var(--text-primary)' }}>
             {getScoreMessage(result.percentage)}
           </p>
           
-          <div className="bg-gray-50 rounded-lg p-4 mb-6">
-            <h4 className="font-semibold text-gray-900 mb-2">Score Breakdown:</h4>
+          <div className="rounded-xl p-4 mb-6" style={{ 
+            background: 'linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%)',
+            border: '1px solid var(--bg-tertiary)',
+            boxShadow: 'var(--shadow-lg)'
+          }}>
+            <h4 className="font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>Score Breakdown:</h4>
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
-                <span className="text-gray-600">Correct Answers:</span>
-                <span className="font-semibold ml-2 text-green-600">{result.correctAnswers}</span>
+                <span style={{ color: 'var(--text-secondary)' }}>Correct Answers:</span>
+                <span className="font-semibold ml-2" style={{ color: 'var(--color-file)' }}>{result.correctAnswers}</span>
               </div>
               <div>
-                <span className="text-gray-600">Total Questions:</span>
-                <span className="font-semibold ml-2">{result.totalQuestions}</span>
+                <span style={{ color: 'var(--text-secondary)' }}>Total Questions:</span>
+                <span className="font-semibold ml-2" style={{ color: 'var(--text-primary)' }}>{result.totalQuestions}</span>
               </div>
               <div>
-                <span className="text-gray-600">Accuracy:</span>
-                <span className={`font-semibold ml-2 ${getScoreColor(result.percentage)}`}>
+                <span style={{ color: 'var(--text-secondary)' }}>Accuracy:</span>
+                <span className="font-semibold ml-2" style={{ 
+                  color: result.percentage >= 80 ? 'var(--color-cta)' :
+                         result.percentage >= 60 ? 'var(--color-video)' :
+                         '#ef4444'
+                }}>
                   {result.percentage}%
                 </span>
               </div>
               <div>
-                <span className="text-gray-600">Completed:</span>
-                <span className="font-semibold ml-2">
+                <span style={{ color: 'var(--text-secondary)' }}>Completed:</span>
+                <span className="font-semibold ml-2" style={{ color: 'var(--text-primary)' }}>
                   {new Date(result.completedAt).toLocaleString()}
                 </span>
               </div>
@@ -209,14 +232,25 @@ export default function Quiz({ questions, noteId, noteType, onComplete }: QuizPr
           {/* Toggle Detailed Results Button */}
           <button
             onClick={() => setShowDetailedResults(!showDetailedResults)}
-            className="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition-colors mr-3"
+            className="px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 mr-4"
+            style={{ 
+              background: 'var(--bg-secondary)',
+              color: 'var(--text-secondary)',
+              border: '1px solid var(--bg-tertiary)',
+              boxShadow: 'var(--shadow-sm)'
+            }}
           >
             {showDetailedResults ? 'Hide' : 'Show'} Detailed Results
           </button>
           
           <button
             onClick={() => window.location.reload()}
-            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
+            className="px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105"
+            style={{ 
+              background: 'linear-gradient(135deg, var(--color-cta) 0%, var(--color-file) 100%)',
+              color: 'var(--bg-primary)',
+              boxShadow: 'var(--glow-cta)'
+            }}
           >
             Take Quiz Again
           </button>
@@ -224,15 +258,19 @@ export default function Quiz({ questions, noteId, noteType, onComplete }: QuizPr
 
         {/* Detailed Results Section */}
         {showDetailedResults && result.userAnswers && (
-          <div className="border-t border-gray-200 pt-6">
-            <h4 className="text-lg font-bold text-gray-900 mb-4">📋 Detailed Results</h4>
+          <div className="pt-6" style={{ borderTop: '1px solid var(--bg-tertiary)' }}>
+            <h4 className="text-lg font-bold mb-4" style={{ color: 'var(--text-primary)' }}>📋 Detailed Results</h4>
             <div className="space-y-6">
               {questions.map((question, index) => {
                 const userAnswer = result.userAnswers![index];
                 const isCorrect = userAnswer === question.correctAnswer;
                 
                 return (
-                  <div key={question.id} className="border border-gray-200 rounded-lg p-4">
+                  <div key={question.id} className="rounded-xl p-4" style={{ 
+                    background: 'linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%)',
+                    border: '1px solid var(--bg-tertiary)',
+                    boxShadow: 'var(--shadow-sm)'
+                  }}>
                     <div className="flex items-start gap-3 mb-3">
                       <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white font-bold ${
                         isCorrect ? 'bg-green-500' : 'bg-red-500'
@@ -240,35 +278,53 @@ export default function Quiz({ questions, noteId, noteType, onComplete }: QuizPr
                         {isCorrect ? '✓' : '✗'}
                       </div>
                       <div className="flex-1">
-                        <h5 className="font-semibold text-gray-900 mb-2">
+                        <h5 className="font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>
                           Question {index + 1}: {question.question}
                         </h5>
                         
                         {/* Answer Options */}
                         <div className="space-y-2 mb-3">
                           {Object.entries(question.options).map(([key, value]) => {
-                            let optionClass = 'p-2 rounded border ';
+                            let optionStyles: React.CSSProperties = { 
+                              border: '1px solid var(--bg-tertiary)',
+                              borderRadius: '8px',
+                              padding: '8px 12px'
+                            };
                             
                             if (key === question.correctAnswer) {
                               // Correct answer - always green
-                              optionClass += 'bg-green-100 border-green-300 text-green-800';
+                              optionStyles = {
+                                ...optionStyles,
+                                background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(22, 163, 74, 0.1))',
+                                border: '1px solid rgba(34, 197, 94, 0.4)',
+                                color: '#22c55e'
+                              };
                             } else if (key === userAnswer && !isCorrect) {
                               // User's wrong answer - red
-                              optionClass += 'bg-red-100 border-red-300 text-red-800';
+                              optionStyles = {
+                                ...optionStyles,
+                                background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(220, 38, 38, 0.1))',
+                                border: '1px solid rgba(239, 68, 68, 0.4)',
+                                color: '#ef4444'
+                              };
                             } else {
-                              // Other options - gray
-                              optionClass += 'bg-gray-50 border-gray-200 text-gray-700';
+                              // Other options - dark theme
+                              optionStyles = {
+                                ...optionStyles,
+                                background: 'var(--bg-primary)',
+                                color: 'var(--text-secondary)'
+                              };
                             }
                             
                             return (
-                              <div key={key} className={optionClass}>
+                              <div key={key} style={optionStyles}>
                                 <span className="font-semibold mr-2">{key}.</span>
                                 {value}
                                 {key === question.correctAnswer && (
-                                  <span className="ml-2 text-green-600 font-semibold">✓ Correct</span>
+                                  <span className="ml-2 font-semibold" style={{ color: '#22c55e' }}>✓ Correct</span>
                                 )}
                                 {key === userAnswer && !isCorrect && (
-                                  <span className="ml-2 text-red-600 font-semibold">✗ Your Answer</span>
+                                  <span className="ml-2 font-semibold" style={{ color: '#ef4444' }}>✗ Your Answer</span>
                                 )}
                               </div>
                             );
@@ -276,14 +332,21 @@ export default function Quiz({ questions, noteId, noteType, onComplete }: QuizPr
                         </div>
                         
                         {/* Result Summary */}
-                        <div className={`p-3 rounded-lg ${
-                          isCorrect ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'
-                        }`}>
-                          <p className={`font-semibold ${isCorrect ? 'text-green-800' : 'text-red-800'}`}>
+                        <div className="p-3 rounded-lg" style={{
+                          background: isCorrect 
+                            ? 'linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(22, 163, 74, 0.05))'
+                            : 'linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.05))',
+                          border: isCorrect 
+                            ? '1px solid rgba(34, 197, 94, 0.3)'
+                            : '1px solid rgba(239, 68, 68, 0.3)'
+                        }}>
+                          <p className="font-semibold" style={{ 
+                            color: isCorrect ? '#22c55e' : '#ef4444'
+                          }}>
                             {isCorrect ? '✅ Correct!' : '❌ Incorrect'}
                           </p>
                           {!isCorrect && (
-                            <p className="text-red-700 text-sm mt-1">
+                            <p className="text-sm mt-1" style={{ color: '#ef4444' }}>
                               Your answer: <strong>{userAnswer}</strong> | 
                               Correct answer: <strong>{question.correctAnswer}</strong>
                             </p>
@@ -291,8 +354,8 @@ export default function Quiz({ questions, noteId, noteType, onComplete }: QuizPr
                           
                           {/* Explanation */}
                           {question.explanation && (
-                            <div className="mt-2 pt-2 border-t border-gray-300">
-                              <p className="text-sm text-gray-700">
+                            <div className="mt-2 pt-2" style={{ borderTop: '1px solid var(--bg-tertiary)' }}>
+                              <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
                                 <strong>Explanation:</strong> {question.explanation}
                               </p>
                             </div>
@@ -314,28 +377,36 @@ export default function Quiz({ questions, noteId, noteType, onComplete }: QuizPr
   const progress = ((currentQuestion + 1) / questions.length) * 100;
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+    <div className="rounded-2xl p-6" style={{ 
+      background: 'linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%)',
+      border: '1px solid var(--bg-tertiary)',
+      boxShadow: 'var(--shadow-lg)'
+    }}>
       {/* Quiz Header */}
       <div className="mb-6">
         <div className="flex justify-between items-center mb-4">
-          <h3 className="text-xl font-bold text-gray-900">📝 Quiz Time!</h3>
-          <span className="text-sm text-gray-600">
+          <h3 className="text-xl font-bold" style={{ color: 'var(--text-primary)' }}>📝 Quiz Time!</h3>
+          <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>
             Question {currentQuestion + 1} of {questions.length}
           </span>
         </div>
         
         {/* Progress Bar */}
-        <div className="w-full bg-gray-200 rounded-full h-2">
+        <div className="w-full rounded-full h-3" style={{ background: 'var(--bg-primary)' }}>
           <div 
-            className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-            style={{ width: `${progress}%` }}
+            className="h-3 rounded-full transition-all duration-300"
+            style={{ 
+              width: `${progress}%`,
+              background: 'linear-gradient(135deg, var(--color-cta) 0%, var(--color-file) 100%)',
+              boxShadow: 'var(--glow-cta)'
+            }}
           ></div>
         </div>
       </div>
 
       {/* Question */}
       <div className="mb-6">
-        <h4 className="text-lg font-semibold text-gray-900 mb-4">
+        <h4 className="text-lg font-semibold mb-4" style={{ color: 'var(--text-primary)' }}>
           {question.question}
         </h4>
         
@@ -345,11 +416,17 @@ export default function Quiz({ questions, noteId, noteType, onComplete }: QuizPr
             <button
               key={key}
               onClick={() => handleAnswerSelect(key)}
-              className={`w-full text-left p-4 rounded-lg border-2 transition-all duration-200 ${
-                selectedAnswer === key
-                  ? 'border-blue-500 bg-blue-50 text-blue-900'
-                  : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
-              }`}
+              className="w-full text-left p-4 rounded-xl transition-all duration-300 transform hover:scale-102"
+              style={{
+                background: selectedAnswer === key 
+                  ? 'linear-gradient(135deg, var(--color-cta) 0%, var(--color-file) 100%)'
+                  : 'var(--bg-primary)',
+                border: selectedAnswer === key 
+                  ? '2px solid var(--color-cta)' 
+                  : '2px solid var(--bg-tertiary)',
+                color: selectedAnswer === key ? 'var(--bg-primary)' : 'var(--text-primary)',
+                boxShadow: selectedAnswer === key ? 'var(--glow-cta)' : 'var(--shadow-sm)'
+              }}
             >
               <span className="font-semibold mr-3">{key}.</span>
               {value}
@@ -360,29 +437,37 @@ export default function Quiz({ questions, noteId, noteType, onComplete }: QuizPr
 
       {/* Error Message */}
       {error && (
-        <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
-          <p className="text-red-600">{error}</p>
+        <div className="mb-4 p-4 rounded-xl" style={{ 
+          background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.1))',
+          border: '1px solid rgba(239, 68, 68, 0.3)',
+          boxShadow: '0 0 20px rgba(239, 68, 68, 0.1)'
+        }}>
+          <p style={{ color: '#ef4444' }}>{error}</p>
         </div>
       )}
 
       {/* Next Button */}
       <div className="flex justify-between items-center">
-        <div className="text-sm text-gray-600">
+        <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>
           {selectedAnswer ? `Selected: ${selectedAnswer}` : 'Select an answer to continue'}
         </div>
         
         <button
           onClick={handleNextQuestion}
           disabled={!selectedAnswer || isSubmitting}
-          className={`px-6 py-2 rounded-md font-semibold transition-colors ${
-            selectedAnswer && !isSubmitting
-              ? 'bg-blue-600 text-white hover:bg-blue-700'
-              : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-          }`}
+          className="px-8 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+          style={{ 
+            background: (selectedAnswer && !isSubmitting)
+              ? 'linear-gradient(135deg, var(--color-cta) 0%, var(--color-file) 100%)'
+              : 'var(--bg-tertiary)',
+            color: (selectedAnswer && !isSubmitting) ? 'var(--bg-primary)' : 'var(--text-muted)',
+            boxShadow: (selectedAnswer && !isSubmitting) ? 'var(--glow-cta)' : 'var(--shadow-sm)'
+          }}
         >
           {isSubmitting ? (
             <span className="flex items-center gap-2">
-              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+              <div className="w-4 h-4 rounded-full animate-spin" 
+                style={{ border: '2px solid var(--bg-primary)', borderTop: '2px solid var(--color-cta)' }}></div>
               Submitting...
             </span>
           ) : currentQuestion === questions.length - 1 ? (

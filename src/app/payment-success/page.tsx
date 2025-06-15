@@ -135,10 +135,11 @@ function PaymentSuccessPageContent() {
   // Show loading state if user is not loaded yet
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--bg-primary)' }}>
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600">
+          <div className="w-20 h-20 rounded-full animate-spin mx-auto mb-6"
+            style={{ border: '4px solid var(--bg-tertiary)', borderTop: '4px solid var(--color-cta)' }}></div>
+          <p style={{ color: 'var(--text-secondary)' }}>
             {syncStatus === 'syncing' ? 'Activating your subscription...' : 'Verifying your payment...'}
           </p>
         </div>
@@ -148,16 +149,27 @@ function PaymentSuccessPageContent() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--bg-primary)' }}>
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Please Sign In</h2>
-          <p className="text-gray-600 mb-6">You need to be signed in to view this page.</p>
-          <button
-            onClick={() => router.push('/?signup=true')}
-            className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700"
-          >
-            Sign In / Sign Up
-          </button>
+          <div className="max-w-md mx-auto rounded-2xl p-8" style={{ 
+            background: 'linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%)',
+            border: '1px solid var(--bg-tertiary)',
+            boxShadow: 'var(--shadow-lg)'
+          }}>
+            <h2 className="text-2xl font-bold mb-4" style={{ color: 'var(--text-primary)' }}>Please Sign In</h2>
+            <p className="mb-6" style={{ color: 'var(--text-secondary)' }}>You need to be signed in to view this page.</p>
+            <button
+              onClick={() => router.push('/?signup=true')}
+              className="px-8 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105"
+              style={{ 
+                background: 'linear-gradient(135deg, var(--color-cta) 0%, var(--color-file) 100%)',
+                color: 'var(--bg-primary)',
+                boxShadow: 'var(--glow-cta)'
+              }}
+            >
+              Sign In / Sign Up
+            </button>
+          </div>
         </div>
       </div>
     )
@@ -165,18 +177,30 @@ function PaymentSuccessPageContent() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="max-w-md mx-auto bg-white rounded-lg shadow-lg p-8 text-center">
-          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--bg-primary)' }}>
+        <div className="max-w-md mx-auto rounded-2xl p-8 text-center" style={{ 
+          background: 'linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%)',
+          border: '1px solid var(--bg-tertiary)',
+          boxShadow: 'var(--shadow-lg)'
+        }}>
+          <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ 
+            background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(220, 38, 38, 0.1))',
+            border: '1px solid rgba(239, 68, 68, 0.3)'
+          }}>
+            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ color: '#ef4444' }}>
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Payment Verification Failed</h2>
-          <p className="text-gray-600 mb-6">{error}</p>
+          <h2 className="text-2xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>Payment Verification Failed</h2>
+          <p className="mb-6" style={{ color: 'var(--text-secondary)' }}>{error}</p>
           <button
             onClick={() => router.push('/pricing')}
-            className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700"
+            className="w-full py-3 px-6 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105"
+            style={{ 
+              background: 'linear-gradient(135deg, var(--color-cta) 0%, var(--color-file) 100%)',
+              color: 'var(--bg-primary)',
+              boxShadow: 'var(--glow-cta)'
+            }}
           >
             Back to Pricing
           </button>
@@ -218,37 +242,47 @@ function PaymentSuccessPageContent() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-      <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-lg p-8">
+    <div className="min-h-screen flex items-center justify-center px-4" style={{ background: 'var(--bg-primary)' }}>
+      <div className="max-w-2xl mx-auto rounded-2xl p-8" style={{ 
+        background: 'linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%)',
+        border: '1px solid var(--bg-tertiary)',
+        boxShadow: 'var(--shadow-lg)'
+      }}>
         <div className="text-center mb-6">
-          <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ 
+            background: 'linear-gradient(135deg, var(--color-cta), var(--color-file))',
+            boxShadow: 'var(--glow-cta)'
+          }}>
+            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ color: 'var(--bg-primary)' }}>
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
           </div>
           
           {syncStatus === 'success' ? (
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Subscription Activated Successfully!</h1>
+            <h1 className="text-3xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>Subscription Activated Successfully!</h1>
           ) : syncStatus === 'error' ? (
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">Payment Successful!</h1>
-              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mt-4">
+              <h1 className="text-3xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>Payment Successful!</h1>
+              <div className="rounded-xl p-4 mt-4" style={{ 
+                background: 'linear-gradient(135deg, rgba(255, 165, 0, 0.1), rgba(255, 165, 0, 0.05))',
+                border: '1px solid rgba(255, 165, 0, 0.3)'
+              }}>
                 <div className="flex items-center">
-                  <svg className="w-5 h-5 text-yellow-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ color: 'var(--color-video)' }}>
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16c-.77.833.192 2.5 1.732 2.5z" />
                   </svg>
-                  <p className="text-yellow-800 text-sm">
+                  <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
                     Your payment was successful, but there was an issue activating your subscription. Please contact support if your limits don't update within a few minutes.
                   </p>
                 </div>
               </div>
             </div>
           ) : (
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Payment Successful!</h1>
+            <h1 className="text-3xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>Payment Successful!</h1>
           )}
           
           {sessionData && (
-            <p className="text-gray-600">
+            <p style={{ color: 'var(--text-secondary)' }}>
               Thank you for subscribing to the <strong>{planNames[sessionData.metadata.planId as keyof typeof planNames]}</strong> plan!
             </p>
           )}
@@ -257,36 +291,40 @@ function PaymentSuccessPageContent() {
         {sessionData && (
           <div className="space-y-6">
             {/* Plan Details */}
-            <div className="bg-gray-50 rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Your New Plan</h3>
+            <div className="rounded-xl p-6" style={{ 
+              background: 'linear-gradient(135deg, var(--bg-primary) 0%, rgba(44, 211, 225, 0.05) 100%)',
+              border: '1px solid var(--bg-tertiary)',
+              boxShadow: 'var(--shadow-sm)'
+            }}>
+              <h3 className="text-lg font-semibold mb-4" style={{ color: 'var(--text-primary)' }}>Your New Plan</h3>
               
               <div className="grid grid-cols-3 gap-4 mb-4">
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-blue-600">
+                  <div className="text-2xl font-bold" style={{ color: 'var(--color-cta)' }}>
                     {planLimits[sessionData.metadata.planId as keyof typeof planLimits].notes}
                   </div>
-                  <div className="text-sm text-gray-600">Notes/Month</div>
+                  <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>Notes/Month</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-blue-600">
+                  <div className="text-2xl font-bold" style={{ color: 'var(--color-cta)' }}>
                     {planLimits[sessionData.metadata.planId as keyof typeof planLimits].saved}
                   </div>
-                  <div className="text-sm text-gray-600">Saved Notes</div>
+                  <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>Saved Notes</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-blue-600">
+                  <div className="text-2xl font-bold" style={{ color: 'var(--color-cta)' }}>
                     {planLimits[sessionData.metadata.planId as keyof typeof planLimits].chars}
                   </div>
-                  <div className="text-sm text-gray-600">Max Text Length</div>
+                  <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>Max Text Length</div>
                 </div>
               </div>
 
               <div className="space-y-2">
-                <h4 className="font-medium text-gray-900">Included Features:</h4>
+                <h4 className="font-medium" style={{ color: 'var(--text-primary)' }}>Included Features:</h4>
                 <ul className="space-y-1">
                   {planFeatures[sessionData.metadata.planId as keyof typeof planFeatures].map((feature, index) => (
-                    <li key={index} className="flex items-center text-sm text-gray-700">
-                      <svg className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <li key={index} className="flex items-center text-sm" style={{ color: 'var(--text-secondary)' }}>
+                      <svg className="w-4 h-4 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ color: 'var(--color-file)' }}>
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
                       {feature}
@@ -300,13 +338,23 @@ function PaymentSuccessPageContent() {
             <div className="flex flex-col sm:flex-row gap-4">
               <button
                 onClick={() => router.push('/dashboard')}
-                className="flex-1 bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors"
+                className="flex-1 py-3 px-6 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105"
+                style={{ 
+                  background: 'linear-gradient(135deg, var(--color-cta) 0%, var(--color-file) 100%)',
+                  color: 'var(--bg-primary)',
+                  boxShadow: 'var(--glow-cta)'
+                }}
               >
                 Go to Dashboard
               </button>
               <button
                 onClick={() => router.push('/generate/text')}
-                className="flex-1 bg-green-600 text-white py-3 px-6 rounded-lg hover:bg-green-700 transition-colors"
+                className="flex-1 py-3 px-6 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105"
+                style={{ 
+                  background: 'linear-gradient(135deg, var(--color-file) 0%, var(--color-text) 100%)',
+                  color: 'var(--bg-primary)',
+                  boxShadow: 'var(--glow-file)'
+                }}
               >
                 Generate Your First Note
               </button>
@@ -320,7 +368,15 @@ function PaymentSuccessPageContent() {
 
 export default function PaymentSuccessPage() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--bg-primary)' }}>
+        <div className="text-center">
+          <div className="w-20 h-20 rounded-full animate-spin mx-auto mb-6"
+            style={{ border: '4px solid var(--bg-tertiary)', borderTop: '4px solid var(--color-cta)' }}></div>
+          <p style={{ color: 'var(--text-secondary)' }}>Loading payment status...</p>
+        </div>
+      </div>
+    }>
       <PaymentSuccessPageContent />
     </Suspense>
   )

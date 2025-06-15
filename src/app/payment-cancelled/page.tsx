@@ -6,46 +6,54 @@ export default function PaymentCancelledPage() {
   const router = useRouter()
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-      <div className="max-w-md mx-auto bg-white rounded-lg shadow-lg p-8 text-center">
-        <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
-          <svg className="w-8 h-8 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+    <div className="min-h-screen flex items-center justify-center px-4" style={{ background: 'var(--bg-primary)' }}>
+      <div className="max-w-md mx-auto rounded-2xl p-8 text-center" style={{ 
+        background: 'linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%)',
+        border: '1px solid var(--bg-tertiary)',
+        boxShadow: 'var(--shadow-lg)'
+      }}>
+        <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ 
+          background: 'linear-gradient(135deg, rgba(255, 165, 0, 0.2), rgba(255, 165, 0, 0.1))',
+          border: '1px solid rgba(255, 165, 0, 0.3)'
+        }}>
+          <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ color: 'var(--color-video)' }}>
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
           </svg>
         </div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Payment Cancelled</h2>
-        <p className="text-gray-600 mb-6">
-          Your payment was cancelled. No charges have been made to your account.
+        
+        <h1 className="text-3xl font-bold mb-4" style={{ color: 'var(--text-primary)' }}>
+          Payment Cancelled
+        </h1>
+        
+        <p className="mb-6 text-lg" style={{ color: 'var(--text-secondary)' }}>
+          Your payment was cancelled. No charges were made to your account.
         </p>
-        <div className="space-y-3">
+        
+        <div className="flex flex-col gap-3">
           <button
             onClick={() => router.push('/pricing')}
-            className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-blue-700 transition-colors"
+            className="w-full py-3 px-6 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105"
+            style={{ 
+              background: 'linear-gradient(135deg, var(--color-cta) 0%, var(--color-file) 100%)',
+              color: 'var(--bg-primary)',
+              boxShadow: 'var(--glow-cta)'
+            }}
           >
             Back to Pricing
           </button>
+          
           <button
-            onClick={() => router.push('/dashboard')}
-            className="w-full border border-gray-300 text-gray-700 py-3 px-6 rounded-lg hover:bg-gray-50 transition-colors"
+            onClick={() => router.push('/')}
+            className="w-full py-3 px-6 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105"
+            style={{ 
+              background: 'var(--bg-primary)',
+              color: 'var(--text-secondary)',
+              border: '1px solid var(--bg-tertiary)',
+              boxShadow: 'var(--shadow-sm)'
+            }}
           >
-            Go to Dashboard
+            Continue with Free Plan
           </button>
-        </div>
-        
-        {/* Help Section */}
-        <div className="mt-6 pt-6 border-t border-gray-200">
-          <p className="text-sm text-gray-500 mb-3">
-            Need help with your subscription?
-          </p>
-          <div className="flex justify-center space-x-4 text-sm">
-            <a href="/pricing" className="text-blue-600 hover:text-blue-800 hover:underline">
-              View Plans
-            </a>
-            <span className="text-gray-300">|</span>
-            <a href="mailto:support@eduscribe.com" className="text-blue-600 hover:text-blue-800 hover:underline">
-              Contact Support
-            </a>
-          </div>
         </div>
       </div>
     </div>

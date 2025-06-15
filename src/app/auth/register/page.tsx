@@ -4,8 +4,6 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { toast } from 'react-hot-toast';
-import { Input } from '@/components/ui/Input';
-import { Button } from '@/components/ui/Button';
 import { supabase } from '@/lib/supabase';
 
 export default function RegisterPage() {
@@ -173,61 +171,127 @@ export default function RegisterPage() {
 
   if (currentStep === 'signup') {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8" style={{ background: 'var(--bg-primary)' }}>
         <div className="max-w-md w-full space-y-8">
           <div className="text-center">
             <Link 
               href="/" 
-              className="inline-block mb-4 text-sm text-blue-600 hover:text-blue-500 transition-colors"
+              className="inline-flex items-center gap-2 mb-6 px-4 py-2 rounded-xl font-medium transition-all duration-300 transform hover:scale-105"
+              style={{ 
+                background: 'var(--bg-secondary)',
+                color: 'var(--text-secondary)',
+                border: '1px solid var(--bg-tertiary)',
+                boxShadow: 'var(--shadow-sm)'
+              }}
             >
-              ← Back to homepage
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+              Back to homepage
             </Link>
-            <h2 className="text-3xl font-extrabold text-gray-900">
-              Create your account
-            </h2>
-            <p className="mt-2 text-sm text-gray-600">
-              Join thousands of students improving their learning
-            </p>
+            
+            <div className="mb-8">
+              <h1 className="text-4xl font-bold mb-4" style={{ color: 'var(--text-primary)' }}>
+                Join{' '}
+                <span style={{ color: 'var(--color-cta)' }}>EduScribe</span>
+              </h1>
+              <p className="text-xl" style={{ color: 'var(--text-secondary)' }}>
+                Join thousands of students improving their learning
+              </p>
+            </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-lg p-8 space-y-6">
+          <div className="rounded-2xl p-8" style={{ 
+            background: 'linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%)',
+            border: '1px solid var(--bg-tertiary)',
+            boxShadow: 'var(--shadow-xl)'
+          }}>
             <form onSubmit={handleSignupSubmit} className="space-y-6">
               <div className="space-y-4">
-                {/* Basic Sign-up Fields */}
-                <Input
-                  label="Email address"
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  error={errors.email}
-                  required
-                  disabled={isLoading}
-                  placeholder="you@example.com"
-                />
-                <Input
-                  label="Password"
-                  type="password"
-                  value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  error={errors.password}
-                  required
-                  disabled={isLoading}
-                  placeholder="At least 6 characters"
-                />
-                <Input
-                  label="Confirm Password"
-                  type="password"
-                  value={formData.confirmPassword}
-                  onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                  error={errors.confirmPassword}
-                  required
-                  disabled={isLoading}
-                  placeholder="Confirm your password"
-                />
+                {/* Email Input */}
+                <div>
+                  <label className="block text-sm font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>
+                    Email address
+                  </label>
+                  <input
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    required
+                    disabled={isLoading}
+                    placeholder="you@example.com"
+                    className="w-full px-4 py-3 rounded-xl transition-all duration-300 focus:outline-none focus:ring-2"
+                    style={{
+                      background: 'var(--bg-primary)',
+                      border: errors.email ? '2px solid #ef4444' : '2px solid var(--bg-tertiary)',
+                      color: 'var(--text-primary)',
+                      boxShadow: 'var(--shadow-sm)'
+                    }}
+                    onFocus={(e) => e.target.style.borderColor = 'var(--color-cta)'}
+                    onBlur={(e) => e.target.style.borderColor = errors.email ? '#ef4444' : 'var(--bg-tertiary)'}
+                  />
+                  {errors.email && (
+                    <p className="mt-2 text-sm" style={{ color: '#ef4444' }}>{errors.email}</p>
+                  )}
+                </div>
+
+                {/* Password Input */}
+                <div>
+                  <label className="block text-sm font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>
+                    Password
+                  </label>
+                  <input
+                    type="password"
+                    value={formData.password}
+                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                    required
+                    disabled={isLoading}
+                    placeholder="At least 6 characters"
+                    className="w-full px-4 py-3 rounded-xl transition-all duration-300 focus:outline-none focus:ring-2"
+                    style={{
+                      background: 'var(--bg-primary)',
+                      border: errors.password ? '2px solid #ef4444' : '2px solid var(--bg-tertiary)',
+                      color: 'var(--text-primary)',
+                      boxShadow: 'var(--shadow-sm)'
+                    }}
+                    onFocus={(e) => e.target.style.borderColor = 'var(--color-cta)'}
+                    onBlur={(e) => e.target.style.borderColor = errors.password ? '#ef4444' : 'var(--bg-tertiary)'}
+                  />
+                  {errors.password && (
+                    <p className="mt-2 text-sm" style={{ color: '#ef4444' }}>{errors.password}</p>
+                  )}
+                </div>
+
+                {/* Confirm Password Input */}
+                <div>
+                  <label className="block text-sm font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>
+                    Confirm Password
+                  </label>
+                  <input
+                    type="password"
+                    value={formData.confirmPassword}
+                    onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                    required
+                    disabled={isLoading}
+                    placeholder="Confirm your password"
+                    className="w-full px-4 py-3 rounded-xl transition-all duration-300 focus:outline-none focus:ring-2"
+                    style={{
+                      background: 'var(--bg-primary)',
+                      border: errors.confirmPassword ? '2px solid #ef4444' : '2px solid var(--bg-tertiary)',
+                      color: 'var(--text-primary)',
+                      boxShadow: 'var(--shadow-sm)'
+                    }}
+                    onFocus={(e) => e.target.style.borderColor = 'var(--color-cta)'}
+                    onBlur={(e) => e.target.style.borderColor = errors.confirmPassword ? '#ef4444' : 'var(--bg-tertiary)'}
+                  />
+                  {errors.confirmPassword && (
+                    <p className="mt-2 text-sm" style={{ color: '#ef4444' }}>{errors.confirmPassword}</p>
+                  )}
+                </div>
 
                 {/* Privacy Policy and Terms Checkbox */}
                 <div>
-                  <label className="flex items-start space-x-3">
+                  <label className="flex items-start space-x-3 cursor-pointer">
                     <input
                       type="checkbox"
                       checked={formData.acceptTerms}
@@ -241,59 +305,75 @@ export default function RegisterPage() {
                           });
                         }
                       }}
-                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded mt-1"
+                      className="h-5 w-5 rounded mt-1 transition-colors duration-300"
+                      style={{ 
+                        accentColor: 'var(--color-cta)',
+                        backgroundColor: 'var(--bg-primary)',
+                        borderColor: 'var(--bg-tertiary)'
+                      }}
                       disabled={isLoading}
                       required
                     />
-                    <span className="text-sm text-gray-700 leading-5">
+                    <span className="text-sm leading-5" style={{ color: 'var(--text-secondary)' }}>
                       I accept the{' '}
-                      <Link href="/privacy" target="_blank" className="text-blue-600 hover:text-blue-500 underline font-medium">
+                      <Link href="/privacy" target="_blank" className="font-semibold transition-colors duration-300 hover:underline" style={{ color: 'var(--color-cta)' }}>
                         Privacy Policy
                       </Link>{' '}
                       and{' '}
-                      <Link href="/terms" target="_blank" className="text-blue-600 hover:text-blue-500 underline font-medium">
+                      <Link href="/terms" target="_blank" className="font-semibold transition-colors duration-300 hover:underline" style={{ color: 'var(--color-cta)' }}>
                         Terms of Service
                       </Link>
-                      <span className="text-red-500 ml-1">*</span>
+                      <span className="ml-1" style={{ color: '#ef4444' }}>*</span>
                     </span>
                   </label>
                   {errors.acceptTerms && (
-                    <p className="mt-2 text-sm text-red-600">{errors.acceptTerms}</p>
+                    <p className="mt-2 text-sm" style={{ color: '#ef4444' }}>{errors.acceptTerms}</p>
                   )}
                 </div>
               </div>
 
-              <Button
+              <button
                 type="submit"
-                isLoading={isLoading}
-                fullWidth
                 disabled={isLoading}
-                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors"
+                className="w-full py-4 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                style={{ 
+                  background: isLoading ? 'var(--bg-tertiary)' : 'linear-gradient(135deg, var(--color-cta) 0%, var(--color-file) 100%)',
+                  color: isLoading ? 'var(--text-muted)' : 'var(--bg-primary)',
+                  boxShadow: isLoading ? 'var(--shadow-sm)' : 'var(--glow-cta)'
+                }}
               >
                 Continue to Survey
-              </Button>
+              </button>
 
               {/* Email Confirmation Notice */}
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <div className="flex">
-                  <div className="flex-shrink-0">
-                    <svg className="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
+              <div className="rounded-xl p-4" style={{ 
+                background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(37, 99, 235, 0.05))',
+                border: '1px solid rgba(59, 130, 246, 0.3)',
+                boxShadow: '0 0 20px rgba(59, 130, 246, 0.1)'
+              }}>
+                <div className="flex items-start gap-3">
+                  <div className="w-6 h-6 rounded-full flex items-center justify-center mt-0.5" style={{ background: 'rgba(59, 130, 246, 0.2)' }}>
+                    <svg className="w-4 h-4" style={{ color: '#3b82f6' }} fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
                     </svg>
                   </div>
-                  <div className="ml-3">
-                    <p className="text-sm text-blue-700">
-                      ⚠️ Please confirm your email address to activate your account. A confirmation link will be sent after registration.
-                    </p>
-                  </div>
+                  <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+                    ⚠️ Please confirm your email address to activate your account. A confirmation link will be sent after registration.
+                  </p>
                 </div>
               </div>
 
-              <div className="text-sm text-center">
-                Already have an account?{' '}
-                <Link href="/auth/login" className="font-medium text-blue-600 hover:text-blue-500 transition-colors">
-                  Sign in
-                </Link>
+              <div className="text-center">
+                <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+                  Already have an account?{' '}
+                  <Link 
+                    href="/auth/login" 
+                    className="font-semibold transition-colors duration-300 hover:underline"
+                    style={{ color: 'var(--color-cta)' }}
+                  >
+                    Sign in
+                  </Link>
+                </p>
               </div>
             </form>
           </div>
@@ -303,21 +383,26 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8" style={{ background: 'var(--bg-primary)' }}>
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-8">
-          <h2 className="text-3xl font-extrabold text-gray-900">
-            Help us personalize your experience
+          <h2 className="text-4xl font-bold mb-4" style={{ color: 'var(--text-primary)' }}>
+            Help us personalize your{' '}
+            <span style={{ color: 'var(--color-cta)' }}>EduScribe</span> experience
           </h2>
-          <p className="mt-2 text-lg text-gray-600">
+          <p className="text-xl" style={{ color: 'var(--text-secondary)' }}>
             Tell us about yourself and what you're interested in (optional)
           </p>
         </div>
 
-        <div className="bg-white rounded-xl shadow-lg p-8 space-y-8">
+        <div className="rounded-2xl p-8 space-y-8" style={{ 
+          background: 'linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%)',
+          border: '1px solid var(--bg-tertiary)',
+          boxShadow: 'var(--shadow-xl)'
+        }}>
           {/* Section 1: Features Interest */}
           <div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-6">
+            <h3 className="text-2xl font-bold mb-6" style={{ color: 'var(--text-primary)' }}>
               📋 What features are you most interested in?
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -326,22 +411,36 @@ export default function RegisterPage() {
                   key={option.value}
                   type="button"
                   onClick={() => handleInterestToggle(option.value)}
-                  className={`p-4 rounded-lg border-2 transition-all text-left hover:shadow-md ${
-                    formData.interests.includes(option.value)
-                      ? 'border-blue-500 bg-blue-50 shadow-md'
-                      : 'border-gray-200 hover:border-gray-300'
-                  }`}
+                  className="p-4 rounded-xl text-left transition-all duration-300 transform hover:scale-105"
+                  style={{
+                    background: formData.interests.includes(option.value)
+                      ? 'linear-gradient(135deg, var(--color-cta)15, var(--color-cta)05)'
+                      : 'var(--bg-primary)',
+                    border: formData.interests.includes(option.value)
+                      ? '2px solid var(--color-cta)'
+                      : '2px solid var(--bg-tertiary)',
+                    boxShadow: formData.interests.includes(option.value) ? 'var(--glow-cta)' : 'var(--shadow-sm)'
+                  }}
                 >
                   <div className="flex items-start space-x-3">
                     <span className="text-2xl">{option.icon}</span>
                     <div>
-                      <h4 className="font-medium text-gray-900">{option.label}</h4>
-                      <p className="text-sm text-gray-600 mt-1">{option.description}</p>
+                      <h4 className="font-semibold mb-1" style={{ 
+                        color: formData.interests.includes(option.value) ? 'var(--color-cta)' : 'var(--text-primary)' 
+                      }}>
+                        {option.label}
+                      </h4>
+                      <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+                        {option.description}
+                      </p>
                     </div>
                   </div>
                   {formData.interests.includes(option.value) && (
-                    <div className="mt-2">
-                      <div className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                    <div className="mt-3">
+                      <div className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold" style={{ 
+                        background: 'var(--color-cta)',
+                        color: 'var(--bg-primary)'
+                      }}>
                         ✓ Selected
                       </div>
                     </div>
@@ -353,7 +452,7 @@ export default function RegisterPage() {
 
           {/* Section 2: User Type */}
           <div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-6">
+            <h3 className="text-2xl font-bold mb-6" style={{ color: 'var(--text-primary)' }}>
               👤 Who are you?
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -362,22 +461,36 @@ export default function RegisterPage() {
                   key={option.value}
                   type="button"
                   onClick={() => setFormData(prev => ({ ...prev, userType: option.value }))}
-                  className={`p-4 rounded-lg border-2 transition-all text-left hover:shadow-md ${
-                    formData.userType === option.value
-                      ? 'border-blue-500 bg-blue-50 shadow-md'
-                      : 'border-gray-200 hover:border-gray-300'
-                  }`}
+                  className="p-4 rounded-xl text-left transition-all duration-300 transform hover:scale-105"
+                  style={{
+                    background: formData.userType === option.value
+                      ? 'linear-gradient(135deg, var(--color-file)15, var(--color-file)05)'
+                      : 'var(--bg-primary)',
+                    border: formData.userType === option.value
+                      ? '2px solid var(--color-file)'
+                      : '2px solid var(--bg-tertiary)',
+                    boxShadow: formData.userType === option.value ? 'var(--shadow-xl)' : 'var(--shadow-sm)'
+                  }}
                 >
                   <div className="flex items-start space-x-3">
                     <span className="text-2xl">{option.icon}</span>
                     <div>
-                      <h4 className="font-medium text-gray-900">{option.label}</h4>
-                      <p className="text-sm text-gray-600 mt-1">{option.description}</p>
+                      <h4 className="font-semibold mb-1" style={{ 
+                        color: formData.userType === option.value ? 'var(--color-file)' : 'var(--text-primary)' 
+                      }}>
+                        {option.label}
+                      </h4>
+                      <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+                        {option.description}
+                      </p>
                     </div>
                   </div>
                   {formData.userType === option.value && (
-                    <div className="mt-2">
-                      <div className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                    <div className="mt-3">
+                      <div className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold" style={{ 
+                        background: 'var(--color-file)',
+                        color: 'var(--bg-primary)'
+                      }}>
                         ✓ Selected
                       </div>
                     </div>
@@ -388,30 +501,65 @@ export default function RegisterPage() {
           </div>
 
           {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 pt-6 border-t border-gray-200">
-            <Button
+          <div className="flex flex-col sm:flex-row gap-4 pt-6" style={{ borderTop: '1px solid var(--bg-tertiary)' }}>
+            <button
               onClick={() => handleCompleteRegistration(true)}
-              variant="outline"
-              isLoading={isLoading}
-              className="flex-1 py-3 border-gray-300 text-gray-700 hover:bg-gray-50"
+              disabled={isLoading}
+              className="flex-1 py-4 rounded-xl font-semibold text-lg transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+              style={{ 
+                background: 'var(--bg-primary)',
+                color: 'var(--text-secondary)',
+                border: '2px solid var(--bg-tertiary)',
+                boxShadow: 'var(--shadow-sm)'
+              }}
             >
-              Skip this step
-            </Button>
-            <Button
+              {isLoading ? (
+                <span className="flex items-center justify-center gap-2">
+                  <div className="w-5 h-5 rounded-full animate-spin" 
+                    style={{ border: '2px solid var(--text-secondary)', borderTop: '2px solid var(--color-cta)' }}></div>
+                  Processing...
+                </span>
+              ) : (
+                'Skip this step'
+              )}
+            </button>
+            <button
               onClick={() => handleCompleteRegistration(false)}
-              isLoading={isLoading}
-              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3"
+              disabled={isLoading}
+              className="flex-1 py-4 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+              style={{ 
+                background: isLoading ? 'var(--bg-tertiary)' : 'linear-gradient(135deg, var(--color-cta) 0%, var(--color-file) 100%)',
+                color: isLoading ? 'var(--text-muted)' : 'var(--bg-primary)',
+                boxShadow: isLoading ? 'var(--shadow-sm)' : 'var(--glow-cta)'
+              }}
             >
-              Complete Registration
-            </Button>
+              {isLoading ? (
+                <span className="flex items-center justify-center gap-2">
+                  <div className="w-5 h-5 rounded-full animate-spin" 
+                    style={{ border: '2px solid var(--bg-primary)', borderTop: '2px solid var(--color-cta)' }}></div>
+                  Creating Account...
+                </span>
+              ) : (
+                'Complete Registration'
+              )}
+            </button>
           </div>
 
           <div className="text-center">
             <button
               onClick={() => setCurrentStep('signup')}
-              className="text-sm text-gray-500 hover:text-gray-700 transition-colors"
+              className="px-4 py-2 rounded-xl font-medium transition-all duration-300 transform hover:scale-105"
+              style={{ 
+                background: 'var(--bg-primary)',
+                color: 'var(--text-secondary)',
+                border: '1px solid var(--bg-tertiary)',
+                boxShadow: 'var(--shadow-sm)'
+              }}
             >
-              ← Back to sign-up form
+              <svg className="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+              Back to sign-up form
             </button>
           </div>
         </div>

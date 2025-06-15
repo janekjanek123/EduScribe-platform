@@ -23,6 +23,24 @@ const pl = {
     subtitle: 'Wykorzystaj AI do generowania kompleksowych notatek z filmów YouTube, przesłanych plików, wideo lub tekstu. Wybierz preferowaną metodę poniżej.',
     generateNotes: 'Generuj notatki',
     
+    // Hero Section
+    heroTitle: 'Zacznij uczyć się mądrzej i szybciej z',
+    heroSubtitle: 'Przekształć dowolną treść w profesjonalne prezentacje, kompleksowe notatki, uporządkowane eseje, szczegółowe studia przypadków i interaktywne quizy dzięki naszej zaawansowanej technologii AI.',
+    getStarted: 'Rozpocznij →',
+    
+    // Features Section
+    powerfulTools: 'Potężne narzędzia AI dla każdej potrzeby',
+    notesGenerator: 'Generator notatek',
+    notesDescription: 'Przekształć dowolną treść w uporządkowane, kompleksowe notatki',
+    presentationGenerator: 'Generator prezentacji',
+    presentationDescription: 'Twórz profesjonalne prezentacje ze swojej treści',
+    essayWriter: 'Pisarz esejów',
+    essayDescription: 'Generuj dobrze uporządkowane eseje i prace akademickie',
+    caseStudyBuilder: 'Kreator studiów przypadków',
+    caseStudyDescription: 'Buduj szczegółowe studia przypadków z pomocą AI',
+    quizGenerator: 'Generator quizów',
+    quizDescription: 'Twórz interaktywne quizy do nauki i oceny',
+    
     // Cards
     youtubeVideos: 'Filmy YouTube',
     youtubeDescription: 'Wyciągnij kompleksowe notatki z dowolnego filmu YouTube, po prostu wklejając URL.',
@@ -40,14 +58,111 @@ const pl = {
     textInputDescription: 'Wklej dowolną treść tekstową i przekształć ją w dobrze uporządkowane, kompleksowe notatki.',
     enterText: 'Wprowadź tekst →',
     
-    // Features
+    // Why Choose EduScribe
     whyChoose: 'Dlaczego wybrać EduScribe?',
+    lightningFast: 'Błyskawicznie szybki',
+    lightningFastDescription: 'Uzyskaj profesjonalne rezultaty w minuty, nie godziny. Nasza AI pracuje z nadludzką prędkością.',
     aiPowered: 'Wsparty AI',
     aiPoweredDescription: 'Zaawansowana technologia AI wyciąga kluczowe informacje i tworzy uporządkowane podsumowania.',
     fastEfficient: 'Szybki i wydajny',
     fastEfficientDescription: 'Generuj kompleksowe notatki w minuty, a nie godziny ręcznej pracy.',
     multipleFormats: 'Wiele formatów',
-    multipleFormatsDescription: 'Obsługa filmów, dokumentów i tekstu z konsekwentną jakością wyników.'
+    multipleFormatsDescription: 'Obsługa filmów, dokumentów i tekstu z konsekwentną jakością wyników.',
+    smartAnalysis: 'Inteligentna analiza',
+    smartAnalysisDescription: 'Nasza AI rozumie kontekst i tworzy znaczące połączenia między koncepcjami.',
+    securePrivate: 'Bezpieczne i prywatne',
+    securePrivateDescription: 'Twoje dane są chronione najnowszym szyfrowaniem i pozostają całkowicie prywatne.',
+    
+    // How It Works
+    howItWorks: 'Jak to działa',
+    step1Title: 'Wybierz swoje zadanie',
+    step1Description: 'Wybierz spośród notatek, prezentacji, esejów, studiów przypadków lub interaktywnych quizów w zależności od swoich celów edukacyjnych',
+    step2Title: 'Dostarcz treść',
+    step2Description: 'Prześlij pliki, wklej adresy YouTube lub wprowadź tekst bezpośrednio - nasza AI pracuje z dowolnym formatem treści',
+    step3Title: 'AI generuje wyniki',
+    step3Description: 'Nasza zaawansowana AI przetwarza i analizuje twoją treść, aby stworzyć profesjonalne, uporządkowane wyniki',
+    step4Title: 'Pobierz i używaj',
+    step4Description: 'Otrzymaj swoją dopracowaną treść gotową do natychmiastowego użycia - eksportuj, udostępniaj lub kontynuuj edycję według potrzeb',
+    
+    // Guarantees
+    guarantees: 'Nasze gwarancje',
+    lightningFastGuarantee: 'Błyskawicznie szybki',
+    lightningFastGuaranteeDesc: 'Wyniki w minuty, nie godziny',
+    accuracyGuarantee: '99% dokładności',
+    accuracyGuaranteeDesc: 'Precyzja i jakość wsparta AI',
+    secureGuarantee: 'Bezpieczne i prywatne',
+    secureGuaranteeDesc: 'Twoje dane są chronione i poufne',
+    multiLanguageGuarantee: 'Wielojęzyczne',
+    multiLanguageGuaranteeDesc: 'Obsługa polskiego i angielskiego',
+    anyDeviceGuarantee: 'Dowolne urządzenie',
+    anyDeviceGuaranteeDesc: 'Działa na komputerze, tablecie i telefonie',
+    premiumQualityGuarantee: 'Najwyższa jakość',
+    premiumQualityGuaranteeDesc: 'Profesjonalne wyniki za każdym razem',
+    
+    // Reviews
+    verifiedReviews: 'Zweryfikowane opinie',
+    review1Name: 'Anna Kowalska',
+    review1Text: 'EduScribe uratował mój semestr! Tworzenie notatek z wykładów nigdy nie było tak proste.',
+    review2Name: 'Michał Nowak',
+    review2Text: 'Jakość generowanych esejów przeszła moje oczekiwania. Oszczędziłem dziesiątki godzin pracy.',
+    review3Name: 'Katarzyna Wiśniewska',
+    review3Text: 'Profesjonalne studia przypadków w kilka minut. To naprawdę działa!',
+    review4Name: 'Piotr Zieliński',
+    review4Text: 'Generator quizów pomaga mi tworzyć angażujące treści dla moich uczniów w minuty.',
+    review5Name: 'Magdalena Kowalczyk',
+    review5Text: 'Najlepsze narzędzie dla studentów. Prezentacje wyglądają profesjonalnie!',
+    
+    // Demo Notes Preview
+    demoNotesTitle: 'Podstawy uczenia maszynowego',
+    demoKeyConcepts: 'Kluczowe koncepcje',
+    demoSupervised: 'Uczenie nadzorowane vs nienadzorowane',
+    demoTrainingData: 'Dane treningowe i walidacyjne',
+    demoAccuracy: 'Dokładność modelu i przeuczenie',
+    demoAlgorithms: 'Popularne algorytmy',
+    demoLinearRegression: 'Regresja liniowa',
+    demoDecisionTrees: 'Drzewa decyzyjne',
+    demoNeuralNetworks: 'Sieci neuronowe',
+    demoRemember: 'Pamiętaj: Zacznij od prostych modeli przed przejściem do złożonych',
+    
+    // Demo Quiz Questions
+    quizQuestion1: 'Jak szybko możesz wygenerować notatki z prezentacji zawierającej 50 slajdów pełnych tekstu używając EduScribe?',
+    quizAnswer1A: 'W ciągu sekund',
+    quizAnswer1B: 'W jeden dzień',
+    quizAnswer1C: 'W jeden tydzień',
+    quizExplanation1: 'Technologia AI EduScribe może przetwarzać i generować kompleksowe notatki z dużych prezentacji w sekundach, nie godzinach czy dniach.',
+    
+    quizQuestion2: 'Ile czasu może zaoszczędzić EduScribe w porównaniu z ręcznym robieniem notatek?',
+    quizAnswer2A: 'Godziny pracy',
+    quizAnswer2B: 'Tylko kilka minut',
+    quizAnswer2C: 'Wcale',
+    quizExplanation2: 'EduScribe może zaoszczędzić ci godziny ręcznej pracy przy robieniu notatek, automatycznie generując uporządkowane, kompleksowe notatki z dowolnej treści.',
+    
+    quizQuestion3: 'Ilu studentów już korzystało z EduScribe?',
+    quizAnswer3A: 'Ponad 10 000',
+    quizAnswer3B: '500',
+    quizAnswer3C: 'Jeszcze nikt',
+    quizExplanation3: 'EduScribe pomógł już ponad 10 000 studentom i profesjonalistom usprawnić proces nauki i tworzenia treści.',
+    
+    // Quiz Interface
+    quizProgress: 'Pytanie {{current}} z {{total}}',
+    quizScore: 'Twój wynik: {{score}}/{{total}}',
+    quizPercentage: '{{percentage}}%',
+    quizExcellent: 'Doskonale! Jesteś ekspertem EduScribe!',
+    quizGood: 'Świetnie! Dobrze znasz EduScribe!',
+    quizOkay: 'Nieźle! Warto dowiedzieć się więcej o EduScribe.',
+    nextQuestion: 'Następne pytanie',
+    showDetails: 'Zobacz szczegóły',
+    tryAgain: 'Spróbuj ponownie',
+    
+    // Pricing CTA
+    readyToStart: 'Gotowy na start?',
+    pricingCta: 'Wybierz plan idealny dla Ciebie i zacznij tworzyć niesamowite treści już dziś.',
+    viewPricing: 'Zobacz cennik',
+    
+    // Footer CTA
+    joinThousands: 'Dołącz do tysięcy zadowolonych użytkowników',
+    startToday: 'Zacznij dziś i przekształć sposób, w jaki się uczysz i tworzysz treści.',
+    getStartedFree: 'Rozpocznij za darmo'
   },
   
   // Help/Support Page
@@ -470,6 +585,24 @@ const en = {
     subtitle: 'Use AI to generate comprehensive notes from YouTube videos, uploaded files, videos, or raw text. Choose your preferred method below.',
     generateNotes: 'Generate Notes',
     
+    // Hero Section
+    heroTitle: 'Start learning smarter and faster with',
+    heroSubtitle: 'Transform any content into professional presentations, comprehensive notes, structured essays, detailed case studies, and interactive quizzes with our advanced AI technology.',
+    getStarted: 'Get Started →',
+    
+    // Features Section
+    powerfulTools: 'Powerful AI Tools for Every Need',
+    notesGenerator: 'Notes Generator',
+    notesDescription: 'Transform any content into structured, comprehensive notes',
+    presentationGenerator: 'Presentation Generator',
+    presentationDescription: 'Create professional presentations from your content',
+    essayWriter: 'Essay Writer',
+    essayDescription: 'Generate well-structured essays and academic papers',
+    caseStudyBuilder: 'Case Study Builder',
+    caseStudyDescription: 'Build detailed case studies with AI assistance',
+    quizGenerator: 'Quiz Generator',
+    quizDescription: 'Create interactive quizzes for learning and assessment',
+    
     // Cards
     youtubeVideos: 'YouTube Videos',
     youtubeDescription: 'Extract comprehensive notes from any YouTube video by simply pasting the URL.',
@@ -487,14 +620,111 @@ const en = {
     textInputDescription: 'Paste any text content and transform it into well-structured, comprehensive notes.',
     enterText: 'Enter Text →',
     
-    // Features
+    // Why Choose EduScribe
     whyChoose: 'Why Choose EduScribe?',
+    lightningFast: 'Lightning Fast',
+    lightningFastDescription: 'Get professional results in minutes, not hours. Our AI works at superhuman speed.',
     aiPowered: 'AI-Powered',
     aiPoweredDescription: 'Advanced AI technology extracts key information and creates structured summaries.',
     fastEfficient: 'Fast & Efficient',
     fastEfficientDescription: 'Generate comprehensive notes in minutes, not hours of manual work.',
     multipleFormats: 'Multiple Formats',
-    multipleFormatsDescription: 'Support for videos, documents, and text with consistent quality output.'
+    multipleFormatsDescription: 'Support for videos, documents, and text with consistent quality output.',
+    smartAnalysis: 'Smart Analysis',
+    smartAnalysisDescription: 'Our AI understands context and creates meaningful connections between concepts.',
+    securePrivate: 'Secure & Private',
+    securePrivateDescription: 'Your data is protected with state-of-the-art encryption and remains completely private.',
+    
+    // How It Works
+    howItWorks: 'How It Works',
+    step1Title: 'Choose Your Task',
+    step1Description: 'Select from notes, presentations, essays, case studies, or interactive quizzes based on your learning goals',
+    step2Title: 'Provide Content',
+    step2Description: 'Upload files, paste YouTube URLs, or input text directly - our AI works with any content format',
+    step3Title: 'AI Generates Results',
+    step3Description: 'Our advanced AI processes and analyzes your content to create professional, structured output',
+    step4Title: 'Download & Use',
+    step4Description: 'Get your polished content ready to use instantly - export, share, or continue editing as needed',
+    
+    // Guarantees
+    guarantees: 'Our Guarantees',
+    lightningFastGuarantee: 'Lightning Fast',
+    lightningFastGuaranteeDesc: 'Results in minutes, not hours',
+    accuracyGuarantee: '99% Accuracy',
+    accuracyGuaranteeDesc: 'AI-powered precision and quality',
+    secureGuarantee: 'Secure & Private',
+    secureGuaranteeDesc: 'Your data is protected and confidential',
+    multiLanguageGuarantee: 'Multi-Language',
+    multiLanguageGuaranteeDesc: 'Support for Polish and English',
+    anyDeviceGuarantee: 'Any Device',
+    anyDeviceGuaranteeDesc: 'Works on desktop, tablet, and mobile',
+    premiumQualityGuarantee: 'Premium Quality',
+    premiumQualityGuaranteeDesc: 'Professional-grade output every time',
+    
+    // Reviews
+    verifiedReviews: 'Verified Reviews',
+    review1Name: 'Anna Kowalska',
+    review1Text: 'EduScribe saved my semester! Creating notes from lectures has never been this easy.',
+    review2Name: 'John Smith',
+    review2Text: 'Incredible tool for students and professionals. The presentation generator is a game-changer!',
+    review3Name: 'Michał Nowak',
+    review3Text: 'The quality of generated essays exceeded my expectations. I saved dozens of hours of work.',
+    review4Name: 'Sarah Johnson',
+    review4Text: 'The quiz generator helps me create engaging content for my students in minutes.',
+    review5Name: 'Katarzyna Wiśniewska',
+    review5Text: 'Professional case studies in just a few minutes. This really works!',
+    
+    // Demo Notes Preview
+    demoNotesTitle: 'Machine Learning Fundamentals',
+    demoKeyConcepts: 'Key Concepts',
+    demoSupervised: 'Supervised vs Unsupervised Learning',
+    demoTrainingData: 'Training and Validation Data',
+    demoAccuracy: 'Model Accuracy and Overfitting',
+    demoAlgorithms: 'Common Algorithms',
+    demoLinearRegression: 'Linear Regression',
+    demoDecisionTrees: 'Decision Trees',
+    demoNeuralNetworks: 'Neural Networks',
+    demoRemember: 'Remember: Start with simple models before moving to complex ones',
+    
+    // Demo Quiz Questions
+    quizQuestion1: 'How fast can you generate notes from a presentation with 50 slides full of text using EduScribe?',
+    quizAnswer1A: 'Within seconds',
+    quizAnswer1B: 'In one day',
+    quizAnswer1C: 'In one week',
+    quizExplanation1: 'EduScribe\'s AI technology can process and generate comprehensive notes from large presentations in seconds, not hours or days.',
+    
+    quizQuestion2: 'How much time can EduScribe save compared to taking manual notes?',
+    quizAnswer2A: 'Hours of work',
+    quizAnswer2B: 'A few minutes only',
+    quizAnswer2C: 'No time at all',
+    quizExplanation2: 'EduScribe can save you hours of manual note-taking work by automatically generating structured, comprehensive notes from any content.',
+    
+    quizQuestion3: 'How many students have already used EduScribe?',
+    quizAnswer3A: 'Over 10,000',
+    quizAnswer3B: '500',
+    quizAnswer3C: 'No one yet',
+    quizExplanation3: 'EduScribe has helped over 10,000 students and professionals streamline their learning and content creation process.',
+    
+    // Quiz Interface
+    quizProgress: 'Question {{current}} of {{total}}',
+    quizScore: 'Your Score: {{score}}/{{total}}',
+    quizPercentage: '{{percentage}}%',
+    quizExcellent: 'Excellent! You\'re an EduScribe expert!',
+    quizGood: 'Great! You know EduScribe well!',
+    quizOkay: 'Not bad! Worth learning more about EduScribe.',
+    nextQuestion: 'Next Question',
+    showDetails: 'Show Details',
+    tryAgain: 'Try Again',
+    
+    // Pricing CTA
+    readyToStart: 'Ready to Get Started?',
+    pricingCta: 'Choose the perfect plan for you and start creating amazing content today.',
+    viewPricing: 'View Pricing',
+    
+    // Footer CTA
+    joinThousands: 'Join Thousands of Satisfied Users',
+    startToday: 'Start today and transform the way you learn and create content.',
+    getStartedFree: 'Get Started for Free'
   },
   
   // Help/Support Page

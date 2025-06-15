@@ -377,17 +377,28 @@ export default function DashboardPage() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--bg-primary)' }}>
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">
-            {t('dashboard.loginRequired')}
-          </h1>
-          <button
-            onClick={() => router.push('/')}
-            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
-          >
-            {t('dashboard.goToHomepage')}
-          </button>
+          <div className="rounded-2xl p-8" style={{ 
+            background: 'linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%)',
+            border: '1px solid var(--bg-tertiary)',
+            boxShadow: 'var(--shadow-lg)'
+          }}>
+            <h1 className="text-2xl font-bold mb-4" style={{ color: 'var(--text-primary)' }}>
+              {t('dashboard.loginRequired')}
+            </h1>
+            <button
+              onClick={() => router.push('/')}
+              className="px-8 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105"
+              style={{ 
+                background: 'linear-gradient(135deg, var(--color-cta) 0%, var(--color-file) 100%)',
+                color: 'var(--bg-primary)',
+                boxShadow: 'var(--glow-cta)'
+              }}
+            >
+              {t('dashboard.goToHomepage')}
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -395,10 +406,11 @@ export default function DashboardPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--bg-primary)' }}>
         <div className="text-center">
-          <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600">{t('dashboard.loadingNotes')}</p>
+          <div className="w-20 h-20 rounded-full animate-spin mx-auto mb-6"
+            style={{ border: '4px solid var(--bg-tertiary)', borderTop: '4px solid var(--color-cta)' }}></div>
+          <p style={{ color: 'var(--text-secondary)' }}>{t('dashboard.loadingNotes')}</p>
         </div>
       </div>
     );
@@ -407,24 +419,29 @@ export default function DashboardPage() {
   const filteredNotes = getFilteredNotes();
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="min-h-screen" style={{ background: 'var(--bg-primary)' }}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Header */}
-        <div className="mb-8">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div className="mb-12">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">
+              <h1 className="text-4xl font-bold" style={{ color: 'var(--text-primary)' }}>
                 {t('dashboard.title')}
               </h1>
-              <p className="text-gray-600 mt-1">
+              <p className="mt-2 text-lg" style={{ color: 'var(--text-secondary)' }}>
                 {t('dashboard.subtitle')}
               </p>
             </div>
             
-            <div className="flex flex-col sm:flex-row gap-3">
+            <div className="flex flex-col sm:flex-row gap-4">
               <button
                 onClick={() => router.push('/')}
-                className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                className="px-8 py-4 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105"
+                style={{ 
+                  background: 'var(--color-cta)',
+                  color: 'var(--bg-primary)',
+                  boxShadow: 'var(--shadow-md)'
+                }}
               >
                 {t('dashboard.generateNotes')}
               </button>
@@ -451,55 +468,75 @@ export default function DashboardPage() {
         )}
 
         {/* Filters */}
-        <div className="mb-6">
-          <div className="flex flex-wrap gap-2">
+        <div className="mb-8">
+          <div className="flex flex-wrap gap-3">
             <button
               onClick={() => setFilter('all')}
-              className={`px-4 py-2 rounded-lg transition-colors ${
-                filter === 'all'
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-white text-gray-700 hover:bg-gray-50 border'
+              className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 ${
+                filter === 'all' ? 'scale-105' : ''
               }`}
+              style={{
+                background: filter === 'all' ? 'var(--color-cta)' : 'var(--bg-secondary)',
+                color: filter === 'all' ? 'var(--bg-primary)' : 'var(--text-secondary)',
+                border: '1px solid var(--bg-tertiary)',
+                boxShadow: filter === 'all' ? 'var(--glow-cta)' : 'var(--shadow-sm)'
+              }}
             >
               {t('dashboard.filters.allNotes')} ({notes.length})
             </button>
             <button
               onClick={() => setFilter('video')}
-              className={`px-4 py-2 rounded-lg transition-colors ${
-                filter === 'video'
-                  ? 'bg-red-600 text-white'
-                  : 'bg-white text-gray-700 hover:bg-gray-50 border'
+              className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 ${
+                filter === 'video' ? 'scale-105' : ''
               }`}
+              style={{
+                background: filter === 'video' ? 'var(--color-youtube)' : 'var(--bg-secondary)',
+                color: filter === 'video' ? 'var(--bg-primary)' : 'var(--text-secondary)',
+                border: '1px solid var(--bg-tertiary)',
+                boxShadow: filter === 'video' ? 'var(--glow-youtube)' : 'var(--shadow-sm)'
+              }}
             >
               {t('dashboard.filters.videoNotes')} ({notes.filter(n => n.type === 'video').length})
             </button>
             <button
               onClick={() => setFilter('video-upload')}
-              className={`px-4 py-2 rounded-lg transition-colors ${
-                filter === 'video-upload'
-                  ? 'bg-purple-600 text-white'
-                  : 'bg-white text-gray-700 hover:bg-gray-50 border'
+              className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 ${
+                filter === 'video-upload' ? 'scale-105' : ''
               }`}
+              style={{
+                background: filter === 'video-upload' ? 'var(--color-video)' : 'var(--bg-secondary)',
+                color: filter === 'video-upload' ? 'var(--bg-primary)' : 'var(--text-secondary)',
+                border: '1px solid var(--bg-tertiary)',
+                boxShadow: filter === 'video-upload' ? 'var(--glow-video)' : 'var(--shadow-sm)'
+              }}
             >
               {t('dashboard.filters.uploadedVideoNotes')} ({notes.filter(n => n.type === 'video-upload').length})
             </button>
             <button
               onClick={() => setFilter('file')}
-              className={`px-4 py-2 rounded-lg transition-colors ${
-                filter === 'file'
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-white text-gray-700 hover:bg-gray-50 border'
+              className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 ${
+                filter === 'file' ? 'scale-105' : ''
               }`}
+              style={{
+                background: filter === 'file' ? 'var(--color-file)' : 'var(--bg-secondary)',
+                color: filter === 'file' ? 'var(--bg-primary)' : 'var(--text-secondary)',
+                border: '1px solid var(--bg-tertiary)',
+                boxShadow: filter === 'file' ? 'var(--glow-file)' : 'var(--shadow-sm)'
+              }}
             >
               {t('dashboard.filters.fileNotes')} ({notes.filter(n => n.type === 'file').length})
             </button>
             <button
               onClick={() => setFilter('text')}
-              className={`px-4 py-2 rounded-lg transition-colors ${
-                filter === 'text'
-                  ? 'bg-green-600 text-white'
-                  : 'bg-white text-gray-700 hover:bg-gray-50 border'
+              className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 ${
+                filter === 'text' ? 'scale-105' : ''
               }`}
+              style={{
+                background: filter === 'text' ? 'var(--color-text)' : 'var(--bg-secondary)',
+                color: filter === 'text' ? 'var(--bg-primary)' : 'var(--text-secondary)',
+                border: '1px solid var(--bg-tertiary)',
+                boxShadow: filter === 'text' ? 'var(--glow-text)' : 'var(--shadow-sm)'
+              }}
             >
               {t('dashboard.filters.textNotes')} ({notes.filter(n => n.type === 'text').length})
             </button>
@@ -508,34 +545,57 @@ export default function DashboardPage() {
 
         {/* Notes Grid */}
         {filteredNotes.length === 0 ? (
-          <div className="text-center py-12">
-            <div className="text-6xl mb-4">📝</div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">
-              {filter === 'all' ? t('dashboard.noNotes') : t('dashboard.noNotesInCategory')}
-            </h3>
-            <p className="text-gray-600 mb-6">
-              {filter === 'all' ? t('dashboard.createFirstNote') : t('dashboard.tryDifferentFilter')}
-            </p>
-            {filter === 'all' && (
-              <button
-                onClick={() => router.push('/')}
-                className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                {t('dashboard.generateFirstNote')}
-              </button>
-            )}
+          <div className="text-center py-16">
+            <div className="rounded-3xl p-12 max-w-md mx-auto" style={{ 
+              background: 'linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%)',
+              border: '1px solid var(--bg-tertiary)',
+              boxShadow: 'var(--shadow-xl)'
+            }}>
+              <div className="text-8xl mb-6 opacity-80">📝</div>
+              <h3 className="text-2xl font-bold mb-4" style={{ color: 'var(--text-primary)' }}>
+                {filter === 'all' ? t('dashboard.noNotes') : t('dashboard.noNotesInCategory')}
+              </h3>
+              <p className="text-lg mb-8 leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+                {filter === 'all' ? t('dashboard.createFirstNote') : t('dashboard.tryDifferentFilter')}
+              </p>
+              {filter === 'all' && (
+                <button
+                  onClick={() => router.push('/')}
+                  className="px-10 py-4 rounded-xl font-semibold text-lg transition-all duration-300 transform hover:scale-105"
+                  style={{ 
+                    background: 'linear-gradient(135deg, var(--color-cta) 0%, var(--color-file) 100%)',
+                    color: 'var(--bg-primary)',
+                    boxShadow: 'var(--glow-cta)',
+                    minHeight: '56px'
+                  }}
+                >
+                  {t('dashboard.generateFirstNote')}
+                </button>
+              )}
+            </div>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredNotes.map((note) => (
               <div
                 key={`${note.type}-${note.id}`}
-                className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow p-6 cursor-pointer"
+                className="rounded-2xl p-6 cursor-pointer transition-all duration-300 transform hover:scale-105 hover:translate-y-[-4px]"
+                style={{ 
+                  background: 'linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%)',
+                  border: '1px solid var(--bg-tertiary)',
+                  boxShadow: 'var(--shadow-md)'
+                }}
                 onClick={() => handleNoteClick(note)}
               >
                 {/* Note Type Badge */}
-                <div className="flex items-center justify-between mb-4">
-                  <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getTypeColor(note.type)}`}>
+                <div className="flex items-center justify-between mb-6">
+                  <span className="inline-flex items-center px-4 py-2 rounded-xl text-sm font-semibold" style={{
+                    background: note.type === 'video' ? 'var(--color-youtube)' :
+                                note.type === 'file' ? 'var(--color-file)' :
+                                note.type === 'video-upload' ? 'var(--color-video)' :
+                                'var(--color-text)',
+                    color: 'var(--bg-primary)'
+                  }}>
                     <span className="mr-2">{getTypeIcon(note.type)}</span>
                     {t(`dashboard.noteTypes.${note.type}`)}
                   </span>
@@ -544,7 +604,8 @@ export default function DashboardPage() {
                       e.stopPropagation();
                       openDeleteConfirm(note);
                     }}
-                    className="text-gray-400 hover:text-red-500 transition-colors"
+                    className="p-2 rounded-xl transition-all duration-300 hover:scale-110"
+                    style={{ color: 'var(--text-muted)' }}
                     title={t('dashboard.deleteNote')}
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -568,13 +629,13 @@ export default function DashboardPage() {
                 )}
 
                 {/* Note Title */}
-                <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
+                <h3 className="text-xl font-semibold mb-3 line-clamp-2" style={{ color: 'var(--text-primary)' }}>
                   {note.title}
                 </h3>
 
                 {/* Note Content Preview */}
                 {note.content && (
-                  <p className="text-gray-600 text-sm mb-4 line-clamp-3">
+                  <p className="text-sm mb-4 line-clamp-3 leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
                     {note.content.substring(0, 150)}...
                   </p>
                 )}
@@ -614,23 +675,38 @@ export default function DashboardPage() {
         {/* Logout Confirmation Modal */}
         {showLogoutConfirm && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg p-6 max-w-md mx-4">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            <div className="rounded-2xl p-8 max-w-md mx-4" style={{ 
+              background: 'linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%)',
+              border: '1px solid var(--bg-tertiary)',
+              boxShadow: 'var(--shadow-xl)'
+            }}>
+              <h3 className="text-xl font-bold mb-4" style={{ color: 'var(--text-primary)' }}>
                 {t('dashboard.confirmLogout.title')}
               </h3>
-              <p className="text-gray-600 mb-6">
+              <p className="mb-8 text-lg leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
                 {t('dashboard.confirmLogout.message')}
               </p>
-              <div className="flex space-x-3">
+              <div className="flex space-x-4">
                 <button
                   onClick={handleCancelLogout}
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                  className="flex-1 px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105"
+                  style={{ 
+                    background: 'var(--bg-primary)',
+                    color: 'var(--text-secondary)',
+                    border: '1px solid var(--bg-tertiary)',
+                    boxShadow: 'var(--shadow-sm)'
+                  }}
                 >
                   {t('dashboard.confirmLogout.cancel')}
                 </button>
                 <button
                   onClick={handleConfirmLogout}
-                  className="flex-1 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+                  className="flex-1 px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105"
+                  style={{ 
+                    background: 'linear-gradient(135deg, #ef4444, #dc2626)',
+                    color: 'white',
+                    boxShadow: 'var(--shadow-md)'
+                  }}
                 >
                   {t('dashboard.confirmLogout.confirm')}
                 </button>
@@ -642,29 +718,52 @@ export default function DashboardPage() {
         {/* Delete Confirmation Modal */}
         {deleteConfirm.isOpen && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg p-6 max-w-md mx-4">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            <div className="rounded-2xl p-8 max-w-md mx-4" style={{ 
+              background: 'linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%)',
+              border: '1px solid var(--bg-tertiary)',
+              boxShadow: 'var(--shadow-xl)'
+            }}>
+              <h3 className="text-xl font-bold mb-4" style={{ color: 'var(--text-primary)' }}>
                 {t('dashboard.deleteConfirm.title')}
               </h3>
-              <p className="text-gray-600 mb-2">
+              <p className="mb-3 text-lg leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
                 {t('dashboard.deleteConfirm.message')}
               </p>
-              <p className="text-sm font-medium text-gray-900 mb-6">
+              <p className="text-lg font-semibold mb-6 p-4 rounded-xl" style={{ 
+                color: 'var(--text-primary)',
+                background: 'var(--bg-primary)',
+                border: '1px solid var(--bg-tertiary)'
+              }}>
                 "{deleteConfirm.noteTitle}"
               </p>
-              <p className="text-sm text-gray-500 mb-6">
+              <p className="text-sm mb-8 p-3 rounded-lg" style={{ 
+                color: '#ef4444',
+                background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.1))',
+                border: '1px solid rgba(239, 68, 68, 0.3)'
+              }}>
                 {t('dashboard.deleteConfirm.warning')}
               </p>
-              <div className="flex space-x-3">
+              <div className="flex space-x-4">
                 <button
                   onClick={closeDeleteConfirm}
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                  className="flex-1 px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105"
+                  style={{ 
+                    background: 'var(--bg-primary)',
+                    color: 'var(--text-secondary)',
+                    border: '1px solid var(--bg-tertiary)',
+                    boxShadow: 'var(--shadow-sm)'
+                  }}
                 >
                   {t('dashboard.deleteConfirm.cancel')}
                 </button>
                 <button
                   onClick={handleDeleteNote}
-                  className="flex-1 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+                  className="flex-1 px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105"
+                  style={{ 
+                    background: 'linear-gradient(135deg, #ef4444, #dc2626)',
+                    color: 'white',
+                    boxShadow: 'var(--shadow-md)'
+                  }}
                 >
                   {t('dashboard.deleteConfirm.confirm')}
                 </button>

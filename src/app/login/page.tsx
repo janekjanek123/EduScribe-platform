@@ -82,34 +82,46 @@ export default function LoginPage() {
   }
   
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-4">
+    <div className="min-h-screen flex flex-col items-center justify-center p-4" style={{ background: 'var(--bg-primary)' }}>
       <div className="w-full max-w-md">
         <div className="text-center mb-10">
-          <h1 className="text-3xl font-bold text-gray-900">Logowanie</h1>
-          <p className="mt-2 text-gray-600">Zaloguj się, aby kontynuować</p>
+          <h1 className="text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>Logowanie</h1>
+          <p className="mt-2" style={{ color: 'var(--text-secondary)' }}>Zaloguj się, aby kontynuować</p>
           {redirectPath && (
-            <p className="mt-2 text-sm text-primary-600">
+            <p className="mt-2 text-sm" style={{ color: 'var(--color-cta)' }}>
               Po zalogowaniu wrócisz do poprzedniej strony
             </p>
           )}
         </div>
         
         {redirectMessage && (
-          <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 text-yellow-800 rounded-md">
+          <div className="mb-6 p-4 rounded-xl" style={{ 
+            background: 'linear-gradient(135deg, rgba(255, 165, 0, 0.1), rgba(255, 165, 0, 0.05))',
+            border: '1px solid rgba(255, 165, 0, 0.3)',
+            color: 'var(--color-video)'
+          }}>
             <p>{redirectMessage}</p>
           </div>
         )}
         
         {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-800 rounded-md">
+          <div className="mb-6 p-4 rounded-xl" style={{ 
+            background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.1))',
+            border: '1px solid rgba(239, 68, 68, 0.3)',
+            color: '#ef4444'
+          }}>
             <p>{error}</p>
           </div>
         )}
         
-        <div className="bg-white shadow-md rounded-lg p-6 border border-gray-200">
+        <div className="rounded-2xl p-6" style={{ 
+          background: 'linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%)',
+          border: '1px solid var(--bg-tertiary)',
+          boxShadow: 'var(--shadow-lg)'
+        }}>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="email" className="block text-sm font-medium mb-1" style={{ color: 'var(--text-primary)' }}>
                 Email
               </label>
               <input
@@ -117,14 +129,20 @@ export default function LoginPage() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                className="w-full px-3 py-2 rounded-md transition-all duration-300 focus:ring-2 focus:outline-none"
+                style={{
+                  background: 'var(--bg-primary)',
+                  border: '1px solid var(--bg-tertiary)',
+                  color: 'var(--text-primary)',
+                  boxShadow: 'var(--shadow-sm)'
+                }}
                 placeholder="twoj@email.pl"
                 required
               />
             </div>
             
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="password" className="block text-sm font-medium mb-1" style={{ color: 'var(--text-primary)' }}>
                 Hasło
               </label>
               <input
@@ -132,7 +150,13 @@ export default function LoginPage() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                className="w-full px-3 py-2 rounded-md transition-all duration-300 focus:ring-2 focus:outline-none"
+                style={{
+                  background: 'var(--bg-primary)',
+                  border: '1px solid var(--bg-tertiary)',
+                  color: 'var(--text-primary)',
+                  boxShadow: 'var(--shadow-sm)'
+                }}
                 placeholder="••••••••"
                 required
               />
@@ -140,7 +164,7 @@ export default function LoginPage() {
             
             <div className="flex items-center justify-between">
               <div className="text-sm">
-                <Link href="/forgot-password" className="text-primary-600 hover:text-primary-500">
+                <Link href="/forgot-password" className="transition-colors duration-300" style={{ color: 'var(--color-cta)' }}>
                   Zapomniałeś hasła?
                 </Link>
               </div>
@@ -150,18 +174,19 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className={`w-full flex justify-center py-2.5 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white focus:outline-none ${
-                  isLoading ? 'bg-gray-400' : 'bg-primary-600 hover:bg-primary-700'
-                }`}
+                className="w-full flex justify-center py-3 px-4 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                style={{ 
+                  background: isLoading 
+                    ? 'var(--bg-tertiary)' 
+                    : 'linear-gradient(135deg, var(--color-cta) 0%, var(--color-file) 100%)',
+                  color: isLoading ? 'var(--text-muted)' : 'var(--bg-primary)',
+                  boxShadow: isLoading ? 'var(--shadow-sm)' : 'var(--glow-cta)'
+                }}
               >
                 {isLoading ? (
                   <div className="flex items-center">
-                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" 
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                      </path>
-                    </svg>
+                    <div className="w-4 h-4 rounded-full animate-spin mr-2" 
+                      style={{ border: '2px solid var(--bg-primary)', borderTop: '2px solid var(--color-cta)' }}></div>
                     Logowanie...
                   </div>
                 ) : 'Zaloguj się'}
@@ -170,9 +195,9 @@ export default function LoginPage() {
           </form>
           
           <div className="mt-6">
-            <p className="text-center text-sm text-gray-600">
+            <p className="text-center text-sm" style={{ color: 'var(--text-secondary)' }}>
               Nie masz konta?{' '}
-              <Link href="/signup" className="text-primary-600 hover:text-primary-500">
+              <Link href="/signup" className="transition-colors duration-300" style={{ color: 'var(--color-cta)' }}>
                 Zarejestruj się
               </Link>
             </p>

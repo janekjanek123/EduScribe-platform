@@ -731,17 +731,18 @@ export default function PricingPage() {
 
   if (subscriptionLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--bg-primary)' }}>
         <div className="text-center">
-          <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading subscription information...</p>
+          <div className="w-20 h-20 rounded-full animate-spin mx-auto mb-6"
+            style={{ border: '4px solid var(--bg-tertiary)', borderTop: '4px solid var(--color-cta)' }}></div>
+          <p style={{ color: 'var(--text-secondary)' }}>Loading subscription information...</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen py-16 px-4 sm:px-6 lg:px-8" style={{ background: 'var(--bg-primary)' }}>
       {/* Toast Notification */}
       {toast && (
         <Toast 
@@ -753,22 +754,26 @@ export default function PricingPage() {
       
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+        <div className="text-center mb-16">
+          <h1 className="text-4xl font-bold mb-6" style={{ color: 'var(--text-primary)' }}>
             {t('pricing.title')}
           </h1>
-          <p className="text-xl text-gray-600 mb-8">
+          <p className="text-xl mb-12" style={{ color: 'var(--text-secondary)' }}>
             {t('pricing.subtitle')}
           </p>
           
           {/* Current Subscription Status */}
           {user && userSubscription && (
-            <div className="mb-8 p-4 bg-blue-50 border border-blue-200 rounded-lg max-w-md mx-auto">
-              <p className="text-blue-800">
+            <div className="mb-12 p-6 rounded-2xl max-w-md mx-auto" style={{ 
+              background: 'linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%)',
+              border: '1px solid var(--color-cta)',
+              boxShadow: 'var(--glow-cta)'
+            }}>
+              <p style={{ color: 'var(--color-cta)' }}>
                 <strong>{t('pricing.currentPlan')}:</strong> {staticPlans.find(p => p.id === currentPlan)?.display_name || t('pricing.unknown')}
               </p>
               {userSubscription.cancel_at_period_end && (
-                <p className="text-orange-600 text-sm mt-1">
+                <p className="text-sm mt-2" style={{ color: 'var(--color-video)' }}>
                   {t('pricing.subscriptionEndsOn', { date: new Date(userSubscription.current_period_end).toLocaleDateString() })}
                 </p>
               )}
@@ -776,25 +781,34 @@ export default function PricingPage() {
           )}
           
           {/* Billing Toggle */}
-          <div className="flex items-center justify-center mb-8">
-            <span className={`mr-3 ${billingCycle === 'monthly' ? 'text-gray-900 font-medium' : 'text-gray-500'}`}>
+          <div className="flex items-center justify-center mb-12">
+            <span className={`mr-4 text-lg font-semibold ${billingCycle === 'monthly' ? '' : ''}`} style={{ 
+              color: billingCycle === 'monthly' ? 'var(--color-cta)' : 'var(--text-muted)' 
+            }}>
               {t('pricing.monthly')}
             </span>
             <button
               onClick={() => setBillingCycle(billingCycle === 'monthly' ? 'yearly' : 'monthly')}
-              className="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 bg-blue-600"
+              className="relative inline-flex h-8 w-14 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-all duration-300 ease-in-out focus:outline-none transform hover:scale-110"
+              style={{ background: 'var(--color-cta)', boxShadow: 'var(--glow-cta)' }}
             >
               <span
-                className={`pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition duration-200 ease-in-out ${
-                  billingCycle === 'yearly' ? 'translate-x-5' : 'translate-x-0'
+                className={`pointer-events-none inline-block h-6 w-6 rounded-full shadow transform ring-0 transition-all duration-300 ease-in-out ${
+                  billingCycle === 'yearly' ? 'translate-x-6' : 'translate-x-0'
                 }`}
+                style={{ background: 'var(--bg-primary)' }}
               />
             </button>
-            <span className={`ml-3 ${billingCycle === 'yearly' ? 'text-gray-900 font-medium' : 'text-gray-500'}`}>
+            <span className={`ml-4 text-lg font-semibold ${billingCycle === 'yearly' ? '' : ''}`} style={{ 
+              color: billingCycle === 'yearly' ? 'var(--color-cta)' : 'var(--text-muted)' 
+            }}>
               {t('pricing.yearly')}
             </span>
             {billingCycle === 'yearly' && (
-              <span className="ml-2 px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full">
+              <span className="ml-3 px-3 py-1 text-sm font-semibold rounded-full" style={{ 
+                background: 'var(--color-file)',
+                color: 'var(--bg-primary)'
+              }}>
                 {t('pricing.saveUpTo')}
               </span>
             )}
@@ -832,14 +846,27 @@ export default function PricingPage() {
             return (
               <div
                 key={plan.id}
-                className={`relative bg-white rounded-lg shadow-lg p-8 ${theme.borderClass} ${
-                  isCurrentPlan ? 'ring-2 ring-blue-500' : ''
+                className={`relative rounded-2xl p-6 transition-all duration-300 transform hover:scale-102 hover:translate-y-[-2px] ${
+                  isCurrentPlan ? 'scale-102' : ''
                 }`}
+                style={{ 
+                  background: 'linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%)',
+                  border: `2px solid ${
+                    plan.id === 'pro' ? 'var(--color-text)' :
+                    plan.id === 'student' ? 'var(--color-file)' :
+                    'var(--bg-tertiary)'
+                  }`,
+                  boxShadow: isCurrentPlan ? 'var(--glow-cta)' : 'var(--shadow-lg)'
+                }}
               >
                 {/* Popular badge for Student plan */}
                 {plan.id === 'student' && (
                   <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                    <span className="bg-blue-600 text-white px-4 py-1 rounded-full text-sm font-medium">
+                    <span className="px-6 py-2 rounded-full text-sm font-semibold" style={{ 
+                      background: 'var(--color-file)',
+                      color: 'var(--bg-primary)',
+                      boxShadow: 'var(--glow-file)'
+                    }}>
                       {t('pricing.mostPopular')}
                     </span>
                   </div>
@@ -848,58 +875,68 @@ export default function PricingPage() {
                 {/* Current Plan badge */}
                 {isCurrentPlan && (
                   <div className="absolute -top-3 -right-3">
-                    <span className="bg-green-600 text-white px-3 py-1 rounded-full text-sm font-medium">
+                    <span className="px-4 py-2 rounded-full text-sm font-semibold" style={{ 
+                      background: 'var(--color-cta)',
+                      color: 'var(--bg-primary)',
+                      boxShadow: 'var(--glow-cta)'
+                    }}>
                       {t('pricing.currentPlan')}
                     </span>
                   </div>
                 )}
 
-                <div className="text-center mb-8">
-                  <h3 className={`text-2xl font-bold ${theme.textClass} mb-2`}>
+                <div className="text-center mb-6">
+                  <h3 className="text-2xl font-bold mb-3" style={{ 
+                    color: plan.id === 'pro' ? 'var(--color-text)' :
+                           plan.id === 'student' ? 'var(--color-file)' :
+                           'var(--text-primary)'
+                  }}>
                     {t(`pricing.plans.${plan.id}.name`)}
                   </h3>
-                  <p className="text-gray-600 mb-4">{t(`pricing.plans.${plan.id}.description`)}</p>
+                  <p className="mb-4 text-base leading-relaxed" style={{ color: 'var(--text-secondary)' }}>{t(`pricing.plans.${plan.id}.description`)}</p>
                   
-                  {/* Price */}
-                  <div className="mb-4">
-                    {plan.price_monthly === 0 ? (
-                      <div className="text-4xl font-bold text-gray-900">{t('pricing.free')}</div>
-                    ) : (
-                      <>
-                        <div className="text-4xl font-bold text-gray-900">
-                          {formatPrice(displayPrice)}
+                                      {/* Price */}
+                    <div className="mb-4">
+                      {plan.price_monthly === 0 ? (
+                        <div className="text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>{t('pricing.free')}</div>
+                      ) : (
+                        <>
+                          <div className="text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>
+                            {formatPrice(displayPrice)}
+                            {billingCycle === 'yearly' && (
+                              <span className="text-lg font-normal" style={{ color: 'var(--text-secondary)' }}>/{t('pricing.year')}</span>
+                            )}
+                            {billingCycle === 'monthly' && (
+                              <span className="text-lg font-normal" style={{ color: 'var(--text-secondary)' }}>/{t('pricing.month')}</span>
+                            )}
+                          </div>
                           {billingCycle === 'yearly' && (
-                            <span className="text-lg font-normal text-gray-600">/{t('pricing.year')}</span>
+                            <div className="text-sm mt-2" style={{ color: 'var(--text-secondary)' }}>
+                              {formatPrice(pricePerMonth)}/{t('pricing.month')} {t('pricing.whenBilledAnnually')}
+                            </div>
                           )}
-                          {billingCycle === 'monthly' && (
-                            <span className="text-lg font-normal text-gray-600">/{t('pricing.month')}</span>
+                          {billingCycle === 'yearly' && pricing.discountPercentage > 0 && (
+                            <div className="text-sm font-semibold mt-2" style={{ color: 'var(--color-file)' }}>
+                              {t('pricing.saveAmount', { amount: formatPrice(pricing.yearlySavings) })}
+                            </div>
                           )}
-                        </div>
-                        {billingCycle === 'yearly' && (
-                          <div className="text-sm text-gray-600">
-                            {formatPrice(pricePerMonth)}/{t('pricing.month')} {t('pricing.whenBilledAnnually')}
-                          </div>
-                        )}
-                        {billingCycle === 'yearly' && pricing.discountPercentage > 0 && (
-                          <div className="text-sm text-green-600 font-medium">
-                            {t('pricing.saveAmount', { amount: formatPrice(pricing.yearlySavings) })}
-                          </div>
-                        )}
-                      </>
-                    )}
-                  </div>
+                        </>
+                      )}
+                    </div>
                 </div>
 
                 {/* Features List */}
-                <ul className="space-y-3 mb-8">
+                <ul className="space-y-4 mb-8">
                   {features.map((feature, index) => (
                     <li key={index} className="flex items-start">
                       {feature.available ? (
-                        <span className="text-green-500 text-xl mr-3 mt-0.5 flex-shrink-0">✅</span>
+                        <span className="text-xl mr-4 mt-0.5 flex-shrink-0" style={{ color: 'var(--color-cta)' }}>✅</span>
                       ) : (
-                        <span className="text-red-500 text-xl mr-3 mt-0.5 flex-shrink-0">❌</span>
+                        <span className="text-xl mr-4 mt-0.5 flex-shrink-0" style={{ color: '#ef4444' }}>❌</span>
                       )}
-                      <span className={`text-gray-700 ${!feature.available ? 'line-through text-gray-400' : ''}`}>
+                      <span className={`text-base leading-relaxed ${!feature.available ? 'line-through' : ''}`} style={{ 
+                        color: !feature.available ? 'var(--text-muted)' : 'var(--text-secondary)'
+                      }}>
                         {feature.text}
                       </span>
                     </li>
@@ -919,13 +956,28 @@ export default function PricingPage() {
                     }
                   }}
                   disabled={isButtonDisabled(plan)}
-                  className={`w-full py-3 px-6 rounded-lg font-medium transition-colors ${
-                    isButtonDisabled(plan)
-                      ? 'bg-gray-100 text-gray-500 cursor-not-allowed'
-                      : plan.id === 'free' && userSubscription && userSubscription.status === 'active'
-                        ? 'bg-red-600 hover:bg-red-700 text-white'
-                        : `${theme.buttonClass} text-white`
+                  className={`w-full py-4 px-8 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 ${
+                    isButtonDisabled(plan) ? 'cursor-not-allowed' : ''
                   }`}
+                  style={{
+                    background: isButtonDisabled(plan) 
+                      ? 'var(--bg-tertiary)'
+                      : plan.id === 'free' && userSubscription && userSubscription.status === 'active'
+                        ? 'linear-gradient(135deg, #ef4444, #dc2626)'
+                        : plan.id === 'pro' 
+                          ? 'var(--color-text)'
+                          : plan.id === 'student'
+                            ? 'var(--color-file)'
+                            : 'var(--color-cta)',
+                    color: isButtonDisabled(plan) ? 'var(--text-muted)' : 'var(--bg-primary)',
+                    boxShadow: isButtonDisabled(plan) 
+                      ? 'none'
+                      : plan.id === 'pro' 
+                        ? 'var(--glow-text)'
+                        : plan.id === 'student'
+                          ? 'var(--glow-file)'
+                          : 'var(--glow-cta)'
+                  }}
                 >
                   {getButtonContent(plan)}
                 </button>
@@ -935,40 +987,56 @@ export default function PricingPage() {
         </div>
 
         {/* FAQ Section */}
-        <div className="mt-16 max-w-4xl mx-auto">
-          <h2 className="text-3xl font-bold text-center text-gray-900 mb-8">
+        <div className="mt-20 max-w-4xl mx-auto">
+          <h2 className="text-4xl font-bold text-center mb-12" style={{ color: 'var(--text-primary)' }}>
             {t('pricing.faq.title')}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            <div className="p-6 rounded-2xl" style={{ 
+              background: 'linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%)',
+              border: '1px solid var(--bg-tertiary)',
+              boxShadow: 'var(--shadow-md)'
+            }}>
+              <h3 className="text-xl font-semibold mb-4" style={{ color: 'var(--color-cta)' }}>
                 {t('pricing.faq.changePlan.question')}
               </h3>
-              <p className="text-gray-600">
+              <p className="text-base leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
                 {t('pricing.faq.changePlan.answer')}
               </p>
             </div>
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            <div className="p-6 rounded-2xl" style={{ 
+              background: 'linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%)',
+              border: '1px solid var(--bg-tertiary)',
+              boxShadow: 'var(--shadow-md)'
+            }}>
+              <h3 className="text-xl font-semibold mb-4" style={{ color: 'var(--color-file)' }}>
                 {t('pricing.faq.exceedLimits.question')}
               </h3>
-              <p className="text-gray-600">
+              <p className="text-base leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
                 {t('pricing.faq.exceedLimits.answer')}
               </p>
             </div>
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            <div className="p-6 rounded-2xl" style={{ 
+              background: 'linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%)',
+              border: '1px solid var(--bg-tertiary)',
+              boxShadow: 'var(--shadow-md)'
+            }}>
+              <h3 className="text-xl font-semibold mb-4" style={{ color: 'var(--color-video)' }}>
                 {t('pricing.faq.freeTrial.question')}
               </h3>
-              <p className="text-gray-600">
+              <p className="text-base leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
                 {t('pricing.faq.freeTrial.answer')}
               </p>
             </div>
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            <div className="p-6 rounded-2xl" style={{ 
+              background: 'linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%)',
+              border: '1px solid var(--bg-tertiary)',
+              boxShadow: 'var(--shadow-md)'
+            }}>
+              <h3 className="text-xl font-semibold mb-4" style={{ color: 'var(--color-text)' }}>
                 {t('pricing.faq.billing.question')}
               </h3>
-              <p className="text-gray-600">
+              <p className="text-base leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
                 {t('pricing.faq.billing.answer')}
               </p>
             </div>
@@ -976,10 +1044,15 @@ export default function PricingPage() {
         </div>
 
         {/* Back to Home */}
-        <div className="text-center mt-12">
+        <div className="text-center mt-16">
           <button
             onClick={() => router.push('/dashboard')}
-            className="text-blue-600 hover:text-blue-800 font-medium"
+            className="px-8 py-4 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105"
+            style={{ 
+              background: 'var(--color-cta)',
+              color: 'var(--bg-primary)',
+              boxShadow: 'var(--glow-cta)'
+            }}
           >
             ← {t('pricing.backToDashboard')}
           </button>

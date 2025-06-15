@@ -254,25 +254,36 @@ export default function UploadVideoPage() {
     }
 
     return (
-      <div className={`flex items-center space-x-3 p-3 rounded-lg ${
-        isActive ? 'bg-blue-50 border-2 border-blue-200' : 
-        isComplete ? 'bg-green-50 border-2 border-green-200' : 
-        'bg-gray-50 border-2 border-gray-200'
-      }`}>
+      <div className={`flex items-center space-x-3 p-4 rounded-xl transition-all duration-300 ${
+        isActive ? 'transform scale-105' : ''
+      }`} style={{
+        background: isActive 
+          ? 'linear-gradient(135deg, var(--color-video) 0%, var(--color-cta) 100%)'
+          : isComplete 
+          ? 'linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(22, 163, 74, 0.2))'
+          : 'var(--bg-secondary)',
+        border: `1px solid ${isActive ? 'var(--color-video)' : isComplete ? 'rgba(34, 197, 94, 0.3)' : 'var(--bg-tertiary)'}`,
+        boxShadow: isActive ? 'var(--glow-video)' : 'var(--shadow-sm)'
+      }}>
         <span className="text-2xl">{getIcon()}</span>
         <div>
-          <p className={`font-medium ${
-            isActive ? 'text-blue-900' : 
-            isComplete ? 'text-green-900' : 
-            'text-gray-600'
-          }`}>
+          <p className="font-semibold" style={{
+            color: isActive 
+              ? 'var(--bg-primary)'
+              : isComplete 
+              ? '#22c55e'
+              : 'var(--text-primary)'
+          }}>
             {getStatus()}
           </p>
           {isActive && step === 'uploading' && (
-            <div className="w-32 bg-gray-200 rounded-full h-2 mt-1">
+            <div className="w-32 rounded-full h-2 mt-1" style={{ background: 'rgba(255, 255, 255, 0.3)' }}>
               <div 
-                className="bg-blue-600 h-2 rounded-full transition-all duration-300" 
-                style={{ width: `${uploadProgress}%` }}
+                className="h-2 rounded-full transition-all duration-300" 
+                style={{ 
+                  width: `${uploadProgress}%`,
+                  background: 'white'
+                }}
               ></div>
             </div>
           )}
@@ -282,11 +293,19 @@ export default function UploadVideoPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen" style={{ background: 'var(--bg-primary)' }}>
       {/* Loading Overlay */}
       {isProcessing && (
-        <div className="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-8 max-w-md mx-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center" 
+          style={{ 
+            background: 'rgba(31, 34, 53, 0.9)',
+            backdropFilter: 'blur(5px)'
+          }}>
+          <div className="p-8 max-w-md mx-4 rounded-2xl" style={{ 
+            background: 'linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%)',
+            border: '1px solid var(--bg-tertiary)',
+            boxShadow: 'var(--shadow-xl)'
+          }}>
             <NotesLoader 
               message="Processing Video..."
               subMessage="This could take 5-10 minutes – please wait while we transcribe and analyze your video."
@@ -299,11 +318,16 @@ export default function UploadVideoPage() {
         <div className="max-w-4xl mx-auto">
           {/* Header */}
           <div className="text-center mb-8">
-            <div className="w-20 h-20 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <span className="text-4xl">🎥</span>
+            <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4" style={{ 
+              background: 'linear-gradient(135deg, var(--color-video) 0%, var(--color-cta) 100%)',
+              boxShadow: 'var(--glow-video)'
+            }}>
+              <svg className="w-10 h-10" fill="white" viewBox="0 0 24 24">
+                <path d="M17,10.5V7A1,1 0 0,0 16,6H4A1,1 0 0,0 3,7V17A1,1 0 0,0 4,18H16A1,1 0 0,0 17,17V13.5L21,17.5V6.5L17,10.5Z"/>
+              </svg>
             </div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-4">Upload Video for Notes</h1>
-            <p className="text-lg text-gray-600">
+            <h1 className="text-4xl font-bold mb-4" style={{ color: 'var(--text-primary)' }}>Upload Video for Notes</h1>
+            <p className="text-lg leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
               Upload your video files and convert them into comprehensive notes using AI transcription and analysis.
             </p>
           </div>
@@ -311,30 +335,37 @@ export default function UploadVideoPage() {
           {!generatedNote ? (
             <>
               {/* Instructions */}
-              <div className="bg-purple-50 border border-purple-200 rounded-lg p-6 mb-8">
-                <h3 className="font-semibold text-purple-900 mb-3">Supported video formats:</h3>
-                <ul className="list-disc list-inside space-y-2 text-purple-800">
+              <div className="rounded-2xl p-6 mb-8" style={{ 
+                background: 'linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%)',
+                border: '1px solid var(--bg-tertiary)',
+                boxShadow: 'var(--shadow-lg)'
+              }}>
+                <h3 className="font-semibold mb-3" style={{ color: 'var(--color-video)' }}>Supported video formats:</h3>
+                <ul className="list-disc list-inside space-y-2" style={{ color: 'var(--text-secondary)' }}>
                   <li><strong>MP4 files</strong> - Most common video format</li>
                   <li><strong>MOV files</strong> - Apple QuickTime format</li>
                   <li><strong>WEBM files</strong> - Web-optimized format</li>
                   <li><strong>AVI files</strong> - Audio Video Interleave format</li>
                   <li><strong>MKV files</strong> - Matroska video format</li>
                 </ul>
-                <div className="mt-4 p-4 bg-amber-50 border border-amber-200 rounded-lg">
+                <div className="mt-4 p-4 rounded-xl" style={{ 
+                  background: 'linear-gradient(135deg, rgba(251, 191, 36, 0.1), rgba(245, 158, 11, 0.1))',
+                  border: '1px solid rgba(251, 191, 36, 0.3)'
+                }}>
                   <div className="flex items-start gap-3">
                     <span className="text-xl">⏱️</span>
                     <div>
-                      <h4 className="font-semibold text-amber-800 mb-2">Processing Time Notice</h4>
-                      <p className="text-sm text-amber-700 mb-2">
+                      <h4 className="font-semibold mb-2" style={{ color: '#f59e0b' }}>Processing Time Notice</h4>
+                      <p className="text-sm mb-2" style={{ color: 'var(--text-secondary)' }}>
                         <strong>Video processing typically takes 5-10 minutes</strong> depending on video length. 
                         Please be patient while we:
                       </p>
-                      <ul className="text-sm text-amber-700 list-disc list-inside ml-2 space-y-1">
+                      <ul className="text-sm list-disc list-inside ml-2 space-y-1" style={{ color: 'var(--text-secondary)' }}>
                         <li>Extract and transcribe audio using AI speech recognition</li>
                         <li>Generate comprehensive notes from the transcript</li>
                         <li>Create practice quizzes and summaries</li>
                       </ul>
-                      <p className="text-sm text-amber-700 mt-2 font-medium">
+                      <p className="text-sm mt-2 font-semibold" style={{ color: '#f59e0b' }}>
                         💡 Keep this tab open during processing - closing it may interrupt the upload.
                       </p>
                     </div>
@@ -344,19 +375,23 @@ export default function UploadVideoPage() {
 
               {/* Error Message */}
               {error && (
-                <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+                <div className="rounded-2xl p-4 mb-6" style={{ 
+                  background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.1))',
+                  border: '1px solid rgba(239, 68, 68, 0.3)',
+                  boxShadow: '0 0 20px rgba(239, 68, 68, 0.1)'
+                }}>
                   <div className="flex items-start">
                     <span className="text-2xl mr-3">❌</span>
                     <div className="flex-1">
-                      <h3 className="text-lg font-semibold text-red-900 mb-2">Upload Error</h3>
-                      <p className="text-red-800 mb-3">{error}</p>
+                      <h3 className="text-lg font-semibold mb-2" style={{ color: '#ef4444' }}>Upload Error</h3>
+                      <p className="mb-3" style={{ color: '#ef4444' }}>{error}</p>
                       
                       {/* Diagnostic information */}
-                      <details className="bg-red-100 rounded p-3">
-                        <summary className="cursor-pointer text-sm font-medium text-red-700 mb-2">
+                      <details className="rounded p-3" style={{ background: 'rgba(239, 68, 68, 0.05)' }}>
+                        <summary className="cursor-pointer text-sm font-semibold mb-2" style={{ color: '#ef4444' }}>
                           🔍 Troubleshooting Tips
                         </summary>
-                        <div className="text-sm text-red-700 space-y-2">
+                        <div className="text-sm space-y-2" style={{ color: 'var(--text-secondary)' }}>
                           <p><strong>If you're getting a "not a valid video" error:</strong></p>
                           <ul className="list-disc list-inside ml-4 space-y-1">
                             <li>Make sure your file is a video (MP4, MOV, WEBM, AVI, MKV)</li>
@@ -372,7 +407,7 @@ export default function UploadVideoPage() {
                             <li>Refresh the page and try again</li>
                           </ul>
                           
-                          <p className="text-xs mt-3 text-red-600">
+                          <p className="text-xs mt-3" style={{ color: '#ef4444' }}>
                             <strong>Supported formats:</strong> MP4 (recommended), MOV, WEBM, AVI, MKV with audio
                           </p>
                         </div>
@@ -384,8 +419,12 @@ export default function UploadVideoPage() {
 
               {/* Processing Progress */}
               {isProcessing && (
-                <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Processing Your Video</h3>
+                <div className="rounded-2xl p-6 mb-8" style={{ 
+                  background: 'linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%)',
+                  border: '1px solid var(--bg-tertiary)',
+                  boxShadow: 'var(--shadow-lg)'
+                }}>
+                  <h3 className="text-lg font-semibold mb-4" style={{ color: 'var(--text-primary)' }}>Processing Your Video</h3>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     {renderProgressStep('uploading', currentStep === 'uploading', ['transcribing', 'generating', 'complete'].includes(currentStep))}
                     {renderProgressStep('transcribing', currentStep === 'transcribing', ['generating', 'complete'].includes(currentStep))}
@@ -393,18 +432,22 @@ export default function UploadVideoPage() {
                   </div>
                   {currentStep === 'uploading' && (
                     <div className="mt-4">
-                      <p className="text-sm text-gray-600 text-center">Uploading: {uploadProgress}%</p>
+                      <p className="text-sm text-center" style={{ color: 'var(--text-secondary)' }}>Uploading: {uploadProgress}%</p>
                     </div>
                   )}
                 </div>
               )}
 
               {/* Upload Form */}
-              <div className="bg-white rounded-lg shadow-lg p-8">
+              <div className="rounded-2xl p-8 mb-8" style={{ 
+                background: 'linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%)',
+                border: '1px solid var(--bg-tertiary)',
+                boxShadow: 'var(--shadow-lg)'
+              }}>
                 <form onSubmit={handleSubmit} className="space-y-6">
                   {/* Title Input */}
                   <div>
-                    <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="title" className="block text-sm font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>
                       Title (Optional)
                     </label>
                     <input
@@ -413,23 +456,40 @@ export default function UploadVideoPage() {
                       value={title}
                       onChange={(e) => setTitle(e.target.value)}
                       placeholder="Enter a custom title for your notes..."
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500"
+                      className="w-full px-4 py-3 rounded-xl transition-all duration-300 focus:ring-2 focus:ring-[var(--color-video)] focus:outline-none"
+                      style={{
+                        background: 'var(--bg-primary)',
+                        border: '1px solid var(--bg-tertiary)',
+                        color: 'var(--text-primary)',
+                        boxShadow: 'var(--shadow-sm)'
+                      }}
                       disabled={isProcessing}
                     />
-                    <p className="mt-1 text-sm text-gray-500">
+                    <p className="mt-2 text-sm" style={{ color: 'var(--text-muted)' }}>
                       Give your notes a descriptive title to help you find them later
                     </p>
                   </div>
 
                   {/* Video Upload Area */}
                   <div
-                    className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
+                    className={`border-2 border-dashed rounded-2xl p-8 text-center transition-all duration-300 ${
                       dragActive
-                        ? 'border-purple-500 bg-purple-50'
+                        ? 'scale-102'
                         : file
-                        ? 'border-purple-300 bg-purple-50'
-                        : 'border-gray-300 hover:border-purple-400'
+                        ? 'scale-102'
+                        : 'hover:scale-101'
                     }`}
+                    style={{
+                      borderColor: dragActive
+                        ? 'var(--color-video)'
+                        : file
+                        ? 'var(--color-video)'
+                        : 'var(--bg-tertiary)',
+                      background: dragActive || file
+                        ? 'linear-gradient(135deg, rgba(255, 165, 0, 0.1), rgba(255, 140, 0, 0.1))'
+                        : 'var(--bg-primary)',
+                      boxShadow: dragActive || file ? 'var(--glow-video)' : 'var(--shadow-sm)'
+                    }}
                     onDragEnter={handleDrag}
                     onDragLeave={handleDrag}
                     onDragOver={handleDrag}
@@ -437,36 +497,56 @@ export default function UploadVideoPage() {
                   >
                     {file ? (
                       <div className="space-y-4">
-                        <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto">
-                          <span className="text-2xl">🎥</span>
+                        <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto" style={{ 
+                          background: 'linear-gradient(135deg, var(--color-video) 0%, var(--color-cta) 100%)',
+                          boxShadow: 'var(--glow-video)'
+                        }}>
+                          <svg className="w-8 h-8" fill="white" viewBox="0 0 24 24">
+                            <path d="M17,10.5V7A1,1 0 0,0 16,6H4A1,1 0 0,0 3,7V17A1,1 0 0,0 4,18H16A1,1 0 0,0 17,17V13.5L21,17.5V6.5L17,10.5Z"/>
+                          </svg>
                         </div>
                         <div>
-                          <p className="text-lg font-medium text-gray-900">{file.name}</p>
-                          <p className="text-sm text-gray-500">
+                          <p className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>{file.name}</p>
+                          <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
                             {(file.size / 1024 / 1024).toFixed(2)} MB
                           </p>
                         </div>
                         <button
                           type="button"
                           onClick={() => setFile(null)}
-                          className="text-red-600 hover:text-red-800 text-sm"
+                          className="px-4 py-2 rounded-xl font-semibold transition-all duration-300 hover:scale-105"
+                          style={{ 
+                            background: 'linear-gradient(135deg, #ef4444, #dc2626)',
+                            color: 'white',
+                            boxShadow: '0 0 20px rgba(239, 68, 68, 0.3)'
+                          }}
                           disabled={isProcessing}
                         >
                           Remove file
                         </button>
                       </div>
-                    ) : (
+                    ) :
                       <div className="space-y-4">
-                        <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto">
-                          <span className="text-2xl">🎬</span>
+                        <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto" style={{ 
+                          background: 'var(--bg-tertiary)',
+                          border: '2px dashed var(--bg-tertiary)'
+                        }}>
+                          <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24" style={{ color: 'var(--text-muted)' }}>
+                            <path d="M14,2V8H20L14,2M15,22H5C4.45,22 4,21.55 4,21V3C4,2.45 4.45,2 5,2H13L19,8V21C19,21.55 18.55,22 18,22H15Z"/>
+                          </svg>
                         </div>
                         <div>
-                          <p className="text-lg font-medium text-gray-900">
+                          <p className="text-lg font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>
                             Drag and drop your video here
                           </p>
-                          <p className="text-gray-500">or</p>
+                          <p className="mb-3" style={{ color: 'var(--text-muted)' }}>or</p>
                           <label className="cursor-pointer">
-                            <span className="text-purple-600 hover:text-purple-800 font-medium">
+                            <span className="px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 inline-block"
+                              style={{ 
+                                background: 'linear-gradient(135deg, var(--color-video) 0%, var(--color-cta) 100%)',
+                                color: 'var(--bg-primary)',
+                                boxShadow: 'var(--glow-video)'
+                              }}>
                               browse to choose a video file
                             </span>
                             <input
@@ -478,67 +558,114 @@ export default function UploadVideoPage() {
                             />
                           </label>
                         </div>
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
                           MP4, MOV, WEBM, AVI, MKV up to 100MB
                         </p>
                       </div>
-                    )}
+                    }
                   </div>
 
                   <button
                     type="submit"
                     disabled={isProcessing || !file}
-                    className="w-full bg-purple-600 text-white py-3 px-6 rounded-lg hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    className="w-full py-4 px-6 rounded-xl font-semibold text-lg transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                    style={{ 
+                      background: (isProcessing || !file)
+                        ? 'var(--bg-tertiary)' 
+                        : 'linear-gradient(135deg, var(--color-video) 0%, var(--color-cta) 100%)',
+                      color: (isProcessing || !file) ? 'var(--text-muted)' : 'var(--bg-primary)',
+                      boxShadow: (isProcessing || !file) ? 'var(--shadow-sm)' : 'var(--glow-video)'
+                    }}
                   >
                     {isProcessing ? 'Processing...' : 'Generate Notes from Video'}
                   </button>
                 </form>
+              </div>
+
+              {/* Back Link */}
+              <div className="text-center">
+                <button
+                  onClick={() => router.push('/')}
+                  className="px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105"
+                  style={{ 
+                    background: 'var(--bg-secondary)',
+                    color: 'var(--text-secondary)',
+                    border: '1px solid var(--bg-tertiary)',
+                    boxShadow: 'var(--shadow-sm)'
+                  }}
+                >
+                  ← Back to Home
+                </button>
               </div>
             </>
           ) : (
             /* Results Display */
             <div className="space-y-6">
               {/* Success Message */}
-              <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+              <div className="rounded-2xl p-4" style={{ 
+                background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(22, 163, 74, 0.1))',
+                border: '1px solid rgba(34, 197, 94, 0.3)',
+                boxShadow: '0 0 20px rgba(34, 197, 94, 0.1)'
+              }}>
                 <div className="flex items-center">
                   <span className="text-2xl mr-3">✅</span>
                   <div>
-                    <h3 className="text-lg font-semibold text-green-900">Notes Generated Successfully!</h3>
-                    <p className="text-green-700">Your video has been processed and notes have been generated.</p>
+                    <h3 className="text-lg font-semibold" style={{ color: '#22c55e' }}>Notes Generated Successfully!</h3>
+                    <p style={{ color: 'var(--text-secondary)' }}>Your video has been processed and notes have been generated.</p>
                   </div>
                 </div>
               </div>
 
               {/* View Toggle */}
-              <div className="bg-white rounded-lg shadow-sm p-6">
+              <div className="rounded-2xl p-6" style={{ 
+                background: 'linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%)',
+                border: '1px solid var(--bg-tertiary)',
+                boxShadow: 'var(--shadow-lg)'
+              }}>
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-xl font-semibold text-gray-900">{generatedNote.title}</h2>
+                  <h2 className="text-xl font-semibold" style={{ color: 'var(--text-primary)' }}>{generatedNote.title}</h2>
                   <div className="note-view-toggle">
                     <button
                       onClick={() => setShowFullNotes(true)}
-                      className={`px-4 py-2 rounded-l-lg border ${showFullNotes 
-                        ? 'bg-purple-600 text-white border-purple-600' 
-                        : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'}`}
+                      className={`px-4 py-2 rounded-l-xl border transition-all duration-300 ${
+                        showFullNotes ? 'transform scale-105' : ''
+                      }`}
+                      style={{
+                        background: showFullNotes 
+                          ? 'linear-gradient(135deg, var(--color-video) 0%, var(--color-cta) 100%)'
+                          : 'var(--bg-primary)',
+                        color: showFullNotes ? 'var(--bg-primary)' : 'var(--text-secondary)',
+                        borderColor: 'var(--bg-tertiary)',
+                        boxShadow: showFullNotes ? 'var(--glow-video)' : 'var(--shadow-sm)'
+                      }}
                     >
                       📖 Full Notes
                     </button>
                     <button
                       onClick={() => setShowFullNotes(false)}
-                      className={`px-4 py-2 rounded-r-lg border-t border-r border-b ${!showFullNotes 
-                        ? 'bg-purple-600 text-white border-purple-600' 
-                        : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'}`}
+                      className={`px-4 py-2 rounded-r-xl border-t border-r border-b transition-all duration-300 ${
+                        !showFullNotes ? 'transform scale-105' : ''
+                      }`}
+                      style={{
+                        background: !showFullNotes 
+                          ? 'linear-gradient(135deg, var(--color-video) 0%, var(--color-cta) 100%)'
+                          : 'var(--bg-primary)',
+                        color: !showFullNotes ? 'var(--bg-primary)' : 'var(--text-secondary)',
+                        borderColor: 'var(--bg-tertiary)',
+                        boxShadow: !showFullNotes ? 'var(--glow-video)' : 'var(--shadow-sm)'
+                      }}
                     >
                       📝 Summary
                     </button>
                   </div>
                 </div>
                 
-                <div className="prose max-w-none">
+                <div className="prose max-w-none prose-invert" style={{ color: 'var(--text-secondary)' }}>
                   {showFullNotes ? (
                     <ReactMarkdown>{generatedNote.content}</ReactMarkdown>
                   ) : (
                     <div className="summary-section">
-                      <h3>📝 Summary Version</h3>
+                      <h3 style={{ color: 'var(--text-primary)' }}>📝 Summary Version</h3>
                       <ReactMarkdown>{generatedNote.summary || 'Summary not available.'}</ReactMarkdown>
                     </div>
                   )}
@@ -547,8 +674,12 @@ export default function UploadVideoPage() {
 
               {/* Quiz Section */}
               {generatedNote.quiz && generatedNote.quiz.length > 0 && (
-                <div className="bg-white rounded-lg shadow-sm p-6">
-                  <h2 className="text-xl font-semibold text-gray-900 mb-4">📝 Test Your Knowledge</h2>
+                <div className="rounded-2xl p-6" style={{ 
+                  background: 'linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%)',
+                  border: '1px solid var(--bg-tertiary)',
+                  boxShadow: 'var(--shadow-lg)'
+                }}>
+                  <h2 className="text-xl font-semibold mb-4" style={{ color: 'var(--text-primary)' }}>📝 Test Your Knowledge</h2>
                   {canUseQuizzes ? (
                     <Quiz 
                       questions={generatedNote.quiz} 
@@ -568,13 +699,24 @@ export default function UploadVideoPage() {
               <div className="flex gap-4 justify-center">
                 <button
                   onClick={resetForm}
-                  className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+                  className="px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105"
+                  style={{ 
+                    background: 'linear-gradient(135deg, var(--color-video) 0%, var(--color-cta) 100%)',
+                    color: 'var(--bg-primary)',
+                    boxShadow: 'var(--glow-video)'
+                  }}
                 >
                   Upload Another Video
                 </button>
                 <button
                   onClick={() => router.push('/dashboard')}
-                  className="px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+                  className="px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105"
+                  style={{ 
+                    background: 'var(--bg-secondary)',
+                    color: 'var(--text-secondary)',
+                    border: '1px solid var(--bg-tertiary)',
+                    boxShadow: 'var(--shadow-sm)'
+                  }}
                 >
                   View All Notes
                 </button>
@@ -604,14 +746,6 @@ export default function UploadVideoPage() {
           feature={upgradeModalConfig.feature}
         />
       )}
-
-      <style jsx>{`
-        .note-view-toggle {
-          display: flex;
-          border-radius: 0.5rem;
-          overflow: hidden;
-        }
-      `}</style>
     </div>
   )
 } 

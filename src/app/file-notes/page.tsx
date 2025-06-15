@@ -38,6 +38,7 @@ function FileNotesPageContent() {
   const [error, setError] = useState('')
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [showFullNotes, setShowFullNotes] = useState(true)
+  const [isDeleting, setIsDeleting] = useState(false)
 
   useEffect(() => {
     if (!noteId) {
@@ -112,6 +113,7 @@ function FileNotesPageContent() {
     if (!noteId || !user) return
 
     try {
+      setIsDeleting(true)
       // Get the access token for API calls
       const { data: { session } } = await supabase.auth.getSession()
       const token = session?.access_token
@@ -144,20 +146,37 @@ function FileNotesPageContent() {
       console.error('[FileNotesPage] Error deleting note:', err)
       setError(err.message || 'Failed to delete note')
       setShowDeleteConfirm(false)
+    } finally {
+      setIsDeleting(false)
     }
   }
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--bg-primary)' }}>
         <div className="text-center">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Please log in to view notes</h2>
-          <button
-            onClick={() => router.push('/')}
-            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
-          >
-            Go to Login
-          </button>
+          <div className="rounded-2xl p-8 max-w-md mx-auto" style={{ 
+            background: 'linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%)',
+            border: '1px solid var(--bg-tertiary)',
+            boxShadow: 'var(--shadow-xl)'
+          }}>
+            <div className="text-6xl mb-6 opacity-80">🔐</div>
+            <h2 className="text-2xl font-bold mb-4" style={{ color: 'var(--text-primary)' }}>Access Required</h2>
+            <p className="text-lg mb-6 leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+              Please log in to view your file notes
+            </p>
+            <button
+              onClick={() => router.push('/')}
+              className="px-8 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105"
+              style={{ 
+                background: 'linear-gradient(135deg, var(--color-cta) 0%, var(--color-file) 100%)',
+                color: 'var(--bg-primary)',
+                boxShadow: 'var(--glow-cta)'
+              }}
+            >
+              Go to Login
+            </button>
+          </div>
         </div>
       </div>
     )
@@ -165,12 +184,13 @@ function FileNotesPageContent() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen" style={{ background: 'var(--bg-primary)' }}>
         <main className="container mx-auto px-4 py-8">
           <div className="max-w-4xl mx-auto">
             <div className="text-center py-12">
-              <div className="w-16 h-16 border-t-4 border-b-4 border-blue-600 rounded-full animate-spin mx-auto mb-4"></div>
-              <h2 className="text-xl font-semibold text-gray-900">Loading your file notes...</h2>
+              <div className="w-20 h-20 rounded-full animate-spin mx-auto mb-6" 
+                style={{ border: '4px solid var(--bg-tertiary)', borderTop: '4px solid var(--color-file)' }}></div>
+              <h2 className="text-2xl font-semibold" style={{ color: 'var(--text-primary)' }}>Loading your file notes...</h2>
             </div>
           </div>
         </main>
@@ -180,22 +200,38 @@ function FileNotesPageContent() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen" style={{ background: 'var(--bg-primary)' }}>
         <main className="container mx-auto px-4 py-8">
           <div className="max-w-4xl mx-auto">
-            <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
-              <h2 className="text-xl font-semibold text-red-800 mb-2">Error</h2>
-              <p className="text-red-600 mb-4">{error}</p>
+            <div className="rounded-2xl p-8 text-center" style={{ 
+              background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.1))',
+              border: '1px solid rgba(239, 68, 68, 0.3)',
+              boxShadow: 'var(--shadow-lg)'
+            }}>
+              <div className="text-6xl mb-6 opacity-80">⚠️</div>
+              <h2 className="text-2xl font-bold mb-4" style={{ color: '#ef4444' }}>Something went wrong</h2>
+              <p className="text-lg mb-8 leading-relaxed" style={{ color: 'var(--text-secondary)' }}>{error}</p>
               <div className="flex justify-center gap-4">
                 <button
                   onClick={() => router.push('/dashboard')}
-                  className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+                  className="px-8 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105"
+                  style={{ 
+                    background: 'linear-gradient(135deg, var(--color-cta) 0%, var(--color-file) 100%)',
+                    color: 'var(--bg-primary)',
+                    boxShadow: 'var(--glow-cta)'
+                  }}
                 >
                   Back to Dashboard
                 </button>
                 <button
                   onClick={() => window.location.reload()}
-                  className="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700"
+                  className="px-8 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105"
+                  style={{ 
+                    background: 'var(--bg-secondary)',
+                    color: 'var(--text-secondary)',
+                    border: '1px solid var(--bg-tertiary)',
+                    boxShadow: 'var(--shadow-sm)'
+                  }}
                 >
                   Try Again
                 </button>
@@ -209,17 +245,32 @@ function FileNotesPageContent() {
 
   if (!notesData) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen" style={{ background: 'var(--bg-primary)' }}>
         <main className="container mx-auto px-4 py-8">
           <div className="max-w-4xl mx-auto">
-            <div className="text-center py-12">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">Note not found</h2>
-              <button
-                onClick={() => router.push('/dashboard')}
-                className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
-              >
-                Back to Dashboard
-              </button>
+            <div className="text-center py-16">
+              <div className="rounded-2xl p-8 max-w-md mx-auto" style={{ 
+                background: 'linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%)',
+                border: '1px solid var(--bg-tertiary)',
+                boxShadow: 'var(--shadow-xl)'
+              }}>
+                <div className="text-6xl mb-6 opacity-80">📄</div>
+                <h2 className="text-2xl font-bold mb-4" style={{ color: 'var(--text-primary)' }}>Note not found</h2>
+                <p className="text-lg mb-8 leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+                  The requested file note could not be found
+                </p>
+                <button
+                  onClick={() => router.push('/dashboard')}
+                  className="px-8 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105"
+                  style={{ 
+                    background: 'linear-gradient(135deg, var(--color-cta) 0%, var(--color-file) 100%)',
+                    color: 'var(--bg-primary)',
+                    boxShadow: 'var(--glow-cta)'
+                  }}
+                >
+                  Back to Dashboard
+                </button>
+              </div>
             </div>
           </div>
         </main>
@@ -284,35 +335,35 @@ function FileNotesPageContent() {
           </div>
 
           {/* Notes Content */}
-          <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-semibold text-gray-900">Generated Notes</h2>
-              <div className="flex items-center gap-3">
-                {notesData.summary && (
-                  <div className="note-view-toggle">
-                    <button
-                      onClick={() => setShowFullNotes(true)}
-                      className={showFullNotes ? 'active' : ''}
-                    >
-                      📖 View Full Notes
-                    </button>
-                    <button
-                      onClick={() => setShowFullNotes(false)}
-                      className={!showFullNotes ? 'active' : ''}
-                    >
-                      📝 View Summary
-                    </button>
-                  </div>
-                )}
+          <div className="rounded-2xl p-6 mb-6" style={{ 
+            background: 'linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%)',
+            border: '1px solid var(--bg-tertiary)',
+            boxShadow: 'var(--shadow-lg)'
+          }}>
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-semibold" style={{ color: 'var(--text-primary)' }}>📄 Notes</h2>
+              <div className="note-view-toggle">
+                <button
+                  onClick={() => setShowFullNotes(false)}
+                  className={!showFullNotes ? 'active' : ''}
+                >
+                  Summary
+                </button>
+                <button
+                  onClick={() => setShowFullNotes(true)}
+                  className={showFullNotes ? 'active' : ''}
+                >
+                  Full Notes
+                </button>
               </div>
             </div>
             
-            <div className="prose max-w-none">
+            <div className="prose max-w-none prose-invert" style={{ color: 'var(--text-secondary)' }}>
               {showFullNotes ? (
                 <ReactMarkdown>{notesData.content}</ReactMarkdown>
               ) : (
                 <div className="summary-section">
-                  <h3>📝 Summary Version</h3>
+                  <h3 style={{ color: 'var(--text-primary)' }}>📝 Summary Version</h3>
                   <ReactMarkdown>{notesData.summary || 'Summary not available.'}</ReactMarkdown>
                 </div>
               )}
@@ -321,21 +372,34 @@ function FileNotesPageContent() {
 
           {/* File Download (if available) */}
           {notesData.file_url ? (
-            <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">Original File</h2>
+            <div className="rounded-2xl p-6 mb-6" style={{ 
+              background: 'linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%)',
+              border: '1px solid var(--bg-tertiary)',
+              boxShadow: 'var(--shadow-lg)'
+            }}>
+              <h2 className="text-xl font-semibold mb-4" style={{ color: 'var(--text-primary)' }}>Original File</h2>
               <a 
                 href={notesData.file_url} 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105"
+                style={{ 
+                  background: 'linear-gradient(135deg, var(--color-file) 0%, var(--color-cta) 100%)',
+                  color: 'var(--bg-primary)',
+                  boxShadow: 'var(--glow-file)'
+                }}
               >
                 📥 Download Original File
               </a>
             </div>
           ) : (
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 mb-6">
-              <h2 className="text-xl font-semibold text-yellow-800 mb-2">File Storage Notice</h2>
-              <p className="text-yellow-700">
+            <div className="rounded-2xl p-6 mb-6" style={{ 
+              background: 'linear-gradient(135deg, rgba(255, 165, 0, 0.1), rgba(255, 165, 0, 0.05))',
+              border: '1px solid rgba(255, 165, 0, 0.3)',
+              boxShadow: '0 0 20px rgba(255, 165, 0, 0.1)'
+            }}>
+              <h2 className="text-xl font-semibold mb-2" style={{ color: 'var(--color-video)' }}>File Storage Notice</h2>
+              <p style={{ color: 'var(--text-secondary)' }}>
                 The original file is not available for download. The file content was processed to generate notes, 
                 but file storage is not currently configured.
               </p>
@@ -344,8 +408,12 @@ function FileNotesPageContent() {
 
           {/* Quiz */}
           {notesData.quiz && notesData.quiz.length > 0 && (
-            <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">📝 Test Your Knowledge</h2>
+            <div className="rounded-2xl p-6 mb-6" style={{ 
+              background: 'linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%)',
+              border: '1px solid var(--bg-tertiary)',
+              boxShadow: 'var(--shadow-lg)'
+            }}>
+              <h2 className="text-xl font-semibold mb-4" style={{ color: 'var(--text-primary)' }}>📝 Test Your Knowledge</h2>
               {canUseQuizzes ? (
                 <Quiz 
                   questions={notesData.quiz} 
@@ -362,28 +430,24 @@ function FileNotesPageContent() {
           )}
 
           {/* Actions */}
-          <div className="flex justify-between">
-            <button
-              onClick={() => router.push('/dashboard')}
-              className="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700"
-            >
-              ← Back to Dashboard
-            </button>
-            <div className="flex gap-3">
+          <div className="rounded-2xl p-6 mb-6" style={{ 
+            background: 'linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%)',
+            border: '1px solid var(--bg-tertiary)',
+            boxShadow: 'var(--shadow-lg)'
+          }}>
+            <h2 className="text-xl font-semibold mb-4" style={{ color: 'var(--text-primary)' }}>Actions</h2>
+            <div className="flex flex-wrap gap-4">
               <button
-                onClick={() => setShowDeleteConfirm(true)}
-                className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 flex items-center gap-2"
+                onClick={() => router.push('/dashboard')}
+                className="px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105"
+                style={{ 
+                  background: 'var(--bg-primary)',
+                  color: 'var(--text-secondary)',
+                  border: '1px solid var(--bg-tertiary)',
+                  boxShadow: 'var(--shadow-sm)'
+                }}
               >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                </svg>
-                Delete Note
-              </button>
-              <button
-                onClick={() => router.push('/generate/upload')}
-                className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
-              >
-                Generate More Notes →
+                📋 View All Notes
               </button>
             </div>
           </div>
@@ -392,34 +456,46 @@ function FileNotesPageContent() {
 
       {/* Delete Confirmation Modal */}
       {showDeleteConfirm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
-                <svg className="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                </svg>
-              </div>
-              <h3 className="text-lg font-semibold text-gray-900">Delete Note</h3>
-            </div>
-            
-            <p className="text-gray-600 mb-6">
-              Are you sure you want to delete "<strong>{notesData?.title}</strong>"? 
-              This action cannot be undone.
+        <div className="fixed inset-0 z-50 flex items-center justify-center" 
+          style={{ 
+            background: 'rgba(31, 34, 53, 0.9)',
+            backdropFilter: 'blur(5px)'
+          }}>
+          <div className="rounded-2xl p-6 max-w-md w-full mx-4" style={{ 
+            background: 'linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%)',
+            border: '1px solid var(--bg-tertiary)',
+            boxShadow: 'var(--shadow-xl)'
+          }}>
+            <h3 className="text-xl font-semibold mb-4" style={{ color: 'var(--text-primary)' }}>Delete Note</h3>
+            <p className="mb-6" style={{ color: 'var(--text-secondary)' }}>
+              Are you sure you want to delete this note? This action cannot be undone.
             </p>
-            
             <div className="flex justify-end gap-3">
               <button
                 onClick={() => setShowDeleteConfirm(false)}
-                className="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors"
+                className="px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105"
+                style={{ 
+                  background: 'var(--bg-primary)',
+                  color: 'var(--text-secondary)',
+                  border: '1px solid var(--bg-tertiary)',
+                  boxShadow: 'var(--shadow-sm)'
+                }}
               >
                 Cancel
               </button>
               <button
                 onClick={handleDeleteNote}
-                className="px-4 py-2 text-white bg-red-600 hover:bg-red-700 rounded-md transition-colors"
+                disabled={isDeleting}
+                className="px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                style={{ 
+                  background: isDeleting 
+                    ? 'var(--bg-tertiary)' 
+                    : 'linear-gradient(135deg, #ef4444, #dc2626)',
+                  color: isDeleting ? 'var(--text-muted)' : 'white',
+                  boxShadow: isDeleting ? 'var(--shadow-sm)' : '0 0 20px rgba(239, 68, 68, 0.3)'
+                }}
               >
-                Delete Note
+                {isDeleting ? 'Deleting...' : 'Delete Note'}
               </button>
             </div>
           </div>
@@ -431,7 +507,15 @@ function FileNotesPageContent() {
 
 export default function FileNotesPage() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--bg-primary)' }}>
+        <div className="text-center">
+          <div className="w-20 h-20 rounded-full animate-spin mx-auto mb-6"
+            style={{ border: '4px solid var(--bg-tertiary)', borderTop: '4px solid var(--color-file)' }}></div>
+          <p style={{ color: 'var(--text-secondary)' }}>Loading file notes...</p>
+        </div>
+      </div>
+    }>
       <FileNotesPageContent />
     </Suspense>
   )

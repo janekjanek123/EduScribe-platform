@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { Montserrat } from 'next/font/google'
 import './globals.css'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
@@ -8,7 +8,11 @@ import { SupabaseProvider } from '@/lib/supabase-provider'
 import { SubscriptionProvider } from '@/contexts/SubscriptionContext'
 import I18nProvider from '@/components/I18nProvider'
 
-const inter = Inter({ subsets: ['latin', 'latin-ext'] })
+const montserrat = Montserrat({ 
+  subsets: ['latin', 'latin-ext'],
+  weight: ['300', '400', '500', '600', '700'],
+  display: 'swap'
+})
 
 export const metadata: Metadata = {
   title: 'EduScribe - AI-Powered Note Generation',
@@ -22,7 +26,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={montserrat.className}>
         <I18nProvider>
           <SupabaseProvider>
             <SubscriptionProvider>

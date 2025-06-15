@@ -108,21 +108,29 @@ export default function AuthModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg max-w-md w-full p-6">
+    <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
+      <div className="rounded-2xl max-w-md w-full p-8" style={{ 
+        background: 'linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%)',
+        border: '1px solid var(--bg-tertiary)',
+        boxShadow: 'var(--shadow-xl)'
+      }}>
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-              <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-2xl flex items-center justify-center" style={{ 
+              background: 'linear-gradient(135deg, rgba(0, 255, 194, 0.2), rgba(0, 255, 194, 0.1))',
+              border: '1px solid rgba(0, 255, 194, 0.3)'
+            }}>
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ color: 'var(--color-cta)' }}>
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>
             </div>
-            <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
+            <h3 className="text-xl font-semibold" style={{ color: 'var(--text-primary)' }}>{title}</h3>
           </div>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
+            className="transition-all duration-300 hover:scale-110 p-2 rounded-xl"
+            style={{ color: 'var(--text-muted)' }}
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -131,27 +139,36 @@ export default function AuthModal({
         </div>
 
         {/* Message */}
-        <p className="text-gray-600 mb-6">{message}</p>
+        <p className="mb-8 leading-relaxed" style={{ color: 'var(--text-secondary)' }}>{message}</p>
 
         {/* Auth Toggle */}
-        <div className="flex bg-gray-100 rounded-lg p-1 mb-6">
+        <div className="flex p-2 rounded-2xl mb-8" style={{ 
+          background: 'var(--bg-primary)',
+          border: '1px solid var(--bg-tertiary)'
+        }}>
           <button
             onClick={() => setIsLogin(true)}
-            className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
-              isLogin 
-                ? 'bg-white text-gray-900 shadow-sm' 
-                : 'text-gray-600 hover:text-gray-900'
+            className={`flex-1 py-3 px-6 rounded-xl text-sm font-semibold transition-all duration-300 ${
+              isLogin ? 'transform scale-105' : ''
             }`}
+            style={{
+              background: isLogin ? 'var(--color-cta)' : 'transparent',
+              color: isLogin ? 'var(--bg-primary)' : 'var(--text-muted)',
+              boxShadow: isLogin ? 'var(--glow-cta)' : 'none'
+            }}
           >
             Sign In
           </button>
           <button
             onClick={() => setIsLogin(false)}
-            className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
-              !isLogin 
-                ? 'bg-white text-gray-900 shadow-sm' 
-                : 'text-gray-600 hover:text-gray-900'
+            className={`flex-1 py-3 px-6 rounded-xl text-sm font-semibold transition-all duration-300 ${
+              !isLogin ? 'transform scale-105' : ''
             }`}
+            style={{
+              background: !isLogin ? 'var(--color-cta)' : 'transparent',
+              color: !isLogin ? 'var(--bg-primary)' : 'var(--text-muted)',
+              boxShadow: !isLogin ? 'var(--glow-cta)' : 'none'
+            }}
           >
             Sign Up
           </button>
@@ -159,41 +176,56 @@ export default function AuthModal({
 
         {/* Error Message */}
         {error && (
-          <div className="bg-red-50 border border-red-200 rounded-md p-3 mb-4">
-            <p className="text-red-600 text-sm">{error}</p>
+          <div className="rounded-xl p-4 mb-6" style={{ 
+            background: 'rgba(239, 68, 68, 0.1)',
+            border: '1px solid rgba(239, 68, 68, 0.3)'
+          }}>
+            <p className="text-sm" style={{ color: '#ef4444' }}>{error}</p>
           </div>
         )}
 
         {/* Auth Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-              Email
-            </label>
-            <input
-              type="email"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="Enter your email"
-              disabled={isLoading}
-            />
-          </div>
+                          <label htmlFor="email" className="block text-sm font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>
+                Email
+              </label>
+              <input
+                type="email"
+                id="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full px-4 py-3 rounded-xl transition-all duration-300 focus:ring-2 focus:ring-[var(--color-cta)] focus:outline-none"
+                style={{
+                  background: 'var(--bg-primary)',
+                  border: '1px solid var(--bg-tertiary)',
+                  color: 'var(--text-primary)',
+                  boxShadow: 'var(--shadow-sm)'
+                }}
+                placeholder="Enter your email"
+                disabled={isLoading}
+              />
+            </div>
 
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-              Password
-            </label>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="Enter your password"
-              disabled={isLoading}
-            />
+            <div>
+              <label htmlFor="password" className="block text-sm font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>
+                Password
+              </label>
+              <input
+                type="password"
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-4 py-3 rounded-xl transition-all duration-300 focus:ring-2 focus:ring-[var(--color-cta)] focus:outline-none"
+                style={{
+                  background: 'var(--bg-primary)',
+                  border: '1px solid var(--bg-tertiary)',
+                  color: 'var(--text-primary)',
+                  boxShadow: 'var(--shadow-sm)'
+                }}
+                placeholder="Enter your password"
+                disabled={isLoading}
+              />
           </div>
 
           <button

@@ -31,16 +31,20 @@ export default function YoutubeGeneratePage() {
       return
     }
 
-    // Basic YouTube URL validation
-    const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+/
-    if (!youtubeRegex.test(url)) {
-      setError('Please enter a valid YouTube URL')
-      return
-    }
-
     // Check if user is authenticated
     if (!user) {
       setShowAuthModal(true)
+      return
+    }
+
+    // Check YouTube access
+    if (!canUseYouTube) {
+      setUpgradeModalConfig({
+        title: 'YouTube Feature Restricted',
+        message: 'Upgrade to Student or Pro plan to generate notes from YouTube videos.',
+        feature: 'YouTube video processing'
+      })
+      setShowUpgradeModal(true)
       return
     }
 
@@ -116,11 +120,19 @@ export default function YoutubeGeneratePage() {
   }
          
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen" style={{ background: 'var(--bg-primary)' }}>
       {/* Loading Overlay */}
       {isLoading && (
-        <div className="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-8 max-w-md mx-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center" 
+          style={{ 
+            background: 'rgba(31, 34, 53, 0.9)',
+            backdropFilter: 'blur(5px)'
+          }}>
+          <div className="p-8 max-w-md mx-4 rounded-2xl" style={{ 
+            background: 'linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%)',
+            border: '1px solid var(--bg-tertiary)',
+            boxShadow: 'var(--shadow-xl)'
+          }}>
             <NotesLoader 
               message="Generating Notes..."
               subMessage="This could take a moment – please wait while we process your YouTube video."
@@ -133,19 +145,28 @@ export default function YoutubeGeneratePage() {
         <div className="max-w-2xl mx-auto">
           {/* Header */}
           <div className="text-center mb-8">
-            <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <span className="text-4xl">📺</span>
+            <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4" style={{ 
+              background: 'linear-gradient(135deg, var(--color-youtube) 0%, var(--color-cta) 100%)',
+              boxShadow: 'var(--glow-youtube)'
+            }}>
+              <svg className="w-10 h-10" fill="white" viewBox="0 0 24 24">
+                <path d="M23.498 6.186c-.277-1.04-1.096-1.86-2.133-2.136C19.502 3.545 12 3.545 12 3.545s-7.502 0-9.365.505c-1.037.276-1.856 1.097-2.133 2.136C0 8.055 0 12 0 12s0 3.945.502 5.814c.277 1.039 1.096 1.86 2.133 2.136 1.863.505 9.365.505 9.365.505s7.502 0 9.365-.505c1.037-.276 1.856-1.097 2.133-2.136C24 15.945 24 12 24 12s0-3.945-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+              </svg>
             </div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-4">YouTube Video Notes</h1>
-            <p className="text-lg text-gray-600">
+            <h1 className="text-4xl font-bold mb-4" style={{ color: 'var(--text-primary)' }}>YouTube Video Notes</h1>
+            <p className="text-lg leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
               Generate comprehensive notes from any YouTube video by pasting the URL below.
             </p>
           </div>
           
           {/* Instructions */}
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
-            <h3 className="font-semibold text-blue-900 mb-3">How to use:</h3>
-            <ol className="list-decimal list-inside space-y-2 text-blue-800">
+          <div className="rounded-2xl p-6 mb-8" style={{ 
+            background: 'linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%)',
+            border: '1px solid var(--bg-tertiary)',
+            boxShadow: 'var(--shadow-lg)'
+          }}>
+            <h3 className="font-semibold mb-3" style={{ color: 'var(--color-youtube)' }}>How to use:</h3>
+            <ol className="list-decimal list-inside space-y-2" style={{ color: 'var(--text-secondary)' }}>
               <li>Copy the YouTube video URL from your browser</li>
               <li>Paste it in the input field below</li>
               <li>Click "Generate Notes" and wait for processing</li>
@@ -155,17 +176,25 @@ export default function YoutubeGeneratePage() {
 
           {/* Error Message */}
           {error && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-              <p className="text-red-800">{error}</p>
+            <div className="rounded-2xl p-4 mb-6" style={{ 
+              background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.1))',
+              border: '1px solid rgba(239, 68, 68, 0.3)',
+              boxShadow: '0 0 20px rgba(239, 68, 68, 0.1)'
+            }}>
+              <p style={{ color: '#ef4444' }}>{error}</p>
             </div>
           )}
           
           {/* Form */}
-          <div className="bg-white rounded-lg shadow-lg p-8">
+          <div className="rounded-2xl p-8 mb-8" style={{ 
+            background: 'linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%)',
+            border: '1px solid var(--bg-tertiary)',
+            boxShadow: 'var(--shadow-lg)'
+          }}>
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Title Input */}
               <div>
-                <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="title" className="block text-sm font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>
                   Title (Optional)
                 </label>
                 <input
@@ -174,16 +203,22 @@ export default function YoutubeGeneratePage() {
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="Enter a custom title for your notes..."
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-3 rounded-xl transition-all duration-300 focus:ring-2 focus:ring-[var(--color-youtube)] focus:outline-none"
+                  style={{
+                    background: 'var(--bg-primary)',
+                    border: '1px solid var(--bg-tertiary)',
+                    color: 'var(--text-primary)',
+                    boxShadow: 'var(--shadow-sm)'
+                  }}
                   disabled={isLoading}
                 />
-                <p className="mt-1 text-sm text-gray-500">
+                <p className="mt-2 text-sm" style={{ color: 'var(--text-muted)' }}>
                   Give your notes a descriptive title to help you find them later
                 </p>
               </div>
           
               <div>
-                <label htmlFor="url" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="url" className="block text-sm font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>
                   YouTube Video URL
                 </label>
                 <input
@@ -192,7 +227,13 @@ export default function YoutubeGeneratePage() {
                   value={url}
                   onChange={(e) => setUrl(e.target.value)}
                   placeholder="https://www.youtube.com/watch?v=..."
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-3 rounded-xl transition-all duration-300 focus:ring-2 focus:ring-[var(--color-youtube)] focus:outline-none"
+                  style={{
+                    background: 'var(--bg-primary)',
+                    border: '1px solid var(--bg-tertiary)',
+                    color: 'var(--text-primary)',
+                    boxShadow: 'var(--shadow-sm)'
+                  }}
                   disabled={isLoading}
                 />
               </div>
@@ -200,7 +241,14 @@ export default function YoutubeGeneratePage() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="w-full py-4 px-6 rounded-xl font-semibold text-lg transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                style={{ 
+                  background: isLoading 
+                    ? 'var(--bg-tertiary)' 
+                    : 'linear-gradient(135deg, var(--color-youtube) 0%, var(--color-cta) 100%)',
+                  color: isLoading ? 'var(--text-muted)' : 'var(--bg-primary)',
+                  boxShadow: isLoading ? 'var(--shadow-sm)' : 'var(--glow-youtube)'
+                }}
               >
                 {isLoading ? 'Processing...' : 'Generate Notes'}
               </button>
@@ -208,10 +256,16 @@ export default function YoutubeGeneratePage() {
           </div>
 
           {/* Back Link */}
-          <div className="text-center mt-8">
+          <div className="text-center">
             <button
               onClick={() => router.push('/')}
-              className="text-blue-600 hover:text-blue-800 hover:underline"
+              className="px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105"
+              style={{ 
+                background: 'var(--bg-secondary)',
+                color: 'var(--text-secondary)',
+                border: '1px solid var(--bg-tertiary)',
+                boxShadow: 'var(--shadow-sm)'
+              }}
             >
               ← Back to Home
             </button>
