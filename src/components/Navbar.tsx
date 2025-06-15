@@ -90,6 +90,19 @@ export default function Navbar() {
             >
               Notes
             </Link>
+
+            <Link 
+              href="/ai-tools" 
+              className={`transition-all duration-300 hover:scale-105 ${
+                isActive('/ai-tools') ? 'font-semibold' : ''
+              }`}
+              style={{ 
+                color: isActive('/ai-tools') ? 'var(--color-cta)' : 'var(--text-secondary)',
+                textShadow: isActive('/ai-tools') ? 'var(--glow-cta)' : 'none'
+              }}
+            >
+              AI Tools
+            </Link>
             
             <Link 
               href="/pricing" 
@@ -222,6 +235,16 @@ export default function Navbar() {
                 onClick={() => setIsMenuOpen(false)}
               >
                 Notes
+              </Link>
+
+              <Link 
+                href="/ai-tools" 
+                className={`text-gray-600 hover:text-gray-900 transition-colors ${
+                  isActive('/ai-tools') ? 'text-gray-900 font-medium' : ''
+                }`}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                AI Tools
               </Link>
               
               <Link 
