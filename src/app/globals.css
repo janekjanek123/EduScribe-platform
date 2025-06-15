@@ -200,6 +200,22 @@ body {
   margin-top: 1.25rem;
 }
 
+/* Custom animations */
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-in-up {
+  animation: slideInUp 1.2s ease-out forwards;
+}
+
 /* Summary section specific styling */
 .prose .summary-section {
   background-color: var(--bg-secondary);

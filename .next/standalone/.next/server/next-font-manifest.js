@@ -1,1 +1,0 @@
-self.__NEXT_FONT_MANIFEST='{"pages":{},"app":{"/Users/janjedrach/Cursor/eduscribe/src/app/layout":["static/media/4f05ba3a6752a328-s.p.woff2","static/media/99b7f73d5af7c3e2-s.p.woff2"]},"appUsingSizeAdjust":true,"pagesUsingSizeAdjust":false}';

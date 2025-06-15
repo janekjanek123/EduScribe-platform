@@ -1,11 +1,7 @@
 {
   "/page": "app/page.js",
+  "/ai-tools/page": "app/ai-tools/page.js",
   "/notes/page": "app/notes/page.js",
-  "/dashboard/page": "app/dashboard/page.js",
-  "/api/refresh-usage/route": "app/api/refresh-usage/route.js",
-  "/api/video-notes/route": "app/api/video-notes/route.js",
-  "/api/file-notes/route": "app/api/file-notes/route.js",
-  "/api/upload-video/route": "app/api/upload-video/route.js",
-  "/api/text-notes/route": "app/api/text-notes/route.js",
-  "/video-notes/page": "app/video-notes/page.js"
+  "/pricing/page": "app/pricing/page.js",
+  "/generate/youtube/page": "app/generate/youtube/page.js"
 }
