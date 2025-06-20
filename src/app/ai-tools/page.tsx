@@ -10,20 +10,20 @@ export default function AIToolsPage() {
 
   const aiTools = [
     {
-      id: 'presentation',
-      title: 'Presentation Generator',
-      subtitle: 'AI-Powered Slide Creation',
-      description: 'Transform your ideas into stunning presentations with intelligent slide generation, professional templates, and dynamic content optimization.',
-      icon: '🎯',
-      gradient: 'from-orange-500 to-red-500',
-      color: '#FF6B35',
+      id: 'brainrot-studying',
+      title: 'Brainrot Studying',
+      subtitle: 'Gen-Z Learning Revolution',
+      description: 'Transform boring study material into engaging, trend-based content that speaks your language. Make learning addictive with viral formats and modern memes.',
+      icon: '🔥',
+      gradient: 'from-purple-500 to-pink-500',
+      color: '#8B5CF6',
       features: [
-        'Smart slide structure and flow optimization',
-        'Professional template library with 100+ designs',
-        'Auto-generated charts and visual elements',
-        'Real-time collaboration and cloud sync'
+        'Convert textbooks into viral TikTok-style summaries',
+        'Meme-based memory techniques and mnemonics',
+        'Trending format study guides and flashcards',
+        'Social media inspired learning experiences'
       ],
-      stats: { accuracy: '95%', time_saved: '80%', templates: '100+' }
+      stats: { engagement: '300%', retention: '85%', vibes: '💯' }
     },
     {
       id: 'essay',
@@ -435,12 +435,19 @@ export default function AIToolsPage() {
                     onMouseLeave={(e) => {
                       e.currentTarget.style.boxShadow = `0 0 40px ${tool.color}30, 0 0 80px ${tool.color}20`
                     }}
+                    onClick={() => {
+                      if (tool.id === 'brainrot-studying') {
+                        window.location.href = '/brainrot-studying'
+                      }
+                    }}
                   >
                     <div 
                       className="absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity duration-300"
                       style={{ background: 'linear-gradient(45deg, white, transparent)' }}
                     />
-                    <span className="relative z-10">Coming Soon - Get Notified</span>
+                    <span className="relative z-10">
+                      {tool.id === 'brainrot-studying' ? 'Generate' : 'Coming Soon - Get Notified'}
+                    </span>
                   </button>
                 </div>
 
