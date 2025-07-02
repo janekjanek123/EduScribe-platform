@@ -1,0 +1,37 @@
+{
+  "backgrounds": [
+    {
+      "id": "background1",
+      "name": "Minecraft",
+      "filename": "copy_B20C53E2-8B14-49DC-8F33-1F86EDEFAD2C.MOV",
+      "thumbnail": "/assets/brainrot/backgrounds/thumbnails/background1.jpg",
+      "duration": 60,
+      "aspectRatio": "9:16", 
+      "resolution": "1080x1920",
+      "description": "First uploaded background video",
+      "category": "custom"
+    },
+    {
+      "id": "background2",
+      "name": "Hydraulic Press",
+      "filename": "copy_A625A3E7-BF73-4C23-94CB-9AC044ED8460.MOV",
+      "thumbnail": "/assets/brainrot/backgrounds/thumbnails/background2.jpg",
+      "duration": 60,
+      "aspectRatio": "9:16",
+      "resolution": "1080x1920", 
+      "description": "Second uploaded background video",
+      "category": "custom"
+    },
+    {
+      "id": "background3",
+      "name": "Subway Surfers",
+      "filename": "copy_592628F3-44A6-4877-AAF3-B8F23C22C278.MOV",
+      "thumbnail": "/assets/brainrot/backgrounds/thumbnails/background3.jpg",
+      "duration": 60,
+      "aspectRatio": "9:16",
+      "resolution": "1080x1920",
+      "description": "Third uploaded background video", 
+      "category": "custom"
+    }
+  ]
+} 

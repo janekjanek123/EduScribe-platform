@@ -1,13 +1,31 @@
-node_modules
-node_modules
+# Ignoruj katalogi i pliki zależności
 node_modules/
+.temp/
 temp/
-.env.local
-node_modules/
-temp/
-.env.local
+.cache/
+
+# Ignoruj pliki multimedialne (mogą być za duże dla GitHub)
 *.mp4
 *.mov
 *.avi
 *.mkv
 *.webm
+
+# Ignoruj pliki edytorów i systemów operacyjnych
+.DS_Store
+Thumbs.db
+
+# Ignoruj pliki konfiguracyjne środowisk
+.env
+.env.local
+.env.*.local
+
+# Ignoruj logi
+*.log
+npm-debug.log*
+
+# Ignoruj pliki buildów (jeśli istnieją)
+dist/
+build/
+out/
+.next/

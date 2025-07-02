@@ -1,0 +1,55 @@
+{
+  "avatars": [
+    {
+      "id": "dr.ogur",
+      "name": "Dr. Ogur",
+      "filename": "IMG_6079-removebg-preview.png",
+      "thumbnail": "IMG_6083-removebg-preview.png",
+      "videoAsset": "IMG_6079-removebg-preview.png",
+      "animations": {
+        "idle": "IMG_6079-removebg-preview.png"
+      },
+      "position": {
+        "x": "center",
+        "y": "bottom-third",
+        "scale": 0.8
+      },
+      "hasTransparency": true,
+      "description": "Dr. Ogur - Polish Medical Expert with chaotic humor"
+    },
+    {
+      "id": "tadzio", 
+      "name": "Tadzio",
+      "filename": "IMG_6078-removebg-preview.png",
+      "thumbnail": "IMG_6082-removebg-preview.png",
+      "videoAsset": "IMG_6078-removebg-preview.png",
+      "animations": {
+        "idle": "IMG_6078-removebg-preview.png"
+      },
+      "position": {
+        "x": "center",
+        "y": "bottom-third", 
+        "scale": 0.8
+      },
+      "hasTransparency": true,
+      "description": "Tadzio - Polish Car Mechanic with warm garage vibes"
+    },
+    {
+      "id": "marek",
+      "name": "Marek", 
+      "filename": "IMG_6077-removebg-preview.png",
+      "thumbnail": "IMG_6084-removebg-preview.png",
+      "videoAsset": "IMG_6077-removebg-preview.png",
+      "animations": {
+        "idle": "IMG_6077-removebg-preview.png"
+      },
+      "position": {
+        "x": "center",
+        "y": "bottom-third",
+        "scale": 0.8
+      },
+      "hasTransparency": true,
+      "description": "Marek - Sarcastic Polish News Anchor with pop culture obsession"
+    }
+  ]
+} 

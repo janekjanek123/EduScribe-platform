@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  voice-cloning-service:
+    build: .
+    ports:
+      - "5001:5001"
+    volumes:
+      # Mount the voice samples from the main project
+      - "../public/assets/brainrot/voice-samples:/app/voice-samples:ro"
+      # Mount a directory for temporary files
+      - "./temp:/tmp"
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start-period: 60s 

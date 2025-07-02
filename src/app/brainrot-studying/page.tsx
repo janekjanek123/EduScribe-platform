@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
+import VideoThumbnail from '@/components/VideoThumbnailGenerator'
 
 interface FormData {
   topic: string
@@ -16,6 +17,36 @@ interface VideoPreview {
   thumbnailUrl: string
   videoUrl: string
   createdAt: string
+  script?: string
+  transcription?: string
+}
+
+interface BackgroundAsset {
+  id: string
+  name: string
+  filename: string
+  thumbnail: string
+  duration: number
+  aspectRatio: string
+  resolution: string
+  description: string
+  category: string
+}
+
+interface AvatarAsset {
+  id: string
+  name: string
+  filename: string
+  thumbnail: string
+  videoAsset?: string
+  animations: Record<string, string>
+  position: {
+    x: string
+    y: string
+    scale: number
+  }
+  hasTransparency: boolean
+  description: string
 }
 
 export default function BrainrotStudyingPage() {
@@ -23,7 +54,7 @@ export default function BrainrotStudyingPage() {
     topic: '',
     description: '',
     videoBackground: '',
-    avatar: 'default',
+    avatar: 'dr.ogur',
     sourceFile: null
   })
   const [isGenerating, setIsGenerating] = useState(false)
@@ -31,19 +62,48 @@ export default function BrainrotStudyingPage() {
   const [videoPreview, setVideoPreview] = useState<VideoPreview | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [isLoaded, setIsLoaded] = useState(false)
+  const [backgroundAssets, setBackgroundAssets] = useState<BackgroundAsset[]>([])
+  const [avatarAssets, setAvatarAssets] = useState<AvatarAsset[]>([])
+  const [showTranscription, setShowTranscription] = useState(false)
 
-  const videoBackgrounds = [
-    { id: 'minecraft', name: 'Minecraft Parkour', preview: '/api/placeholder/minecraft-bg.jpg' },
-    { id: 'subway', name: 'Subway Surfers', preview: '/api/placeholder/subway-bg.jpg' },
-    { id: 'satisfying', name: 'Satisfying Visuals', preview: '/api/placeholder/satisfying-bg.jpg' }
-  ]
-
-  const avatars = [
-    { id: 'default', name: 'Default Avatar', preview: '/api/placeholder/avatar-default.jpg' }
-  ]
-
+  // Load assets from manifest files
   useEffect(() => {
-    setIsLoaded(true)
+    const loadAssets = async () => {
+      try {
+        // Load background assets
+        const backgroundsResponse = await fetch('/assets/brainrot/manifests/backgrounds.json')
+        if (backgroundsResponse.ok) {
+          const backgroundsData = await backgroundsResponse.json()
+          setBackgroundAssets(backgroundsData.backgrounds)
+        } else {
+          // Fallback to hardcoded assets if manifest not found
+          setBackgroundAssets([
+            { id: 'minecraft', name: 'Minecraft Parkour', filename: 'minecraft-parkour.mp4', thumbnail: '/api/placeholder/minecraft-bg.jpg', duration: 60, aspectRatio: '9:16', resolution: '1080x1920', description: 'Epic Minecraft parkour gameplay', category: 'gaming' },
+            { id: 'subway', name: 'Subway Surfers', filename: 'subway-surfers.mp4', thumbnail: '/api/placeholder/subway-bg.jpg', duration: 45, aspectRatio: '9:16', resolution: '1080x1920', description: 'Fast-paced subway surfing action', category: 'gaming' },
+            { id: 'satisfying', name: 'Satisfying Visuals', filename: 'satisfying-visuals.mp4', thumbnail: '/api/placeholder/satisfying-bg.jpg', duration: 50, aspectRatio: '9:16', resolution: '1080x1920', description: 'Relaxing satisfying content', category: 'satisfying' }
+          ])
+        }
+
+        // Load avatar assets
+        const avatarsResponse = await fetch('/assets/brainrot/manifests/avatars.json')
+        if (avatarsResponse.ok) {
+          const avatarsData = await avatarsResponse.json()
+          setAvatarAssets(avatarsData.avatars)
+        } else {
+          // Fallback to hardcoded assets if manifest not found
+          setAvatarAssets([
+            { id: 'default', name: 'Default Avatar', filename: 'default-avatar.mp4', thumbnail: '/api/placeholder/avatar-default.jpg', animations: { idle: 'default-avatar.mp4' }, position: { x: 'center', y: 'bottom-third', scale: 0.8 }, hasTransparency: true, description: 'Animated character with transparent background' }
+          ])
+        }
+        
+        setIsLoaded(true)
+      } catch (error) {
+        console.error('Failed to load assets:', error)
+        setIsLoaded(true)
+      }
+    }
+
+    loadAssets()
   }, [])
 
   const handleInputChange = (field: keyof FormData, value: string | File | null) => {
@@ -96,8 +156,8 @@ export default function BrainrotStudyingPage() {
   }
 
   const handleGenerate = async () => {
-    if (!formData.topic || (!formData.description && !formData.sourceFile) || !formData.videoBackground) {
-      setError('Please fill in topic, either description or upload a file, and select a video background')
+    if ((!formData.description && !formData.sourceFile) || !formData.videoBackground) {
+      setError('Please fill in either description or upload a file, and select a video background')
       return
     }
 
@@ -110,7 +170,7 @@ export default function BrainrotStudyingPage() {
     try {
       // Create FormData for file upload
       const formDataToSend = new FormData()
-      formDataToSend.append('topic', formData.topic)
+      formDataToSend.append('topic', formData.topic || 'Study Material') // Use default if empty
       formDataToSend.append('description', formData.description)
       formDataToSend.append('videoBackground', formData.videoBackground)
       formDataToSend.append('avatar', formData.avatar)
@@ -130,17 +190,24 @@ export default function BrainrotStudyingPage() {
 
       const result = await response.json()
       
+      console.log('API Response:', result) // Debug log
+      
       // Complete progress
       setGenerationProgress(100)
       
-      // Simulate video preview
+      // Use actual generated video URLs from the API response
       setTimeout(() => {
-        setVideoPreview({
-          id: 'preview-' + Date.now(),
-          thumbnailUrl: '/api/placeholder/video-thumbnail.jpg',
-          videoUrl: '/api/placeholder/brainrot-video.mp4',
-          createdAt: new Date().toISOString()
-        })
+        const videoPreviewData = {
+          id: result.videoId || 'preview-' + Date.now(),
+          thumbnailUrl: result.thumbnailUrl || '/api/placeholder/video-thumbnail.jpg',
+          videoUrl: result.videoUrl || '/api/placeholder/brainrot-video.mp4',
+          createdAt: new Date().toISOString(),
+          script: result.script || null,
+          transcription: result.script || null // Use script as transcription since they match
+        }
+        
+        console.log('Setting video preview:', videoPreviewData) // Debug log
+        setVideoPreview(videoPreviewData)
         setIsGenerating(false)
       }, 1000)
 
@@ -158,12 +225,13 @@ export default function BrainrotStudyingPage() {
       topic: '',
       description: '',
       videoBackground: '',
-      avatar: 'default',
+      avatar: 'dr.ogur',
       sourceFile: null
     })
     setVideoPreview(null)
     setError(null)
     setGenerationProgress(0)
+    setShowTranscription(false)
   }
 
   return (
@@ -211,7 +279,7 @@ export default function BrainrotStudyingPage() {
               {/* Topic Input */}
               <div className="mb-6">
                 <label className="block text-sm font-medium mb-3" style={{ color: 'var(--text-secondary)' }}>
-                  Study Topic *
+                  Study Topic (Optional)
                 </label>
                 <input
                   type="text"
@@ -316,25 +384,43 @@ export default function BrainrotStudyingPage() {
               {/* Video Background Selection */}
               <div className="mb-6">
                 <label className="block text-sm font-medium mb-3" style={{ color: 'var(--text-secondary)' }}>
-                  Video Background *
+                  Video Background * ({backgroundAssets.length} available)
                 </label>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  {videoBackgrounds.map((bg) => (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                  {backgroundAssets.map((bg) => (
                     <button
                       key={bg.id}
                       onClick={() => handleInputChange('videoBackground', bg.id)}
-                      className={`p-4 rounded-xl border-2 transition-all duration-300 ${
+                      className={`p-4 rounded-xl border-2 transition-all duration-300 flex flex-col items-center ${
                         formData.videoBackground === bg.id
                           ? 'border-purple-500 bg-purple-500/20'
                           : 'border-gray-600 hover:border-purple-400'
                       }`}
                       style={{ background: formData.videoBackground === bg.id ? '#8B5CF620' : 'var(--bg-primary)' }}
                     >
-                      <div className="aspect-video bg-gray-700 rounded-lg mb-2 flex items-center justify-center text-2xl">
-                        {bg.id === 'minecraft' ? '⛏️' : bg.id === 'subway' ? '🚇' : '✨'}
+                      <div className="w-32 h-56 rounded-lg mb-3 overflow-hidden relative border-2 border-gray-600">
+                        <img 
+                          src={bg.thumbnail}
+                          alt={bg.name}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            e.currentTarget.style.display = 'none';
+                            const fallbackDiv = e.currentTarget.nextElementSibling as HTMLElement;
+                            if (fallbackDiv) fallbackDiv.style.display = 'flex';
+                          }}
+                        />
+                        <div className="w-full h-full flex items-center justify-center bg-gray-800 text-gray-400" style={{ display: 'none' }}>
+                          <div className="text-center">
+                            <div className="text-2xl mb-2">⚠️</div>
+                            <div className="text-sm">Thumbnail not found</div>
+                          </div>
+                        </div>
                       </div>
-                      <div className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>
+                      <div className="text-sm font-medium text-center" style={{ color: 'var(--text-primary)' }}>
                         {bg.name}
+                      </div>
+                      <div className="text-xs text-center" style={{ color: 'var(--text-muted)' }}>
+                        {bg.resolution} • {bg.duration}s
                       </div>
                     </button>
                   ))}
@@ -344,28 +430,47 @@ export default function BrainrotStudyingPage() {
               {/* Avatar Selection */}
               <div className="mb-8">
                 <label className="block text-sm font-medium mb-3" style={{ color: 'var(--text-secondary)' }}>
-                  Avatar
+                  Avatar ({avatarAssets.length} available)
                 </label>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                  {avatars.map((avatar) => (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {avatarAssets.map((avatar) => (
                     <button
                       key={avatar.id}
                       onClick={() => handleInputChange('avatar', avatar.id)}
-                      className={`p-3 rounded-xl border-2 transition-all duration-300 ${
+                      className={`p-4 rounded-xl border-2 transition-all duration-300 ${
                         formData.avatar === avatar.id
                           ? 'border-purple-500 bg-purple-500/20'
                           : 'border-gray-600 hover:border-purple-400'
                       }`}
                       style={{ background: formData.avatar === avatar.id ? '#8B5CF620' : 'var(--bg-primary)' }}
                     >
-                      <div className="aspect-square bg-gray-700 rounded-lg mb-2 flex items-center justify-center text-2xl">
-                        👤
+                      <div className="flex items-center justify-center mb-3">
+                        <img 
+                          src={`/assets/brainrot/avatars/${avatar.thumbnail}`} 
+                          alt={avatar.name}
+                          className="w-40 h-40 object-contain drop-shadow-2xl"
+                          style={{ 
+                            background: 'transparent',
+                            filter: 'drop-shadow(0 0 20px rgba(139, 92, 246, 0.4))'
+                          }}
+                          onError={(e) => {
+                            e.currentTarget.style.display = 'none';
+                            const nextElement = e.currentTarget.nextElementSibling as HTMLElement;
+                            if (nextElement) nextElement.style.display = 'flex';
+                          }}
+                        />
+                        <div className="w-40 h-40 flex items-center justify-center text-5xl bg-gradient-to-br from-purple-500 to-pink-500 rounded-full text-white shadow-2xl" style={{ display: 'none' }}>
+                          👤
+                        </div>
                       </div>
-                      <div className="text-xs font-medium" style={{ color: 'var(--text-primary)' }}>
+                      <div className="text-sm font-medium text-center" style={{ color: 'var(--text-primary)' }}>
                         {avatar.name}
                       </div>
                     </button>
                   ))}
+                </div>
+                <div className="mt-2 text-xs" style={{ color: 'var(--text-muted)' }}>
+                  💡 Select your avatar character for the brainrot video
                 </div>
               </div>
 
@@ -424,7 +529,7 @@ export default function BrainrotStudyingPage() {
               </h2>
 
               {!videoPreview ? (
-                <div className="aspect-video bg-gray-800 rounded-xl flex items-center justify-center border-2 border-dashed border-gray-600">
+                <div className="w-full max-w-sm mx-auto aspect-[9/16] bg-gray-800 rounded-xl flex items-center justify-center border-2 border-dashed border-gray-600">
                   <div className="text-center">
                     <div className="text-4xl mb-4">🎬</div>
                     <p className="text-gray-400">Your brainrot video will appear here</p>
@@ -433,7 +538,7 @@ export default function BrainrotStudyingPage() {
               ) : (
                 <div className="space-y-4">
                   {/* Video Player */}
-                  <div className="relative aspect-video bg-black rounded-xl overflow-hidden">
+                  <div className="relative w-full max-w-sm mx-auto aspect-[9/16] bg-black rounded-xl overflow-hidden">
                     <video
                       className="w-full h-full object-cover"
                       controls
@@ -453,14 +558,14 @@ export default function BrainrotStudyingPage() {
                   <div className="p-4 rounded-xl" style={{ background: 'var(--bg-primary)' }}>
                     <div className="flex items-center justify-between mb-2">
                       <h3 className="font-bold" style={{ color: 'var(--text-primary)' }}>
-                        {formData.topic}
+                        {formData.topic || 'Brainrot Study Video'}
                       </h3>
                       <span className="text-sm px-2 py-1 rounded-full bg-purple-500/20 text-purple-300">
                         Generated
                       </span>
                     </div>
                     <p className="text-sm mb-3" style={{ color: 'var(--text-secondary)' }}>
-                      {formData.description.slice(0, 100)}...
+                      {(formData.description || 'Generated from uploaded content').slice(0, 100)}...
                     </p>
                     <div className="text-xs" style={{ color: 'var(--text-muted)' }}>
                       Created: {new Date(videoPreview.createdAt).toLocaleString()}
@@ -469,15 +574,18 @@ export default function BrainrotStudyingPage() {
 
                   {/* Action Buttons */}
                   <div className="flex gap-3">
-                    <button
-                      className="flex-1 py-3 px-4 rounded-xl font-medium transition-all duration-300 hover:scale-105"
+                    <a
+                      href={videoPreview.videoUrl}
+                      download={`brainrot-${(formData.topic || 'study-video').replace(/\s+/g, '-').toLowerCase()}.mp4`}
+                      className="flex-1 py-3 px-4 rounded-xl font-medium transition-all duration-300 hover:scale-105 text-center block"
                       style={{ 
                         background: 'linear-gradient(135deg, #10B981, #059669)',
-                        color: 'white'
+                        color: 'white',
+                        textDecoration: 'none'
                       }}
                     >
                       Download Video
-                    </button>
+                    </a>
                     <button
                       onClick={resetForm}
                       className="flex-1 py-3 px-4 rounded-xl font-medium transition-all duration-300 hover:scale-105"
@@ -490,6 +598,68 @@ export default function BrainrotStudyingPage() {
                       Create New
                     </button>
                   </div>
+
+                  {/* Transcription Box */}
+                  {videoPreview.transcription && (
+                    <div className="rounded-xl" style={{ 
+                      background: 'var(--bg-primary)',
+                      border: '2px solid #8B5CF630'
+                    }}>
+                      <button
+                        onClick={() => setShowTranscription(!showTranscription)}
+                        className="w-full p-4 flex items-center justify-between text-left transition-all duration-300 hover:bg-purple-500/10 rounded-xl"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-lg bg-purple-500/20 flex items-center justify-center">
+                            📝
+                          </div>
+                          <div>
+                            <h4 className="font-medium" style={{ color: 'var(--text-primary)' }}>
+                              Video Transcription
+                            </h4>
+                            <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+                              {showTranscription ? 'Click to hide' : 'Click to view full transcript'}
+                            </p>
+                          </div>
+                        </div>
+                        <div className={`transform transition-transform duration-300 ${showTranscription ? 'rotate-180' : ''}`}>
+                          <svg className="w-5 h-5" style={{ color: 'var(--text-secondary)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                          </svg>
+                        </div>
+                      </button>
+                      
+                      {showTranscription && (
+                        <div className="px-4 pb-4">
+                          <div className="p-4 rounded-lg max-h-80 overflow-y-auto" style={{ 
+                            background: 'var(--bg-secondary)',
+                            border: '1px solid #8B5CF620'
+                          }}>
+                            <div className="flex items-center justify-between mb-3">
+                              <span className="text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>
+                                Full Transcript
+                              </span>
+                              <button
+                                onClick={() => {
+                                  navigator.clipboard.writeText(videoPreview.transcription || '')
+                                  // You could add a toast notification here
+                                }}
+                                className="text-xs px-3 py-1 rounded-full bg-purple-500/20 text-purple-300 hover:bg-purple-500/30 transition-colors duration-300"
+                              >
+                                Copy
+                              </button>
+                            </div>
+                            <div className="text-sm leading-relaxed whitespace-pre-wrap" style={{ color: 'var(--text-primary)' }}>
+                              {videoPreview.transcription}
+                            </div>
+                          </div>
+                          <div className="mt-3 text-xs" style={{ color: 'var(--text-muted)' }}>
+                            💡 This is the exact text spoken by the avatar in your brainrot video
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               )}
             </div>

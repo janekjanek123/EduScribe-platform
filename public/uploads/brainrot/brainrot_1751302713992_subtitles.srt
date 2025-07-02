@@ -1,0 +1,380 @@
+1
+00:00:00,000 --> 00:00:00,322
+Hej, hej, hej! Dzisiaj
+
+2
+00:00:00,322 --> 00:00:00,645
+gadamy o Study Material!
+
+3
+00:00:00,645 --> 00:00:00,967
+Koncepcja psychoanalizy
+
+Dynamicznie rozwijająca się
+
+4
+00:00:00,967 --> 00:00:01,290
+w XIX wieku psychologia
+
+5
+00:00:01,290 --> 00:00:01,612
+przeżyła pod koniec tego
+
+6
+00:00:01,612 --> 00:00:01,935
+okresu ogromny przełom! To
+
+7
+00:00:01,935 --> 00:00:02,258
+jest cholernie ważne! Teoria
+
+8
+00:00:02,258 --> 00:00:02,580
+psychiatry Zygmunta Freuda zrewolucjonizowała
+
+9
+00:00:02,580 --> 00:00:02,903
+podejście terapeutyczne do pacjenta!
+
+10
+00:00:02,903 --> 00:00:03,225
+To jest cholernie ważne!
+
+11
+00:00:03,225 --> 00:00:03,548
+Freud opracował formę psychoterapii
+
+12
+00:00:03,548 --> 00:00:03,870
+- i słuchajcie dalej
+
+13
+00:00:03,870 --> 00:00:04,193
+- która miała na
+
+14
+00:00:04,193 --> 00:00:04,516
+celu wyjaśnianie i leczenie
+
+15
+00:00:04,516 --> 00:00:04,838
+zachowań patologicznych mających podłoże
+
+16
+00:00:04,838 --> 00:00:05,161
+w zaburzeniach emocjonalnych! To
+
+17
+00:00:05,161 --> 00:00:05,483
+jest cholernie ważne! Metoda
+
+18
+00:00:05,483 --> 00:00:05,806
+ta polegała na analizie
+
+19
+00:00:05,806 --> 00:00:06,129
+życia psychicznego pacjenta umożliwiającej
+
+20
+00:00:06,129 --> 00:00:06,451
+zdiagnozowanie przyczyn jego problemów!
+
+21
+00:00:06,451 --> 00:00:06,774
+To jest cholernie ważne!
+
+22
+00:00:06,774 --> 00:00:07,096
+Z tego względu nazwano
+
+23
+00:00:07,096 --> 00:00:07,419
+ją psychoanalizą! To jest
+
+24
+00:00:07,419 --> 00:00:07,741
+cholernie ważne! 
+
+Badawczy aspekt
+
+25
+00:00:07,741 --> 00:00:08,064
+psychoanalizy miał na celu
+
+26
+00:00:08,064 --> 00:00:08,387
+umożliwienie opisania struktury ludzkiej
+
+27
+00:00:08,387 --> 00:00:08,709
+psychiki i zrozumienia mechanizmów
+
+28
+00:00:08,709 --> 00:00:09,032
+kierujących rozwojem człowieka i
+
+29
+00:00:09,032 --> 00:00:09,354
+funkcjonowaniem jego osobowości! To
+
+30
+00:00:09,354 --> 00:00:09,677
+jest cholernie ważne! Zainteresowanie
+
+31
+00:00:09,677 --> 00:00:09,999
+Freuda wzbudzał także proces
+
+32
+00:00:09,999 --> 00:00:10,322
+tworzenia przez człowieka środowiska
+
+33
+00:00:10,322 --> 00:00:10,645
+społecznego i wzajemne oddziaływanie
+
+34
+00:00:10,645 --> 00:00:10,967
+tego środowiska na procesy
+
+35
+00:00:10,967 --> 00:00:11,290
+psychiczne człowieka! To jest
+
+36
+00:00:11,290 --> 00:00:11,612
+cholernie ważne! Badał on
+
+37
+00:00:11,612 --> 00:00:11,935
+więc także zagadnienia kulturowe
+
+38
+00:00:11,935 --> 00:00:12,258
+i społeczne dotyczące jednostki
+
+39
+00:00:12,258 --> 00:00:12,580
+ludzkiej! To jest cholernie
+
+40
+00:00:12,580 --> 00:00:12,903
+ważne! U założeń freudowskiej
+
+41
+00:00:12,903 --> 00:00:13,225
+teorii leżał pogląd o
+
+42
+00:00:13,225 --> 00:00:13,548
+ogromnym znaczeniu rozwoju rodowego
+
+43
+00:00:13,548 --> 00:00:13,870
+jednostki dla jej rozwoju
+
+44
+00:00:13,870 --> 00:00:14,193
+osobniczego! To jest cholernie
+
+45
+00:00:14,193 --> 00:00:14,516
+ważne! Według Freuda skutkiem
+
+46
+00:00:14,516 --> 00:00:14,838
+tego jest konflikt motywacyjny
+
+47
+00:00:14,838 --> 00:00:15,161
+zmuszający jednostkę do nieustannego
+
+48
+00:00:15,161 --> 00:00:15,483
+dokonywania wyboru między zachowaniem
+
+49
+00:00:15,483 --> 00:00:15,806
+stymulowanym przez popędy a
+
+50
+00:00:15,806 --> 00:00:16,129
+tym - i słuchajcie
+
+51
+00:00:16,129 --> 00:00:16,451
+dalej - które jest
+
+52
+00:00:16,451 --> 00:00:16,774
+narzucane przez normy kulturowe!
+
+53
+00:00:16,774 --> 00:00:17,096
+To jest cholernie ważne!
+
+54
+00:00:17,096 --> 00:00:17,419
+Intencją Freuda było aby
+
+55
+00:00:17,419 --> 00:00:17,741
+dzięki terapii psychoanalitycznej można
+
+56
+00:00:17,741 --> 00:00:18,064
+było nie tylko skutecznie
+
+57
+00:00:18,064 --> 00:00:18,387
+leczyć patologie behawioralne lecz
+
+58
+00:00:18,387 --> 00:00:18,709
+także w większym stopniu
+
+59
+00:00:18,709 --> 00:00:19,032
+poznać i zrozumieć sterujące
+
+60
+00:00:19,032 --> 00:00:19,354
+zachowaniem mechanizmy! To jest
+
+61
+00:00:19,354 --> 00:00:19,677
+cholernie ważne! Ze względu
+
+62
+00:00:19,677 --> 00:00:20,000
+na to - i
+
+63
+00:00:20,000 --> 00:00:20,322
+słuchajcie dalej - Freud
+
+64
+00:00:20,322 --> 00:00:20,645
+skupił się na analizie
+
+65
+00:00:20,645 --> 00:00:20,967
+motywów dominujących w kierowaniu
+
+66
+00:00:20,967 --> 00:00:21,290
+zachowaniem człowieka! To jest
+
+67
+00:00:21,290 --> 00:00:21,612
+cholernie ważne! Wśród tych
+
+68
+00:00:21,612 --> 00:00:21,935
+motywów wyróżnił przede wszystkim
+
+69
+00:00:21,935 --> 00:00:22,258
+popędy - i słuchajcie
+
+70
+00:00:22,258 --> 00:00:22,580
+dalej - zwłaszcza seksualny
+
+71
+00:00:22,580 --> 00:00:22,903
+- i słuchajcie dalej
+
+72
+00:00:22,903 --> 00:00:23,225
+- skłaniające jednostkę do
+
+73
+00:00:23,225 --> 00:00:23,548
+działania w określonym kierunku!
+
+74
+00:00:23,548 --> 00:00:23,870
+To jest cholernie ważne!
+
+75
+00:00:23,870 --> 00:00:24,193
+Freud był zdania -
+
+76
+00:00:24,193 --> 00:00:24,516
+i słuchajcie dalej -
+
+77
+00:00:24,516 --> 00:00:24,838
+że rola popędów w
+
+78
+00:00:24,838 --> 00:00:25,161
+życiu człowieka jest ogromna
+
+79
+00:00:25,161 --> 00:00:25,483
+już podczas pierwszych kilku
+
+80
+00:00:25,483 --> 00:00:25,806
+lat jego rozwoju! To
+
+81
+00:00:25,806 --> 00:00:26,129
+jest cholernie ważne! 
+
+
+
+Czytaj
+
+82
+00:00:26,129 --> 00:00:26,451
+więcej na https://www! To
+
+83
+00:00:26,451 --> 00:00:26,774
+jest cholernie ważne! bryk!
+
+84
+00:00:26,774 --> 00:00:27,096
+To jest cholernie ważne!
+
+85
+00:00:27,096 --> 00:00:27,419
+pl/wypracowania/pozostale/psychologia/24105-glowne-zalozenia-koncepcji-psychoanalitycznej-freuda! To jest cholernie
+
+86
+00:00:27,419 --> 00:00:27,741
+ważne! Jak tego nie
+
+87
+00:00:27,741 --> 00:00:28,064
+wiesz to jesteś tępy
+
+88
+00:00:28,064 --> 00:00:28,387
+jak mój skalpel po
+
+89
+00:00:28,387 --> 00:00:28,709
+trzech operacjach. Teraz będzie
+
+90
+00:00:28,709 --> 00:00:29,032
+najlepsze... To jest podstawa
+
+91
+00:00:29,032 --> 00:00:29,354
+medycyny, którą musicie znać!
+
+92
+00:00:29,354 --> 00:00:29,677
+I właśnie tak działają
+
+93
+00:00:29,677 --> 00:00:30,000
+wszystkie te pierdoły! Zrozumieliście?
+

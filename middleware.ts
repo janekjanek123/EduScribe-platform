@@ -29,6 +29,11 @@ export async function middleware(req: NextRequest) {
     '/api/stripe',              // Stripe API endpoints
     '/payment-success',         // Payment success page
     '/payment-cancelled',       // Payment cancelled page
+    '/uploads',                 // Uploaded files (videos, thumbnails, etc.)
+    '/assets',                  // Static assets
+    '/api/placeholder',         // Placeholder API endpoints
+    '/api/generate-brainrot',   // Brainrot generation API
+    '/brainrot-studying',       // Brainrot studying page
   ];
   if (publicPaths.some(p => path.startsWith(p) || path === p)) {
     console.log('[Middleware] Allowing access to public path:', path);
