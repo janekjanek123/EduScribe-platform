@@ -31,3 +31,4 @@ out/
 .next/venv/
 voice-cloning-service/venv/
 .next/
+.next/
