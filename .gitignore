@@ -28,4 +28,4 @@ npm-debug.log*
 dist/
 build/
 out/
-.next/
+.next/venv/
